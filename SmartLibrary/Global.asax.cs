@@ -1,3 +1,5 @@
+using AutoMapper;
+using SmartLibrary.Models.Mappings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,17 @@ namespace SmartLibrary
     {
         protected void Application_Start()
         {
+            // Initialize AutoMapper
+            // Initialize AutoMapper
+            Mapper.Initialize(cfg => cfg.AddProfiles(new[]
+            {
+                typeof(UserMappingProfile),
+                typeof(BookMappingProfile),
+                typeof(AuthorMappingProfile),
+                typeof(CategoryMappingProfile)
+            }));
+
+
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);

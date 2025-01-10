@@ -1,0 +1,19 @@
+﻿using System;
+using System.ComponentModel.DataAnnotations;
+
+namespace SmartLibrary.Models.ViewModels.Author
+{
+    public class CreateAuthorViewModel
+    {
+        [Required]
+        [Display(Name = "Tên tác giảm")]
+        public string AuthorName { get; set; }
+
+        [Required]
+        [Display(Name = "Ngày sinh")]
+        public DateTime DateOfBirth { get; set; }
+
+        [Display(Name = "Tiểu sử")]
+        public string Biography { get; set; }
+    }
+}

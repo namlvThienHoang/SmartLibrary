@@ -9,6 +9,7 @@ namespace SmartLibrary.Models.EntityModels
     {
         public int BookId { get; set; }
         public string Title { get; set; }
+        public string Description { get; set; }
         public string Publisher { get; set; }
         public DateTime PublishedDate { get; set; }
         public string ISBN { get; set; }
@@ -19,7 +20,6 @@ namespace SmartLibrary.Models.EntityModels
         // Navigation property
         public virtual ICollection<BookAuthor> BookAuthors { get; set; }
         public virtual ICollection<BookCategory> BookCategories { get; set; }
-
         public ICollection<Reservation> Reservations { get; set; }
         public ICollection<BookReview> BookReviews { get; set; }
         public virtual ICollection<BorrowTransaction> BorrowTransactions { get; set; }
