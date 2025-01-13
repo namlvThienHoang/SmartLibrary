@@ -1,8 +1,10 @@
-﻿using System;
+﻿using SmartLibrary.Models.ViewModels.Category;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace SmartLibrary.Models.ViewModels.Book
 {
@@ -40,5 +42,15 @@ namespace SmartLibrary.Models.ViewModels.Book
 
         [Display(Name = "Ảnh bìa")]
         public string CoverImage { get; set; }
+
+        // Danh sách Category được chọn
+        [Display(Name = "Chọn loại sách")]
+        public List<int> SelectedCategoryIds { get; set; } = new List<int>();
+        [Display(Name = "Chọn tác giả")]
+        public List<int> SelectedAuthorIds { get; set; } = new List<int>();
+
+        // Danh sách tất cả các Category
+        public List<SelectListItem> Categories { get; set; }
+        public List<SelectListItem> Authors { get; set; }
     }
 }

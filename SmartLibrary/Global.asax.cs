@@ -15,7 +15,6 @@ namespace SmartLibrary
         protected void Application_Start()
         {
             // Initialize AutoMapper
-            // Initialize AutoMapper
             Mapper.Initialize(cfg => cfg.AddProfiles(new[]
             {
                 typeof(UserMappingProfile),

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SmartLibrary.Models.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -20,11 +21,25 @@ namespace SmartLibrary.Controllers
             return View();
         }
 
+        // GET: Contact
         public ActionResult Contact()
         {
-            ViewBag.Message = "Your contact page.";
+            return View(new ContactViewModel());
+        }
 
-            return View();
+        // POST: Contact
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Contact(ContactViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Xử lý logic liên hệ (ví dụ: gửi email)
+                TempData["SuccessMessage"] = "Cảm ơn bạn đã liên hệ với chúng tôi! Chúng tôi sẽ phản hồi sớm.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            return View(model);
         }
     }
 }

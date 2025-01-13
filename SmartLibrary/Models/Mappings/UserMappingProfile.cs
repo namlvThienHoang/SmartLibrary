@@ -15,6 +15,7 @@ namespace SmartLibrary.Models.Mappings
             CreateMap<CreateUserViewModel, ApplicationUser>();
 
             CreateMap<EditUserViewModel, ApplicationUser>();
+            CreateMap<ApplicationUser, EditUserViewModel>();
         }
     }
 }

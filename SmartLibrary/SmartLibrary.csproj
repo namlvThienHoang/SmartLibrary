@@ -174,6 +174,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AuthorController.cs" />
     <Compile Include="Controllers\BookController.cs" />
+    <Compile Include="Controllers\BorrowBookController.cs" />
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
@@ -181,6 +182,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\FileHelper.cs" />
     <Compile Include="Migrations\202412200223330_InitialCreate.cs" />
     <Compile Include="Migrations\202412200223330_InitialCreate.designer.cs">
       <DependentUpon>202412200223330_InitialCreate.cs</DependentUpon>
@@ -230,9 +232,11 @@
     <Compile Include="Models\ViewModels\Book\EditBookViewModel.cs" />
     <Compile Include="Models\ViewModels\Book\CreateBookViewModel.cs" />
     <Compile Include="Models\ViewModels\Book\BookViewModel.cs" />
+    <Compile Include="Models\ViewModels\BorrowBook\BorrowBookViewModel.cs" />
     <Compile Include="Models\ViewModels\Category\CategoryViewModel.cs" />
     <Compile Include="Models\ViewModels\Category\CreateCategoryViewModel.cs" />
     <Compile Include="Models\ViewModels\Category\EditCategoryViewModel.cs" />
+    <Compile Include="Models\ViewModels\ContactViewModel.cs" />
     <Compile Include="Models\ViewModels\PagedResult.cs" />
     <Compile Include="Models\ViewModels\User\CreateUserViewModel.cs" />
     <Compile Include="Models\ViewModels\User\EditUserViewModel.cs" />
@@ -252,6 +256,7 @@
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <None Include="Scripts\jquery-3.4.1.intellisense.js" />
+    <Content Include="Scripts\custom.js" />
     <Content Include="Scripts\jquery-3.4.1.js" />
     <Content Include="Scripts\jquery-3.4.1.min.js" />
     <Content Include="Scripts\jquery-3.4.1.slim.js" />
@@ -316,10 +321,17 @@
     <Content Include="Views\Category\Details.cshtml" />
     <Content Include="Views\Category\Delete.cshtml" />
     <Content Include="Views\Author\Index.cshtml" />
+    <Content Include="Views\BorrowBook\Create.cshtml" />
+    <Content Include="Views\BorrowBook\Delete.cshtml" />
+    <Content Include="Views\BorrowBook\Details.cshtml" />
+    <Content Include="Views\BorrowBook\Edit.cshtml" />
+    <Content Include="Views\BorrowBook\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\ViewModels\Role\" />
+    <Folder Include="Uploads\Books\" />
+    <Folder Include="Views\Shared\Components\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff2" />

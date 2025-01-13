@@ -12,7 +12,6 @@ namespace SmartLibrary.Controllers
     public class UserController : Controller
     {
         private ApplicationUserManager UserManager;
-
         public UserController()
         {
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
@@ -32,12 +31,7 @@ namespace SmartLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser
-                {
-                    UserName = model.Email,
-                    Email = model.Email,
-                    // Add any additional properties if needed
-                };
+                var user = Mapper.Map<ApplicationUser>(model);
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -82,13 +76,7 @@ namespace SmartLibrary.Controllers
                 return HttpNotFound();
             }
 
-            var model = new EditUserViewModel
-            {
-                Id = user.Id,
-                UserName = user.UserName,
-                Email = user.Email,
-                // Add other properties as needed
-            };
+            var model = Mapper.Map<EditUserViewModel>(user);
 
             return View(model);
         }
@@ -107,6 +95,11 @@ namespace SmartLibrary.Controllers
 
                 user.UserName = model.UserName;
                 user.Email = model.Email;
+                user.FullName = model.FullName;
+                user.DateOfBirth = model.DateOfBirth;
+                user.Address = model.Address;
+                user.PhoneNumber = model.PhoneNumber;
+                user.Status = model.Status;
                 // Update other properties as needed
 
                 var result = await UserManager.UpdateAsync(user);
@@ -128,7 +121,7 @@ namespace SmartLibrary.Controllers
             {
                 return HttpNotFound();
             }
-            return View(user);
+            return View(Mapper.Map<UserViewModel>(user));
         }
 
         [HttpPost, ActionName("Delete")]
