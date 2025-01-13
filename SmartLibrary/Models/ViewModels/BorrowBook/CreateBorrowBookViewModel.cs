@@ -1,18 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace SmartLibrary.Models.ViewModels.BorrowBook
 {
-    public class BorrowBookViewModel
+    public class CreateBorrowBookViewModel
     {
-        public int BorrowTransactionId { get; set; }
-        [Display(Name = "Tên người mượn")]
-        public string UserName { get; set; }
+        [Display(Name = "Người mượn")]
+        public string UserId { get; set; }
         [Display(Name = "Tên sách")]
-        public string BookTitle { get; set; }
+        public int BookId { get; set; }
         [Display(Name = "Ngày mượn")]
         public DateTime BorrowDate { get; set; }
 

@@ -9,6 +9,9 @@ using System.Web;
 using System.Web.Mvc;
 using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
+using AutoMapper;
+using SmartLibrary.Models.ViewModels.BorrowBook;
+using SmartLibrary.Helpers;
 
 namespace SmartLibrary.Controllers
 {
@@ -19,8 +22,8 @@ namespace SmartLibrary.Controllers
         // GET: BorrowBook
         public async Task<ActionResult> Index()
         {
-            var borrowTransactions = db.BorrowTransactions.Include(b => b.Book).Include(b => b.User);
-            return View(await borrowTransactions.ToListAsync());
+            var borrowTransactions = await db.BorrowTransactions.ToListAsync();
+            return View(Mapper.Map<List<BorrowBookViewModel>>(borrowTransactions));
         }
 
         // GET: BorrowBook/Details/5
@@ -41,8 +44,15 @@ namespace SmartLibrary.Controllers
         // GET: BorrowBook/Create
         public ActionResult Create()
         {
-            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title");
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName");
+            // Giả sử bạn đã có danh sách users và books từ cơ sở dữ liệu
+            var users = db.Users.Select(u => new SelectListItem { Text = u.FullName, Value = u.Id.ToString() }).ToList();
+            var books = db.Books.Select(b => new SelectListItem { Text = b.Title, Value = b.BookId.ToString() }).ToList();
+
+            ViewBag.Users = new SelectList(users, "Value", "Text");
+            ViewBag.Books = new SelectList(books, "Value", "Text");
+
+            ViewBag.Statuses = new SelectList(Commons.StatusList.GetStatuses(), "Value", "Text");
+
             return View();
         }
 

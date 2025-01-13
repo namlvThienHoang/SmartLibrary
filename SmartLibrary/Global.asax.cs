@@ -20,6 +20,7 @@ namespace SmartLibrary
                 typeof(UserMappingProfile),
                 typeof(BookMappingProfile),
                 typeof(AuthorMappingProfile),
+                typeof(BorrowBookMappingProfile),
                 typeof(CategoryMappingProfile)
             }));
 

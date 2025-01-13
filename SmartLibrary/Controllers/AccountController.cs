@@ -156,7 +156,7 @@ namespace SmartLibrary.Controllers
                 if (result.Succeeded)
                 {
                     // Assign default role "User" to the newly registered user
-                    await UserManager.AddToRoleAsync(user.Id, Commons.Roles.User);
+                    await UserManager.AddToRoleAsync(user.Id, ModelCommons.Roles.User);
 
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     

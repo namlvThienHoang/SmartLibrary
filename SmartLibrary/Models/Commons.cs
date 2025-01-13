@@ -1,6 +1,6 @@
 ﻿namespace SmartLibrary.Models
 {
-    public class Commons
+    public class ModelCommons
     {
         public static class Roles 
         {

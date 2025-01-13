@@ -1,10 +1,8 @@
-﻿@model IEnumerable<SmartLibrary.Models.EntityModels.BorrowTransaction>
+﻿@model IEnumerable<SmartLibrary.Models.ViewModels.BorrowBook.BorrowBookViewModel>
 
 @{
     ViewBag.Title = "Index";
 }
-
-<h2>Index</h2>
 
 <p>
     @Html.ActionLink("Thêm mới", "Create")
@@ -12,10 +10,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.Book.Title)
+            @Html.DisplayNameFor(model => model.BookTitle)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.User.FullName)
+            @Html.DisplayNameFor(model => model.UserName)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.BorrowDate)
@@ -35,10 +33,10 @@
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Book.Title)
+            @Html.DisplayFor(modelItem => item.BookTitle)
         </td>
         <td>
-            @Html.DisplayFor(modelItem => item.User.FullName)
+            @Html.DisplayFor(modelItem => item.UserName)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.BorrowDate)

@@ -1,4 +1,5 @@
-﻿using SmartLibrary.Helpers;
+﻿using AutoMapper;
+using SmartLibrary.Helpers;
 using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
 using SmartLibrary.Models.ViewModels;
@@ -64,6 +65,7 @@ namespace SmartLibrary.Controllers
                               CoverImage = b.CoverImage
                           })
                           .ToList();
+
 
             // Tạo ViewModel chứa dữ liệu
             var viewModel = new PagedResult<BookViewModel>
