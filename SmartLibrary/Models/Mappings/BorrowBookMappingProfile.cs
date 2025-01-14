@@ -10,7 +10,9 @@ namespace SmartLibrary.Models.Mappings
         public BorrowBookMappingProfile()
         {
             // Mapping from ApplicationUser to UserViewModel
-            CreateMap<BorrowTransaction, BorrowBookViewModel>(); // If you have roles
+            CreateMap<BorrowTransaction, BorrowBookViewModel>()
+                .ForMember(des => des.BookTitle, act => act.MapFrom(src => src.Book.Title))
+                .ForMember(des => des.UserName, act => act.MapFrom(src => src.User.FullName));
 
             CreateMap<CreateBorrowBookViewModel, BorrowTransaction>();
 

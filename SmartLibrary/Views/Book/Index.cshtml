@@ -5,88 +5,115 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Danh sách</h2>
+<div class="mb-3">
+    @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
+</div>
 
-<p>
-    @Html.ActionLink("Thêm mới", "Create")
-</p>
+<!-- Tìm kiếm -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4 class="card-title d-flex justify-content-between">
+            Tìm kiếm
+            <!-- Toggle button -->
+            <button class="btn btn-sm btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#searchForm" aria-expanded="false" aria-controls="searchForm">
+                <i class="fa-solid fa-search"></i> Ẩn/Hiển thị tìm kiếm
+            </button>
+        </h4>
+    </div>
+    <div class="card-body">
+        <!-- Collapsible search form -->
+        <div class="collapse" id="searchForm">
+            <form method="get" action="@Url.Action("Index", "Book")" class="row g-3">
+                <div class="col-sm-6 col-md-4">
+                    <label for="Title" class="form-label">Tiêu đề</label>
+                    <input type="text" id="Title" name="Title" class="form-control" placeholder="Nhập tiêu đề" value="@Request.QueryString["Title"]" />
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <label for="Publisher" class="form-label">Nhà xuất bản</label>
+                    <input type="text" id="Publisher" name="Publisher" class="form-control" placeholder="Nhập nhà xuất bản" value="@Request.QueryString["Publisher"]" />
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <label for="ISBN" class="form-label">ISBN</label>
+                    <input type="text" id="ISBN" name="ISBN" class="form-control" placeholder="Nhập ISBN" value="@Request.QueryString["ISBN"]" />
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <label for="AvailableCopies" class="form-label">Số lượng có sẵn</label>
+                    <input type="number" id="AvailableCopies" name="AvailableCopies" class="form-control" placeholder="Số lượng có sẵn" value="@Request.QueryString["AvailableCopies"]" />
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <label for="Status" class="form-label">Trạng thái</label>
+                    <select id="Status" name="Status" class="form-select" aria-label="Chọn trạng thái">
+                        <option value="">--Chọn trạng thái--</option>
+                        <option value="Available" @(Request.QueryString["Status"] == "Available" ? "selected" : "")>Còn sách</option>
+                        <option value="Unavailable" @(Request.QueryString["Status"] == "Unavailable" ? "selected" : "")>Hết sách</option>
+                    </select>
+                </div>
 
-<div class="search-panel">
-    <h4>Tìm kiếm</h4>
-    <form method="get" action="@Url.Action("Index", "Book")" class="form-inline">
-        <div class="form-group">
-            <label for="Title">Tiêu đề</label>
-            <input type="text" id="Title" name="Title" class="form-control" placeholder="Nhập tiêu đề" value="@Request.QueryString["Title"]" />
+                <div class="col-12">
+                    <div class="d-flex justify-content-between">
+                        <button type="submit" class="btn btn-primary w-48">Tìm kiếm</button>
+                        <a href="@Url.Action("Index", "Book")" class="btn btn-secondary w-48">Làm mới</a>
+                    </div>
+                </div>
+            </form>
         </div>
-        <div class="form-group">
-            <label for="Publisher">Nhà xuất bản</label>
-            <input type="text" id="Publisher" name="Publisher" class="form-control" placeholder="Nhập nhà xuất bản" value="@Request.QueryString["Publisher"]" />
-        </div>
-        <div class="form-group">
-            <label for="ISBN">ISBN</label>
-            <input type="text" id="ISBN" name="ISBN" class="form-control" placeholder="Nhập ISBN" value="@Request.QueryString["ISBN"]" />
-        </div>
-        <div class="form-group">
-            <label for="AvailableCopies">Số lượng có sẵn</label>
-            <input type="number" id="AvailableCopies" name="AvailableCopies" class="form-control" placeholder="Số lượng có sẵn" value="@Request.QueryString["AvailableCopies"]" />
-        </div>
-        <div class="form-group">
-            <label for="Status">Trạng thái</label>
-            <select id="Status" name="Status" class="form-control">
-                <option value="">--Chọn trạng thái--</option>
-                <option value="Available" @(Request.QueryString["Status"] == "Available" ? "selected" : "")>Còn sách</option>
-                <option value="Unavailable" @(Request.QueryString["Status"] == "Unavailable" ? "selected" : "")>Hết sách</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Tìm kiếm</button>
-        <a href="@Url.Action("Index", "Book")" class="btn btn-secondary">Làm mới</a>
-    </form>
+    </div>
+</div>
+<!-- Bảng danh sách sách -->
+<div class="table-responsive">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Title)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Author)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Category)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Description)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Publisher)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().PublishedDate)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().ISBN)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().TotalCopies)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().AvailableCopies)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().CoverImage)</th>
+                <th>Thao tác</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Author)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Publisher)</td>
+                    <td>@Html.DisplayFor(modelItem => item.PublishedDate)</td>
+                    <td>@Html.DisplayFor(modelItem => item.ISBN)</td>
+                    <td>@Html.DisplayFor(modelItem => item.TotalCopies)</td>
+                    <td>@Html.DisplayFor(modelItem => item.AvailableCopies)</td>
+                    <td>@Html.DisplayFor(modelItem => item.CoverImage)</td>
+                    <td>
+                        <div class="btn-group" role="group">
+                            <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-info text-white" title="Xem chi tiết">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                            <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Title)</th>
-            <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Author)</th>
-            <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Category)</th>
-            <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Description)</th>
-            <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Publisher)</th>
-            <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().PublishedDate)</th>
-            <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().ISBN)</th>
-            <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().TotalCopies)</th>
-            <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().AvailableCopies)</th>
-            <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().CoverImage)</th>
-            <th>Thao tác</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model.Items)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                <td>@Html.DisplayFor(modelItem => item.Author)</td>
-                <td>@Html.DisplayFor(modelItem => item.Category)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>@Html.DisplayFor(modelItem => item.Publisher)</td>
-                <td>@Html.DisplayFor(modelItem => item.PublishedDate)</td>
-                <td>@Html.DisplayFor(modelItem => item.ISBN)</td>
-                <td>@Html.DisplayFor(modelItem => item.TotalCopies)</td>
-                <td>@Html.DisplayFor(modelItem => item.AvailableCopies)</td>
-                <td>@Html.DisplayFor(modelItem => item.CoverImage)</td>
-                <td>
-                    @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Xem chi tiết", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Xóa", "Delete", new { id = item.Id })
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-
-<!-- Hiển thị nút phân trang -->
+<!-- Phân trang -->
 <nav aria-label="Page navigation">
-    <ul class="pagination">
+    <ul class="pagination justify-content-center">
         @if (Model.PageNumber > 1)
         {
             <li class="page-item">

@@ -38,7 +38,7 @@ namespace SmartLibrary.Controllers
             {
                 return HttpNotFound();
             }
-            return View(borrowTransaction);
+            return View(Mapper.Map<BorrowBookViewModel>(borrowTransaction));
         }
 
         // GET: BorrowBook/Create
@@ -61,8 +61,9 @@ namespace SmartLibrary.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create([Bind(Include = "BorrowTransactionId,UserId,BookId,BorrowDate,DueDate,ReturnDate,Status")] BorrowTransaction borrowTransaction)
+        public async Task<ActionResult> Create(CreateBorrowBookViewModel borrowTransactionVM)
         {
+            var borrowTransaction = Mapper.Map<BorrowTransaction>(borrowTransactionVM);
             if (ModelState.IsValid)
             {
                 db.BorrowTransactions.Add(borrowTransaction);
@@ -70,9 +71,9 @@ namespace SmartLibrary.Controllers
                 return RedirectToAction("Index");
             }
 
-            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", borrowTransaction.BookId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", borrowTransaction.UserId) ;
-            return View(borrowTransaction);
+            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", borrowTransactionVM.BookId);
+            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", borrowTransactionVM.UserId) ;
+            return View(borrowTransactionVM);
         }
 
         // GET: BorrowBook/Edit/5
@@ -89,7 +90,8 @@ namespace SmartLibrary.Controllers
             }
             ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", borrowTransaction.BookId);
             ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", borrowTransaction.UserId);
-            return View(borrowTransaction);
+            ViewBag.Statuses = new SelectList(Commons.StatusList.GetStatuses(), "Value", "Text");
+            return View(Mapper.Map<EditBorrowBookViewModel>(borrowTransaction));
         }
 
         // POST: BorrowBook/Edit/5
@@ -97,17 +99,18 @@ namespace SmartLibrary.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit([Bind(Include = "BorrowTransactionId,UserId,BookId,BorrowDate,DueDate,ReturnDate,Status")] BorrowTransaction borrowTransaction)
+        public async Task<ActionResult> Edit(EditBorrowBookViewModel borrowTransactionVM)
         {
+            var borrowTransaction = Mapper.Map<BorrowTransaction>(borrowTransactionVM);
             if (ModelState.IsValid)
             {
                 db.Entry(borrowTransaction).State = EntityState.Modified;
                 await db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
-            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", borrowTransaction.BookId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", borrowTransaction.UserId);
-            return View(borrowTransaction);
+            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", borrowTransactionVM.BookId);
+            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", borrowTransactionVM.UserId);
+            return View(borrowTransactionVM);
         }
 
         // GET: BorrowBook/Delete/5

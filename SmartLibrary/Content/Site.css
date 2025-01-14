@@ -22,3 +22,59 @@ select,
 textarea {
     max-width: 280px;
 }
+
+
+/* Wrapper để tạo bố cục flex */
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Đảm bảo chiều cao của trang tối thiểu là 100% */
+}
+
+/* Nội dung body có thể mở rộng */
+.body-content {
+    flex-grow: 1; /* Nội dung body sẽ chiếm hết không gian có sẵn */
+}
+
+/* Footer luôn nằm ở dưới cùng */
+footer {
+    margin-top: auto; /* Đặt footer luôn ở cuối */
+}
+
+
+/* Nút cuộn về đầu trang */
+#backToTop {
+    position: fixed;
+    bottom: 20px;
+    right: 20px; /* Đặt nút ở phía bên phải */
+    display: none; /* Ẩn nút khi chưa cuộn xuống */
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    padding: 10px 15px;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+    /* Khi di chuột qua nút */
+    #backToTop:hover {
+        background-color: #0056b3;
+    }
+
+
+.table td .btn {
+    margin-right: 5px; /* Khoảng cách giữa các nút */
+}
+
+    .table td .btn:last-child {
+        margin-right: 0; /* Không có khoảng cách phía cuối cùng */
+    }
+
+.table td .btn-group {
+    display: flex;
+    justify-content: flex-start;
+}
+
+

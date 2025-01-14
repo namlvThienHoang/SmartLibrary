@@ -13,11 +13,16 @@ namespace SmartLibrary.Helpers
             public static List<SelectListItem> GetStatuses()
             {
                 return new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Đang mượn", Value = "Borrowed" },
+                    new SelectListItem { Text = "Đã trả", Value = "Returned" },
+                    new SelectListItem { Text = "Đã hết hạn", Value = "Expired" }
+                };
+            }
+            public static string GetStatusText(string value)
             {
-                new SelectListItem { Text = "Đang mượn", Value = "Borrowed" },
-                new SelectListItem { Text = "Đã trả", Value = "Returned" },
-                new SelectListItem { Text = "Đã hết hạn", Value = "Expired" }
-            };
+                var status = GetStatuses().FirstOrDefault(s => s.Value == value);
+                return status?.Text ?? "Không xác định";
             }
         }
     }
