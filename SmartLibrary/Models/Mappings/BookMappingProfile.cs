@@ -12,10 +12,19 @@ namespace SmartLibrary.Models.Mappings
     {
         public BookMappingProfile()
         {
-            CreateMap<Book, BookViewModel>();
+            CreateMap<Book, BookViewModel>()
+                .ForMember(dest => dest.Authors, act => act.MapFrom(src =>
+                    string.Join(", ", src.BookAuthors.Select(ba => ba.Author.AuthorName))))
+                .ForMember(dest => dest.Categories, act => act.MapFrom(src =>
+                    string.Join(", ", src.BookCategories.Select(ba => ba.Category.CategoryName))));
 
             CreateMap<CreateBookViewModel, Book>();
             CreateMap<EditBookViewModel, Book>();
+            CreateMap<Book, EditBookViewModel>()
+                .ForMember(dest => dest.AuthorIds, act => act.MapFrom(src =>
+                    src.BookAuthors.Select(ba => ba.Author.AuthorId)))
+                .ForMember(dest => dest.CategoryIds, act => act.MapFrom(src =>
+                    src.BookCategories.Select(ba => ba.Category.CategoryId)));
         }
     }
 }

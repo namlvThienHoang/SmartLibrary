@@ -14,12 +14,6 @@ namespace SmartLibrary.Models.ViewModels.Book
         [Display(Name = "Tiêu đề")]
         public string Title { get; set; }
 
-        [Display(Name = "Tác giả")]
-        public string Author { get; set; }
-
-        [Display(Name = "Thể loại")]
-        public string Category { get; set; }
-
         [Display(Name = "Mô tả")]
         public string Description { get; set; }
 
@@ -40,5 +34,13 @@ namespace SmartLibrary.Models.ViewModels.Book
 
         [Display(Name = "Ảnh bìa")]
         public string CoverImage { get; set; }
+
+
+        // Các ID cho quan hệ nhiều-nhiều
+
+        [Display(Name = "Tác giả")]
+        public string Authors { get; set; }
+        [Display(Name = "Thể loại")]
+        public string Categories { get; set; }
     }
 }

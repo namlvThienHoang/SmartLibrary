@@ -25,5 +25,25 @@ namespace SmartLibrary.Helpers
                 return status?.Text ?? "Không xác định";
             }
         }
+
+        public static class ReservationStatusList
+        {
+            public static List<SelectListItem> GetReservationStatuses()
+            {
+                return new List<SelectListItem>
+                {
+                    new SelectListItem { Text = "Đang chờ", Value = "Pending" },
+                    new SelectListItem { Text = "Đã duyệt", Value = "Approved" },
+                    new SelectListItem { Text = "Đã hủy", Value = "Cancelled" },
+                    new SelectListItem { Text = "Đã hoàn tất", Value = "Completed" }
+                };
+            }
+
+            public static string GetStatusText(string value)
+            {
+                var status = GetReservationStatuses().FirstOrDefault(s => s.Value == value);
+                return status?.Text ?? "Không xác định";
+            }
+        }
     }
 }

@@ -8,7 +8,7 @@ namespace SmartLibrary
         // For more information on bundling, visit https://go.microsoft.com/fwlink/?LinkId=301862
         public static void RegisterBundles(BundleCollection bundles)
         {
-            bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
+            bundles.Add(new Bundle("~/bundles/jquery").Include(
                         "~/Scripts/jquery-{version}.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
@@ -19,13 +19,21 @@ namespace SmartLibrary
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
+            bundles.Add(new Bundle("~/bundles/popper").Include(
+                         "~/Scripts/bootstrap.bundle.min.js"
+                        ));
+
             bundles.Add(new Bundle("~/bundles/bootstrap").Include(
-                      "~/Scripts/bootstrap.js"
+                      "~/Scripts/bootstrap.min.js"
                       ));
 
             bundles.Add(new Bundle("~/Content/css").Include(
-                      "~/Content/bootstrap.css",
+                      "~/Content/bootstrap.min.css",
+                      "~/Content/css/select2.min.css",
                       "~/Content/site.css"));
+
+            bundles.Add(new Bundle("~/bundles/select2").Include(
+                        "~/Scripts/select2.min.js"));
         }
     }
 }

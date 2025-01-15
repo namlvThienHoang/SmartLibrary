@@ -16,8 +16,13 @@ namespace SmartLibrary.Models
         public DateTime? DateOfBirth { get; set; }
         public string Address { get; set; }
         public string Status { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+
+
 
         // Navigation property
+        public ICollection<UserSetting> UserSettings { get; set; }
         public ICollection<Reservation> Reservations { get; set; }
         public virtual ICollection<BorrowTransaction> BorrowTransactions { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
@@ -55,6 +60,7 @@ namespace SmartLibrary.Models
         public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<LibrarySetting> LibrarySettings { get; set; }
         public DbSet<Membership> Memberships { get; set; }
+        public DbSet<UserSetting> UserSettings { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -139,6 +145,16 @@ namespace SmartLibrary.Models
                 .HasRequired(n => n.User)
                 .WithMany()
                 .HasForeignKey(n => n.UserId);
+
+            modelBuilder.Entity<UserSetting>()
+            .HasRequired(us => us.User)
+            .WithMany(u => u.UserSettings)
+            .HasForeignKey(us => us.UserId);
+
+            modelBuilder.Entity<AuditLog>()
+            .HasRequired(a => a.User)
+            .WithMany() // Adjust as necessary if the user has many audit logs
+            .HasForeignKey(a => a.UserId);
 
             // LibrarySetting, AuditLog do not require special relations
         }

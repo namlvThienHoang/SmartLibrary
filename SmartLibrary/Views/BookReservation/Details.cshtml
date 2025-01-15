@@ -1,0 +1,50 @@
+﻿@model SmartLibrary.Models.ViewModels.Reservation.ReservationViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Reservation</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.BookTitle)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BookTitle)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.UserName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReservationDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReservationDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CancelDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CancelDate)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ReservationId }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

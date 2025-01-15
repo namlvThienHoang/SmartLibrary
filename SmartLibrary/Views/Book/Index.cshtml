@@ -65,8 +65,8 @@
         <thead>
             <tr>
                 <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Title)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Author)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Category)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Authors)</th>
+                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Categories)</th>
                 <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Description)</th>
                 <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Publisher)</th>
                 <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().PublishedDate)</th>
@@ -82,8 +82,8 @@
             {
                 <tr>
                     <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Author)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Category)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Authors)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Categories)</td>
                     <td>@Html.DisplayFor(modelItem => item.Description)</td>
                     <td>@Html.DisplayFor(modelItem => item.Publisher)</td>
                     <td>@Html.DisplayFor(modelItem => item.PublishedDate)</td>
