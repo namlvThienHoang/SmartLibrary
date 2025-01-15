@@ -90,7 +90,9 @@
                     <td>@Html.DisplayFor(modelItem => item.ISBN)</td>
                     <td>@Html.DisplayFor(modelItem => item.TotalCopies)</td>
                     <td>@Html.DisplayFor(modelItem => item.AvailableCopies)</td>
-                    <td>@Html.DisplayFor(modelItem => item.CoverImage)</td>
+                    <td>
+                        <img src="@item.CoverImage" alt="Cover Image" class="img-thumbnail" style="width: 50px; height: auto;" />
+                    </td>
                     <td>
                         <div class="btn-group" role="group">
                             <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-sm btn-primary" title="Chỉnh sửa">

@@ -172,6 +172,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AuditLogController.cs" />
     <Compile Include="Controllers\AuthorController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\BookController.cs" />
@@ -234,6 +235,7 @@
     <Compile Include="Models\EntityModels\UserSetting.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\Mappings\AuditLogMappingProfile.cs" />
     <Compile Include="Models\Mappings\AuthorMappingProfile.cs" />
     <Compile Include="Models\Mappings\ReservationMappingProfile.cs" />
     <Compile Include="Models\Mappings\BookMappingProfile.cs" />
@@ -241,6 +243,7 @@
     <Compile Include="Models\Mappings\CategoryMappingProfile.cs" />
     <Compile Include="Models\Mappings\UserMappingProfile.cs" />
     <Compile Include="Models\ViewModels\Admin\DashboardViewModel.cs" />
+    <Compile Include="Models\ViewModels\AuditLog\AuditLogViewModel.cs" />
     <Compile Include="Models\ViewModels\Author\AuthorViewModel.cs" />
     <Compile Include="Models\ViewModels\Author\CreateAuthorViewModel.cs" />
     <Compile Include="Models\ViewModels\Author\EditAuthorViewModel.cs" />
@@ -456,6 +459,8 @@
     <Content Include="Views\BookReservation\Details.cshtml" />
     <Content Include="Views\BookReservation\Edit.cshtml" />
     <Content Include="Views\BookReservation\Index.cshtml" />
+    <Content Include="Views\AuditLog\Details.cshtml" />
+    <Content Include="Views\AuditLog\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

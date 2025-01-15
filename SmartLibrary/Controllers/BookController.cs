@@ -142,7 +142,7 @@ namespace SmartLibrary.Controllers
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Thêm mới sách thành công";
                 // Log the action
-                await LogActionAsync("Create", "Book", $"Created book with Title {book.Title}");
+                await LogActionAsync("Create", "Book", $"Đã tạo sách có Tiêu đề {book.Title}");
                 return RedirectToAction(nameof(Index));
             }
             // Nếu ModelState không hợp lệ, load lại danh sách Category
@@ -200,6 +200,7 @@ namespace SmartLibrary.Controllers
             book.PublishedDate = model.PublishedDate;
             book.ISBN = model.ISBN;
             book.TotalCopies = model.TotalCopies;
+            book.AvailableCopies = model.TotalCopies;
 
             // Cập nhật ảnh bìa nếu có
             if (CoverImage != null && CoverImage.ContentLength > 0)
