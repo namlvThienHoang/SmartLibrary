@@ -14,7 +14,7 @@ using SmartLibrary.Models.ViewModels.Author;
 
 namespace SmartLibrary.Controllers
 {
-    public class AuthorController : Controller
+    public class AuthorController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 

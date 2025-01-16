@@ -15,7 +15,7 @@ using Microsoft.AspNet.Identity;
 
 namespace SmartLibrary.Controllers
 {
-    public class BookReservationController : Controller
+    public class BookReservationController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 

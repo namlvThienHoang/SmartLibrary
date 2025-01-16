@@ -11,10 +11,11 @@ using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
 using AutoMapper;
 using SmartLibrary.Models.ViewModels.Category;
+using SmartLibrary.Helpers;
 
 namespace SmartLibrary.Controllers
 {
-    public class CategoryController : Controller
+    public class CategoryController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 
@@ -59,6 +60,7 @@ namespace SmartLibrary.Controllers
                 var category = Mapper.Map<Category>(categoryViewModel);
                 db.Categories.Add(category);
                 await db.SaveChangesAsync();
+                SetToast("Thành công", "Thêm mới loại sách thành công!", Commons.ToastType.Success);
                 return RedirectToAction("Index");
             }
 

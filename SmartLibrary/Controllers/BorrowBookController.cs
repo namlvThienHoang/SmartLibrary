@@ -15,7 +15,7 @@ using SmartLibrary.Helpers;
 
 namespace SmartLibrary.Controllers
 {
-    public class BorrowBookController : Controller
+    public class BorrowBookController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 

@@ -14,7 +14,7 @@ using SmartLibrary.Models.ViewModels.AuditLog;
 
 namespace SmartLibrary.Controllers
 {
-    public class AuditLogController : Controller
+    public class AuditLogController : BaseController
     {
         private ApplicationDbContext db = new ApplicationDbContext();
 

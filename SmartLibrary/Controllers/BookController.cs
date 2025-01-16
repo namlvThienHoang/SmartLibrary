@@ -77,7 +77,6 @@ namespace SmartLibrary.Controllers
                 PageSize = pageSize,
                 TotalItems = totalBooks
             };
-            
 
             return View(viewModel);
         }
@@ -140,9 +139,9 @@ namespace SmartLibrary.Controllers
 
                 _context.Books.Add(book);
                 await _context.SaveChangesAsync();
-                TempData["SuccessMessage"] = "Thêm mới sách thành công";
+                SetToast("Thành công", "Thêm mới sách thành công!", Commons.ToastType.Success);
                 // Log the action
-                await LogActionAsync("Create", "Book", $"Đã tạo sách có Tiêu đề {book.Title}");
+                await LogActionAsync("Thêm mới", "Sách", $"Đã tạo sách có tiêu đề: {book.Title}");
                 return RedirectToAction(nameof(Index));
             }
             // Nếu ModelState không hợp lệ, load lại danh sách Category
@@ -178,6 +177,7 @@ namespace SmartLibrary.Controllers
         {
             if (!ModelState.IsValid)
             {
+                SetToast("Thất bại", "Dữ liệu không hợp lệ!", Commons.ToastType.Error);
                 // Trả lại view với thông báo lỗi nếu ModelState không hợp lệ
                 return View(model);
             }
@@ -246,7 +246,7 @@ namespace SmartLibrary.Controllers
 
             // Lưu thay đổi vào cơ sở dữ liệu
             await _context.SaveChangesAsync();
-
+            SetToast("Thành công", "Chỉnh sửa sách thành công!", Commons.ToastType.Success);
             return RedirectToAction(nameof(Index));
         }
 
@@ -273,6 +273,7 @@ namespace SmartLibrary.Controllers
 
             _context.Books.Remove(book);
              await _context.SaveChangesAsync();
+            SetToast("Thành công", "Xóa thành công!", Commons.ToastType.Success);
             return RedirectToAction(nameof(Index));
         }
 

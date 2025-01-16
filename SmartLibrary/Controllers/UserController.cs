@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace SmartLibrary.Controllers
 {
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         private ApplicationUserManager UserManager;
         public UserController()

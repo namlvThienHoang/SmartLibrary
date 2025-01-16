@@ -45,5 +45,13 @@ namespace SmartLibrary.Helpers
                 return status?.Text ?? "Không xác định";
             }
         }
+
+        public static class ToastType
+        {
+            public const string Success = "success";
+            public const string Error = "error";
+            public const string Info = "info";
+            public const string Warning = "warning";
+        }
     }
 }

@@ -6,7 +6,7 @@ using System.Web.Mvc;
 
 namespace SmartLibrary.Controllers
 {
-    public class SettingController : Controller
+    public class SettingController : BaseController
     {
         // GET: Setting
         public ActionResult Index()

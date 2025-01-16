@@ -5,9 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="mb-3">
-    @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
-</div>
+
 
 <!-- Tìm kiếm -->
 <div class="card mb-4">
@@ -50,7 +48,7 @@
                 </div>
 
                 <div class="col-12">
-                    <div class="d-flex justify-content-between">
+                    <div class="d-flex justify-content-lg-start gap-4">
                         <button type="submit" class="btn btn-primary w-48">Tìm kiếm</button>
                         <a href="@Url.Action("Index", "Book")" class="btn btn-secondary w-48">Làm mới</a>
                     </div>
@@ -60,81 +58,97 @@
     </div>
 </div>
 <!-- Bảng danh sách sách -->
-<div class="table-responsive">
-    <table class="table table-bordered table-striped">
-        <thead>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Title)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Authors)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Categories)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Description)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Publisher)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().PublishedDate)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().ISBN)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().TotalCopies)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().AvailableCopies)</th>
-                <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().CoverImage)</th>
-                <th>Thao tác</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.Items)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Authors)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Categories)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                    <td>@Html.DisplayFor(modelItem => item.Publisher)</td>
-                    <td>@Html.DisplayFor(modelItem => item.PublishedDate)</td>
-                    <td>@Html.DisplayFor(modelItem => item.ISBN)</td>
-                    <td>@Html.DisplayFor(modelItem => item.TotalCopies)</td>
-                    <td>@Html.DisplayFor(modelItem => item.AvailableCopies)</td>
-                    <td>
-                        <img src="@item.CoverImage" alt="Cover Image" class="img-thumbnail" style="width: 50px; height: auto;" />
-                    </td>
-                    <td>
-                        <div class="btn-group" role="group">
-                            <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
-                            <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-info text-white" title="Xem chi tiết">
-                                <i class="fa-solid fa-eye"></i>
-                            </a>
-                            <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                <i class="fa-solid fa-trash"></i>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h4 class="card-title d-flex justify-content-between">
+            Danh sách
+            @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
+        </h4>
+        
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Title)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Authors)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Categories)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Description)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Publisher)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().PublishedDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().ISBN)</th>
+                        <th class="text-center">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().TotalCopies)</th>
+                        <th class="text-center">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().AvailableCopies)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().CoverImage)</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Authors)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Categories)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Publisher)</td>
+                            <td>@Html.DisplayFor(modelItem => item.PublishedDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.ISBN)</td>
+                            <td>@Html.DisplayFor(modelItem => item.TotalCopies)</td>
+                            <td>@Html.DisplayFor(modelItem => item.AvailableCopies)</td>
+                            <td>
+                                <img src="@item.CoverImage" alt="Cover Image" class="img-thumbnail" style="width: 50px; height: auto;" />
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-info text-white" title="Xem chi tiết">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+        <!-- Phân trang -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                @if (Model.PageNumber > 1)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1 })">Previous</a>
+                    </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                    </li>
+                }
+
+                @if (Model.PageNumber < Model.TotalPages)
+                {
+                    <li class="page-item">
+                        <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1 })">Next</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    </div>
 </div>
 
 
-<!-- Phân trang -->
-<nav aria-label="Page navigation">
-    <ul class="pagination justify-content-center">
-        @if (Model.PageNumber > 1)
-        {
-            <li class="page-item">
-                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1 })">Previous</a>
-            </li>
-        }
 
-        @for (int i = 1; i <= Model.TotalPages; i++)
-        {
-            <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
-            </li>
-        }
 
-        @if (Model.PageNumber < Model.TotalPages)
-        {
-            <li class="page-item">
-                <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1 })">Next</a>
-            </li>
-        }
-    </ul>
-</nav>
