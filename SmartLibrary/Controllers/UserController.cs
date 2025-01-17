@@ -1,8 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using SmartLibrary.Helpers;
 using SmartLibrary.Models;
+using SmartLibrary.Models.ViewModels;
 using SmartLibrary.Models.ViewModels.User;
+using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
@@ -45,12 +49,50 @@ namespace SmartLibrary.Controllers
         }
 
         // READ: /User/Index (List of users)
-        public ActionResult Index()
+        public async Task<ActionResult> Index(string search, string sortOrder, int page = 1, int pageSize = 10)
         {
-            var users = UserManager.Users.ToList();
-            var userViewModels = users.Select(user => Mapper.Map<UserViewModel>(user)).ToList();
+            // Lấy dữ liệu ban đầu
+            var query = UserManager.Users.AsQueryable();
 
-            return View(userViewModels);
+
+            // Áp dụng tìm kiếm
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(b =>
+                    b.UserName.Contains(search));
+            }
+
+            // Lấy tổng số lượng sách
+            int totalUsers = await query.CountAsync();
+
+            // Áp dụng sắp xếp
+            query = PaginationHelper.ApplySorting(query, sortOrder, (item, order) =>
+            {
+                switch (order)
+                {
+                    case "username_desc":
+                        return item.OrderByDescending(b => b.UserName);
+                    default:
+                        return item.OrderBy(b => b.UserName);
+                }
+            });
+
+            // Áp dụng phân trang
+            var users = PaginationHelper.ApplyPagination(query, page, pageSize);
+
+            // Tạo ViewModel chứa dữ liệu
+            var viewModel = new PagedResult<UserViewModel>
+            {
+                Items = Mapper.Map<List<UserViewModel>>(await users.ToListAsync()),
+                Pagination = new PaginationInfo
+                {
+                    PageNumber = page,
+                    PageSize = pageSize,
+                    TotalItems = totalUsers
+                }
+            };
+
+            return View(viewModel);
         }
 
         // READ: /User/Details/{id}

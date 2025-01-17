@@ -1,46 +1,81 @@
-﻿@model IEnumerable<SmartLibrary.Models.ViewModels.Author.AuthorViewModel>
+﻿@model SmartLibrary.Models.ViewModels.PagedResult<SmartLibrary.Models.ViewModels.Author.AuthorViewModel>
 
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<div class="card mb-4">
+    <div class="card-header">
+        <h4 class="card-title d-flex justify-content-between align-items-center">
+            <!-- Ô tìm kiếm đơn giản -->
+            <form method="get" action="@Url.Action("Index", "Author")" class="d-flex align-items-center w-100">
+                <input type="text" name="search" class="form-control me-2" placeholder="Tìm kiếm ..." value="@Request.QueryString["search"]" />
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>
+            </form>
+        </h4>
+    </div>
+</div>
 
-<p>
-    @Html.ActionLink("Thêm mới", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.AuthorName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfBirth)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Biography)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.AuthorName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateOfBirth)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Biography)
-        </td>
-        <td>
-            @Html.ActionLink("Chỉnh sửa", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Xem chi tiết", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Xóa", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
-
-</table>
+<div class="card mb-4">
+    <div class="card-header">
+        <h4 class="card-title d-flex justify-content-between">
+            Danh sách tác giả
+            @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <a href="@Url.Action("Index", new { sortOrder = Request["sortOrder"] == "name_desc" ? "" : "name_desc" })">
+                                Tên tác giả
+                            </a>
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Items.FirstOrDefault().DateOfBirth)
+                        </th>
+                        <th>
+                            @Html.DisplayNameFor(model => model.Items.FirstOrDefault().Biography)
+                        </th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AuthorName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DateOfBirth)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Biography)
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-info text-white" title="Xem chi tiết">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+        @Html.Partial("_Pagination", Model.Pagination)
+    </div>
+</div>

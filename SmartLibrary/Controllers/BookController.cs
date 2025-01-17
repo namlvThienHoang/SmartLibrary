@@ -20,8 +20,7 @@ namespace SmartLibrary.Controllers
     {
         private readonly ApplicationDbContext _context = new ApplicationDbContext();
 
-        // GET: Book
-        public async Task<ActionResult> Index(string Title, string Publisher, string ISBN, int? AvailableCopies, string Status, int page = 1, int pageSize = 10)
+        public async Task<ActionResult> Index(string search, string Title, string Publisher, string ISBN, int? AvailableCopies, string Status, string sortOrder, int page = 1, int pageSize = 10)
         {
             // Lấy dữ liệu ban đầu
             var query = _context.Books.AsQueryable();
@@ -46,40 +45,48 @@ namespace SmartLibrary.Controllers
                 else if (Status == "Unavailable")
                     query = query.Where(b => b.AvailableCopies == 0);
             }
+
+            // Áp dụng tìm kiếm
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(b =>
+                    b.Title.Contains(search) ||
+                    b.BookAuthors.Any(ba => ba.Author.AuthorName.Contains(search)));
+            }
+
             // Lấy tổng số lượng sách
-            int totalBooks = query.Count();
+            int totalBooks = await query.CountAsync();
 
-            // Lấy danh sách sách theo trang
-            var books = await query
-                          .OrderBy(b => b.Title) // Sắp xếp theo tiêu chí
-                          .Skip((page - 1) * pageSize) // Bỏ qua các mục trước trang hiện tại
-                          .Take(pageSize) // Lấy số mục của trang hiện tại
-                          .Select(b => new BookViewModel
-                          {
-                              Id = b.BookId,
-                              Title = b.Title,
-                              Description = b.Description,
-                              Publisher = b.Publisher,
-                              PublishedDate = b.PublishedDate,
-                              ISBN = b.ISBN,
-                              TotalCopies = b.TotalCopies,
-                              AvailableCopies = b.AvailableCopies,
-                              CoverImage = b.CoverImage
-                          })
-                          .ToListAsync();
+            // Áp dụng sắp xếp
+            query = PaginationHelper.ApplySorting(query, sortOrder, (item, order) =>
+            {
+                switch (order)
+                {
+                    case "title_desc":
+                        return item.OrderByDescending(b => b.Title);
+                    default:
+                        return item.OrderBy(b => b.Title);
+                }
+            });
 
+            // Áp dụng phân trang
+            var books = PaginationHelper.ApplyPagination(query, page, pageSize);
 
             // Tạo ViewModel chứa dữ liệu
             var viewModel = new PagedResult<BookViewModel>
             {
-                Items = books,
-                PageNumber = page,
-                PageSize = pageSize,
-                TotalItems = totalBooks
+                Items = Mapper.Map<List<BookViewModel>>(await books.ToListAsync()),
+                Pagination = new PaginationInfo
+                {
+                    PageNumber = page,
+                    PageSize = pageSize,
+                    TotalItems = totalBooks
+                }
             };
 
             return View(viewModel);
         }
+
 
         // GET: Book/Details/5
         public async Task<ActionResult> Details(int id)
@@ -247,6 +254,7 @@ namespace SmartLibrary.Controllers
             // Lưu thay đổi vào cơ sở dữ liệu
             await _context.SaveChangesAsync();
             SetToast("Thành công", "Chỉnh sửa sách thành công!", Commons.ToastType.Success);
+            await LogActionAsync("Chỉnh sửa", "Sách", $"Đã chỉnh sửa sách có tiêu đề: {book.Title}");
             return RedirectToAction(nameof(Index));
         }
 
@@ -274,6 +282,7 @@ namespace SmartLibrary.Controllers
             _context.Books.Remove(book);
              await _context.SaveChangesAsync();
             SetToast("Thành công", "Xóa thành công!", Commons.ToastType.Success);
+            await LogActionAsync("Xóa", "Sách", $"Đã xóa sách có tiêu đề: {book.Title}");
             return RedirectToAction(nameof(Index));
         }
 

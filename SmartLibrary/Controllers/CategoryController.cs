@@ -12,6 +12,7 @@ using SmartLibrary.Models.EntityModels;
 using AutoMapper;
 using SmartLibrary.Models.ViewModels.Category;
 using SmartLibrary.Helpers;
+using SmartLibrary.Models.ViewModels;
 
 namespace SmartLibrary.Controllers
 {
@@ -20,11 +21,50 @@ namespace SmartLibrary.Controllers
         private ApplicationDbContext db = new ApplicationDbContext();
 
         // GET: Category
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(string search, string sortOrder, int page = 1, int pageSize = 10)
         {
-            var categories = await db.Categories.ToListAsync();
-            var categoryViewModels = categories.Select(category => Mapper.Map<CategoryViewModel>(category)).ToList();
-            return View(categoryViewModels);
+            // Lấy dữ liệu ban đầu
+            var query = db.Categories.AsQueryable();
+
+
+            // Áp dụng tìm kiếm
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(b =>
+                    b.CategoryName.Contains(search));
+            }
+
+            // Lấy tổng số lượng sách
+            int totalBooks = await query.CountAsync();
+
+            // Áp dụng sắp xếp
+            query = PaginationHelper.ApplySorting(query, sortOrder, (item, order) =>
+            {
+                switch (order)
+                {
+                    case "name_desc":
+                        return item.OrderByDescending(b => b.CategoryName);
+                    default:
+                        return item.OrderBy(b => b.CategoryName);
+                }
+            });
+
+            // Áp dụng phân trang
+            var books = PaginationHelper.ApplyPagination(query, page, pageSize);
+
+            // Tạo ViewModel chứa dữ liệu
+            var viewModel = new PagedResult<CategoryViewModel>
+            {
+                Items = Mapper.Map<List<CategoryViewModel>>(await books.ToListAsync()),
+                Pagination = new PaginationInfo
+                {
+                    PageNumber = page,
+                    PageSize = pageSize,
+                    TotalItems = totalBooks
+                }
+            };
+
+            return View(viewModel);
         }
 
         // GET: Category/Details/5

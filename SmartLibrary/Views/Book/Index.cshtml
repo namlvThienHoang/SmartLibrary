@@ -10,17 +10,29 @@
 <!-- Tìm kiếm -->
 <div class="card mb-4">
     <div class="card-header">
-        <h4 class="card-title d-flex justify-content-between">
-            Tìm kiếm
-            <!-- Toggle button -->
-            <button class="btn btn-sm btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#searchForm" aria-expanded="false" aria-controls="searchForm">
-                <i class="fa-solid fa-search"></i> Ẩn/Hiển thị tìm kiếm
+        <h4 class="card-title d-flex justify-content-between align-items-center">
+            <!-- Ô tìm kiếm đơn giản -->
+            <form method="get" action="@Url.Action("Index", "Book")" class="d-flex align-items-center w-100">
+                <input type="text" name="search" class="form-control me-2" placeholder="Tìm kiếm nhanh..." value="@Request.QueryString["search"]" />
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>
+            </form>
+
+            <!-- Nút Tìm kiếm nâng cao -->
+            <button class="btn btn-sm btn-secondary ms-3 toggle-search-btn" type="button" data-bs-toggle="collapse" data-bs-target="#searchForm"
+                    aria-expanded="@(Request.QueryString.AllKeys.Contains("Title") || Request.QueryString.AllKeys.Contains("Publisher")
+                   || Request.QueryString.AllKeys.Contains("ISBN") || Request.QueryString.AllKeys.Contains("AvailableCopies")
+                   || Request.QueryString.AllKeys.Contains("Status") ? "true" : "false")"
+                    aria-controls="searchForm">
+                <i class="fa-solid fa-plus"></i> Nâng cao
             </button>
         </h4>
     </div>
+
+    <!-- Biểu mẫu tìm kiếm nâng cao -->
     <div class="card-body">
-        <!-- Collapsible search form -->
-        <div class="collapse" id="searchForm">
+        <div class="collapse @(Request.QueryString.AllKeys.Contains("Title") || Request.QueryString.AllKeys.Contains("Publisher")
+                                || Request.QueryString.AllKeys.Contains("ISBN") || Request.QueryString.AllKeys.Contains("AvailableCopies")
+                                || Request.QueryString.AllKeys.Contains("Status") ? "show" : "")" id="searchForm">
             <form method="get" action="@Url.Action("Index", "Book")" class="row g-3">
                 <div class="col-sm-6 col-md-4">
                     <label for="Title" class="form-label">Tiêu đề</label>
@@ -57,6 +69,7 @@
         </div>
     </div>
 </div>
+
 <!-- Bảng danh sách sách -->
 
 <div class="card mb-4">
@@ -65,14 +78,18 @@
             Danh sách
             @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
         </h4>
-        
+
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Title)</th>
+                        <th>
+                            <a href="@Url.Action("Index", new { sortOrder = Request["sortOrder"] == "title_desc" ? "" : "title_desc" })">
+                                Tên sách
+                            </a>
+                        </th>
                         <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Authors)</th>
                         <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Categories)</th>
                         <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Description)</th>
@@ -121,34 +138,30 @@
         </div>
     </div>
     <div class="card-footer">
-        <!-- Phân trang -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                @if (Model.PageNumber > 1)
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1 })">Previous</a>
-                    </li>
-                }
-
-                @for (int i = 1; i <= Model.TotalPages; i++)
-                {
-                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                        <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
-                    </li>
-                }
-
-                @if (Model.PageNumber < Model.TotalPages)
-                {
-                    <li class="page-item">
-                        <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1 })">Next</a>
-                    </li>
-                }
-            </ul>
-        </nav>
+        @Html.Partial("_Pagination", Model.Pagination)
     </div>
+
 </div>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const toggleButton = document.querySelector(".toggle-search-btn");
+        const toggleIcon = toggleButton.querySelector("i");
 
+        const searchForm = document.getElementById("searchForm");
+
+        // Lắng nghe sự kiện mở form
+        searchForm.addEventListener("show.bs.collapse", function () {
+            toggleIcon.classList.remove("fa-plus");
+            toggleIcon.classList.add("fa-minus");
+        });
+
+        // Lắng nghe sự kiện đóng form
+        searchForm.addEventListener("hide.bs.collapse", function () {
+            toggleIcon.classList.remove("fa-minus");
+            toggleIcon.classList.add("fa-plus");
+        });
+    });
+</script>
 
 
