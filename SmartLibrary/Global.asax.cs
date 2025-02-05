@@ -1,4 +1,5 @@
-using AutoMapper;
+﻿using AutoMapper;
+using SmartLibrary.App_Start;
 using SmartLibrary.Models.Mappings;
 using System;
 using System.Collections.Generic;
@@ -26,11 +27,12 @@ namespace SmartLibrary
                 typeof(ReservationMappingProfile),
             }));
 
-
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+            // Đăng ký Autofac
+            AutofacConfig.RegisterDependencies();
         }
     }
 }

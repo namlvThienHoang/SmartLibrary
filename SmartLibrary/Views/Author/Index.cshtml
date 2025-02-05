@@ -5,24 +5,30 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<!-- Tìm kiếm -->
 <div class="card mb-4">
     <div class="card-header">
         <h4 class="card-title d-flex justify-content-between align-items-center">
             <!-- Ô tìm kiếm đơn giản -->
-            <form method="get" action="@Url.Action("Index", "Author")" class="d-flex align-items-center w-100">
-                <input type="text" name="search" class="form-control me-2" placeholder="Tìm kiếm ..." value="@Request.QueryString["search"]" />
-                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>
+            <form method="get" action="@Url.Action("Index")" class="d-flex align-items-center">
+                <input type="text" name="searchString" class="form-control me-2" value="@Model.SearchString" placeholder="Tìm kiếm..." />
+                <button type="submit" class="btn btn-primary me-2"><i class="fa-solid fa-search"></i></button>
+                <a type="button" href="@Url.Action("Index", "Author")" class="btn btn-secondary"><i class="fa-solid fa-refresh"></i></a>
             </form>
         </h4>
     </div>
 </div>
 
+
+<!-- Bảng danh sách sách -->
+
 <div class="card mb-4">
     <div class="card-header">
         <h4 class="card-title d-flex justify-content-between">
-            Danh sách tác giả
+            Danh sách
             @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
         </h4>
+
     </div>
     <div class="card-body">
         <div class="table-responsive">
@@ -30,16 +36,10 @@
                 <thead>
                     <tr>
                         <th>
-                            <a href="@Url.Action("Index", new { sortOrder = Request["sortOrder"] == "name_desc" ? "" : "name_desc" })">
-                                Tên tác giả
-                            </a>
+                            <a href="@Url.Action("Index", new { sortOrder = ViewBag.NameSortParam, searchString = Model.SearchString })">Tên tác giả</a>
                         </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Items.FirstOrDefault().DateOfBirth)
-                        </th>
-                        <th>
-                            @Html.DisplayNameFor(model => model.Items.FirstOrDefault().Biography)
-                        </th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().DateOfBirth)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Biography)</th>
                         <th class="text-center">Thao tác</th>
                     </tr>
                 </thead>
@@ -47,15 +47,9 @@
                     @foreach (var item in Model.Items)
                     {
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.AuthorName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.DateOfBirth)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Biography)
-                            </td>
+                            <td>@Html.DisplayFor(modelItem => item.AuthorName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.DateOfBirth)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Biography)</td>
                             <td>
                                 <div class="btn-group" role="group">
                                     <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
@@ -78,4 +72,5 @@
     <div class="card-footer">
         @Html.Partial("_Pagination", Model.Pagination)
     </div>
+
 </div>

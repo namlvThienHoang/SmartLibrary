@@ -12,62 +12,14 @@
     <div class="card-header">
         <h4 class="card-title d-flex justify-content-between align-items-center">
             <!-- Ô tìm kiếm đơn giản -->
-            <form method="get" action="@Url.Action("Index", "Book")" class="d-flex align-items-center w-100">
-                <input type="text" name="search" class="form-control me-2" placeholder="Tìm kiếm nhanh..." value="@Request.QueryString["search"]" />
-                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>
+            <form method="get" action="@Url.Action("Index")" class="d-flex align-items-center">
+                <input type="text" name="searchString" class="form-control me-2" value="@Model.SearchString" placeholder="Tìm kiếm..." />
+                <button type="submit" class="btn btn-primary me-2"><i class="fa-solid fa-search"></i></button>
+                <a type="button" href="@Url.Action("Index", "Book")" class="btn btn-secondary"><i class="fa-solid fa-refresh"></i></a>
             </form>
-
-            <!-- Nút Tìm kiếm nâng cao -->
-            <button class="btn btn-sm btn-secondary ms-3 toggle-search-btn" type="button" data-bs-toggle="collapse" data-bs-target="#searchForm"
-                    aria-expanded="@(Request.QueryString.AllKeys.Contains("Title") || Request.QueryString.AllKeys.Contains("Publisher")
-                   || Request.QueryString.AllKeys.Contains("ISBN") || Request.QueryString.AllKeys.Contains("AvailableCopies")
-                   || Request.QueryString.AllKeys.Contains("Status") ? "true" : "false")"
-                    aria-controls="searchForm">
-                <i class="fa-solid fa-plus"></i> Nâng cao
-            </button>
         </h4>
     </div>
 
-    <!-- Biểu mẫu tìm kiếm nâng cao -->
-    <div class="card-body">
-        <div class="collapse @(Request.QueryString.AllKeys.Contains("Title") || Request.QueryString.AllKeys.Contains("Publisher")
-                                || Request.QueryString.AllKeys.Contains("ISBN") || Request.QueryString.AllKeys.Contains("AvailableCopies")
-                                || Request.QueryString.AllKeys.Contains("Status") ? "show" : "")" id="searchForm">
-            <form method="get" action="@Url.Action("Index", "Book")" class="row g-3">
-                <div class="col-sm-6 col-md-4">
-                    <label for="Title" class="form-label">Tiêu đề</label>
-                    <input type="text" id="Title" name="Title" class="form-control" placeholder="Nhập tiêu đề" value="@Request.QueryString["Title"]" />
-                </div>
-                <div class="col-sm-6 col-md-4">
-                    <label for="Publisher" class="form-label">Nhà xuất bản</label>
-                    <input type="text" id="Publisher" name="Publisher" class="form-control" placeholder="Nhập nhà xuất bản" value="@Request.QueryString["Publisher"]" />
-                </div>
-                <div class="col-sm-6 col-md-4">
-                    <label for="ISBN" class="form-label">ISBN</label>
-                    <input type="text" id="ISBN" name="ISBN" class="form-control" placeholder="Nhập ISBN" value="@Request.QueryString["ISBN"]" />
-                </div>
-                <div class="col-sm-6 col-md-4">
-                    <label for="AvailableCopies" class="form-label">Số lượng có sẵn</label>
-                    <input type="number" id="AvailableCopies" name="AvailableCopies" class="form-control" placeholder="Số lượng có sẵn" value="@Request.QueryString["AvailableCopies"]" />
-                </div>
-                <div class="col-sm-6 col-md-4">
-                    <label for="Status" class="form-label">Trạng thái</label>
-                    <select id="Status" name="Status" class="form-select" aria-label="Chọn trạng thái">
-                        <option value="">--Chọn trạng thái--</option>
-                        <option value="Available" @(Request.QueryString["Status"] == "Available" ? "selected" : "")>Còn sách</option>
-                        <option value="Unavailable" @(Request.QueryString["Status"] == "Unavailable" ? "selected" : "")>Hết sách</option>
-                    </select>
-                </div>
-
-                <div class="col-12">
-                    <div class="d-flex justify-content-lg-start gap-4">
-                        <button type="submit" class="btn btn-primary w-48">Tìm kiếm</button>
-                        <a href="@Url.Action("Index", "Book")" class="btn btn-secondary w-48">Làm mới</a>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
 </div>
 
 <!-- Bảng danh sách sách -->
@@ -86,15 +38,17 @@
                 <thead>
                     <tr>
                         <th>
-                            <a href="@Url.Action("Index", new { sortOrder = Request["sortOrder"] == "title_desc" ? "" : "title_desc" })">
-                                Tên sách
-                            </a>
+                            <a href="@Url.Action("Index", new { sortOrder = ViewBag.TitleSortParam, searchString = Model.SearchString })">Tiêu đề</a>
                         </th>
                         <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Authors)</th>
                         <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Categories)</th>
                         <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Description)</th>
-                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Publisher)</th>
-                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().PublishedDate)</th>
+                        <th>
+                            <a href="@Url.Action("Index", new { sortOrder = ViewBag.PublisherSortParam, searchString = Model.SearchString })">Nhà xuất bản</a>
+                        </th>
+                        <th>
+                            <a href="@Url.Action("Index", new { sortOrder = ViewBag.PublishedDateSortParam, searchString = Model.SearchString })">Ngày xuất bản</a>
+                        </th>
                         <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().ISBN)</th>
                         <th class="text-center">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().TotalCopies)</th>
                         <th class="text-center">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().AvailableCopies)</th>
@@ -143,25 +97,5 @@
 
 </div>
 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const toggleButton = document.querySelector(".toggle-search-btn");
-        const toggleIcon = toggleButton.querySelector("i");
-
-        const searchForm = document.getElementById("searchForm");
-
-        // Lắng nghe sự kiện mở form
-        searchForm.addEventListener("show.bs.collapse", function () {
-            toggleIcon.classList.remove("fa-plus");
-            toggleIcon.classList.add("fa-minus");
-        });
-
-        // Lắng nghe sự kiện đóng form
-        searchForm.addEventListener("hide.bs.collapse", function () {
-            toggleIcon.classList.remove("fa-minus");
-            toggleIcon.classList.add("fa-plus");
-        });
-    });
-</script>
 
 

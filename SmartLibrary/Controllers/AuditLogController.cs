@@ -11,7 +11,7 @@ using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
 using AutoMapper;
 using SmartLibrary.Models.ViewModels.AuditLog;
-using SmartLibrary.Helpers;
+using SmartLibrary.Utilities.Helpers;
 using SmartLibrary.Models.ViewModels;
 
 namespace SmartLibrary.Controllers

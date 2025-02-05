@@ -3,7 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SmartLibrary.Services
+namespace SmartLibrary.Services.Interfaces
 {
     public interface IAuditLogService
     {

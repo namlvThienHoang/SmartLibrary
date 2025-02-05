@@ -11,60 +11,35 @@ using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
 using AutoMapper;
 using SmartLibrary.Models.ViewModels.Category;
-using SmartLibrary.Helpers;
+using SmartLibrary.Utilities.Helpers;
 using SmartLibrary.Models.ViewModels;
+using SmartLibrary.Services.Interfaces;
 
 namespace SmartLibrary.Controllers
 {
     public class CategoryController : BaseController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly ICategoryService _categoryService;
+
+        public CategoryController(ICategoryService categoryService)
+        {
+            _categoryService = categoryService;
+        }
 
         // GET: Category
-        public async Task<ActionResult> Index(string search, string sortOrder, int page = 1, int pageSize = 10)
+        public async Task<ActionResult> Index(string searchString, string sortOrder, int? pageNumber, int pageSize = 10)
         {
-            // Lấy dữ liệu ban đầu
-            var query = db.Categories.AsQueryable();
+            // Thiết lập thứ tự sắp xếp
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.NameSortParam = string.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
 
+            // Thiết lập trang hiện tại
+            pageNumber = pageNumber ?? 1;
 
-            // Áp dụng tìm kiếm
-            if (!string.IsNullOrEmpty(search))
-            {
-                query = query.Where(b =>
-                    b.CategoryName.Contains(search));
-            }
+            // Lấy dữ liệu từ service
+            var model = await _categoryService.GetCategories(searchString, sortOrder, pageNumber.Value, pageSize);
 
-            // Lấy tổng số lượng sách
-            int totalBooks = await query.CountAsync();
-
-            // Áp dụng sắp xếp
-            query = PaginationHelper.ApplySorting(query, sortOrder, (item, order) =>
-            {
-                switch (order)
-                {
-                    case "name_desc":
-                        return item.OrderByDescending(b => b.CategoryName);
-                    default:
-                        return item.OrderBy(b => b.CategoryName);
-                }
-            });
-
-            // Áp dụng phân trang
-            var books = PaginationHelper.ApplyPagination(query, page, pageSize);
-
-            // Tạo ViewModel chứa dữ liệu
-            var viewModel = new PagedResult<CategoryViewModel>
-            {
-                Items = Mapper.Map<List<CategoryViewModel>>(await books.ToListAsync()),
-                Pagination = new PaginationInfo
-                {
-                    PageNumber = page,
-                    PageSize = pageSize,
-                    TotalItems = totalBooks
-                }
-            };
-
-            return View(viewModel);
+            return View(model);
         }
 
         // GET: Category/Details/5
@@ -74,12 +49,12 @@ namespace SmartLibrary.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = await db.Categories.FindAsync(id);
+            var category = await _categoryService.GetCategoryById(id.Value);
+
             if (category == null)
-            {
                 return HttpNotFound();
-            }
-            return View(Mapper.Map<CategoryViewModel>(category));
+
+            return View(category);
         }
 
         // GET: Category/Create
@@ -97,9 +72,7 @@ namespace SmartLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
-                var category = Mapper.Map<Category>(categoryViewModel);
-                db.Categories.Add(category);
-                await db.SaveChangesAsync();
+                await _categoryService.CreateCategory(categoryViewModel);
                 SetToast("Thành công", "Thêm mới loại sách thành công!", Commons.ToastType.Success);
                 return RedirectToAction("Index");
             }
@@ -114,12 +87,13 @@ namespace SmartLibrary.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = await db.Categories.FindAsync(id);
+            var category = await _categoryService.GetCategoryEditById(id.Value);
+            
             if (category == null)
             {
                 return HttpNotFound();
             }
-            return View(Mapper.Map<CategoryViewModel>(category));
+            return View(category);
         }
 
         // POST: Category/Edit/5
@@ -129,14 +103,25 @@ namespace SmartLibrary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EditCategoryViewModel categoryViewModel)
         {
-            if (ModelState.IsValid)
+
+            if (!ModelState.IsValid)
             {
-                var category = Mapper.Map<Category>(categoryViewModel);
-                db.Entry(category).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
+                SetToast("Thất bại", "Dữ liệu không hợp lệ!", Commons.ToastType.Error);
+                // Trả lại view với thông báo lỗi nếu ModelState không hợp lệ
+                return View(categoryViewModel);
             }
-            return View(categoryViewModel);
+
+            // Tìm sách trong cơ sở dữ liệu
+            var category = await _categoryService.GetCategoryById(categoryViewModel.Id);
+            if (category == null)
+            {
+                return HttpNotFound();
+            }
+
+            await _categoryService.EditCategory(categoryViewModel);
+            SetToast("Thành công", "Chỉnh sửa loại sách thành công!", Commons.ToastType.Success);
+            await LogActionAsync("Chỉnh sửa", "Loại sách", $"Đã chỉnh sửa loại sách có tên: {category.Name}");
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Category/Delete/5
@@ -146,12 +131,12 @@ namespace SmartLibrary.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Category category = await db.Categories.FindAsync(id);
+            var category = await _categoryService.GetCategoryById(id.Value);
+
             if (category == null)
-            {
                 return HttpNotFound();
-            }
-            return View(Mapper.Map<CategoryViewModel>(category));
+
+            return View(category);
         }
 
         // POST: Category/Delete/5
@@ -159,19 +144,15 @@ namespace SmartLibrary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Category category = await db.Categories.FindAsync(id);
-            db.Categories.Remove(category);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
+            var category = await _categoryService.GetCategoryById(id);
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
+            if (category == null)
+                return HttpNotFound();
+
+            await _categoryService.DeleteCategory(id);
+            SetToast("Thành công", "Xóa thành công!", Commons.ToastType.Success);
+            await LogActionAsync("Xóa", "Loại sách", $"Đã xóa loại sách có tên: {category.Name}");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

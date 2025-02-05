@@ -1,76 +1,99 @@
-﻿@model IEnumerable<SmartLibrary.Models.ViewModels.User.UserViewModel>
+﻿@model SmartLibrary.Models.ViewModels.PagedResult<SmartLibrary.Models.ViewModels.User.UserViewModel>
 
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Index</h2>
+<!-- Tìm kiếm -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4 class="card-title d-flex justify-content-between align-items-center">
+            <!-- Ô tìm kiếm đơn giản -->
+            <form method="get" action="@Url.Action("Index")" class="d-flex align-items-center">
+                <input type="text" name="searchString" class="form-control me-2" value="@Model.SearchString" placeholder="Tìm kiếm..." />
+                <button type="submit" class="btn btn-primary me-2"><i class="fa-solid fa-search"></i></button>
+                <a type="button" href="@Url.Action("Index", "User")" class="btn btn-secondary"><i class="fa-solid fa-refresh"></i></a>
+            </form>
+        </h4>
+    </div>
+</div>
 
-<p>
-    @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.UserName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Role)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FullName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DateOfBirth)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Address)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th></th>
-    </tr>
+<div class="card mb-4">
+    <div class="card-header">
+        <h4 class="card-title d-flex justify-content-between">
+            Danh sách
+            @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
+        </h4>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.UserName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Email)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Role)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.PhoneNumber)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.FullName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DateOfBirth)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Address)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Status)
-        </td>
-        <td>
-            @Html.ActionLink("Chỉnh sửa", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Xem chi tiết", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Xóa", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <a href="@Url.Action("Index", new { sortOrder = ViewBag.UserNameSortParam, searchString = Model.SearchString })">Tên người dùng</a>
+                        </th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Email)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Role)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().PhoneNumber)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().FullName)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().DateOfBirth)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Address)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Status)</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.UserName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Email)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Role)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PhoneNumber)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.FullName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DateOfBirth)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Address)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Status)
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-info text-white" title="Xem chi tiết">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+        @Html.Partial("_Pagination", Model.Pagination)
+    </div>
 
-</table>
+</div>

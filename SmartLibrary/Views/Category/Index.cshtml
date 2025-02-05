@@ -7,16 +7,19 @@
 
 
 
+<!-- Tìm kiếm -->
 <div class="card mb-4">
     <div class="card-header">
         <h4 class="card-title d-flex justify-content-between align-items-center">
             <!-- Ô tìm kiếm đơn giản -->
-            <form method="get" action="@Url.Action("Index", "Category")" class="d-flex align-items-center w-100">
-                <input type="text" name="search" class="form-control me-2" placeholder="Tìm kiếm ..." value="@Request.QueryString["search"]" />
-                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-search"></i></button>
+            <form method="get" action="@Url.Action("Index")" class="d-flex align-items-center">
+                <input type="text" name="searchString" class="form-control me-2" value="@Model.SearchString" placeholder="Tìm kiếm..." />
+                <button type="submit" class="btn btn-primary me-2"><i class="fa-solid fa-search"></i></button>
+                <a type="button" href="@Url.Action("Index", "Category")" class="btn btn-secondary"><i class="fa-solid fa-refresh"></i></a>
             </form>
         </h4>
     </div>
+
 </div>
 
 <div class="card mb-4">
@@ -32,9 +35,7 @@
                 <thead>
                     <tr>
                         <th>
-                            <a href="@Url.Action("Index", new { sortOrder = Request["sortOrder"] == "name_desc" ? "" : "name_desc" })">
-                                Tên loại sách
-                            </a>
+                            <a href="@Url.Action("Index", new { sortOrder = ViewBag.NameSortParam, searchString = Model.SearchString })">Tiêu đề</a>
                         </th>
                         <th>
                             @Html.DisplayNameFor(model => model.Items.FirstOrDefault().Description)
@@ -45,27 +46,27 @@
                 <tbody>
                     @foreach (var item in Model.Items)
                     {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Description)
-                        </td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                    <i class="fa-solid fa-pen-to-square"></i>
-                                </a>
-                                <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-info text-white" title="Xem chi tiết">
-                                    <i class="fa-solid fa-eye"></i>
-                                </a>
-                                <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                    <i class="fa-solid fa-trash"></i>
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Description)
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-info text-white" title="Xem chi tiết">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
                     }
                 </tbody>
             </table>

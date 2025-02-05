@@ -13,13 +13,15 @@ namespace SmartLibrary.Models.Mappings
         public BookMappingProfile()
         {
             CreateMap<Book, BookViewModel>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.BookId))
                 .ForMember(dest => dest.Authors, act => act.MapFrom(src =>
                     string.Join(", ", src.BookAuthors.Select(ba => ba.Author.AuthorName))))
                 .ForMember(dest => dest.Categories, act => act.MapFrom(src =>
                     string.Join(", ", src.BookCategories.Select(ba => ba.Category.CategoryName))));
 
             CreateMap<CreateBookViewModel, Book>();
-            CreateMap<EditBookViewModel, Book>();
+            CreateMap<EditBookViewModel, Book>()
+                .ForMember(dest => dest.BookId, act => act.MapFrom(src => src.Id));
             CreateMap<Book, EditBookViewModel>()
                 .ForMember(dest => dest.AuthorIds, act => act.MapFrom(src =>
                     src.BookAuthors.Select(ba => ba.Author.AuthorId)))

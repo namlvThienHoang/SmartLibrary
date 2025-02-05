@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
-using SmartLibrary.Helpers;
+using SmartLibrary.Utilities.Helpers;
 using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
 using SmartLibrary.Models.ViewModels;
 using SmartLibrary.Models.ViewModels.Book;
 using SmartLibrary.Models.ViewModels.Category;
+using SmartLibrary.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -13,147 +14,95 @@ using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using System.IO;
 
 namespace SmartLibrary.Controllers
 {
     public class BookController : BaseController
     {
-        private readonly ApplicationDbContext _context = new ApplicationDbContext();
+        private readonly IBookService _bookService;
 
-        public async Task<ActionResult> Index(string search, string Title, string Publisher, string ISBN, int? AvailableCopies, string Status, string sortOrder, int page = 1, int pageSize = 10)
+        public BookController(IBookService bookService)
         {
-            // Lấy dữ liệu ban đầu
-            var query = _context.Books.AsQueryable();
-
-            // Lọc dữ liệu theo điều kiện
-            if (!string.IsNullOrEmpty(Title))
-                query = query.Where(b => b.Title.Contains(Title));
-
-            if (!string.IsNullOrEmpty(Publisher))
-                query = query.Where(b => b.Publisher.Contains(Publisher));
-
-            if (!string.IsNullOrEmpty(ISBN))
-                query = query.Where(b => b.ISBN.Contains(ISBN));
-
-            if (AvailableCopies.HasValue)
-                query = query.Where(b => b.AvailableCopies == AvailableCopies.Value);
-
-            if (!string.IsNullOrEmpty(Status))
-            {
-                if (Status == "Available")
-                    query = query.Where(b => b.AvailableCopies > 0);
-                else if (Status == "Unavailable")
-                    query = query.Where(b => b.AvailableCopies == 0);
-            }
-
-            // Áp dụng tìm kiếm
-            if (!string.IsNullOrEmpty(search))
-            {
-                query = query.Where(b =>
-                    b.Title.Contains(search) ||
-                    b.BookAuthors.Any(ba => ba.Author.AuthorName.Contains(search)));
-            }
-
-            // Lấy tổng số lượng sách
-            int totalBooks = await query.CountAsync();
-
-            // Áp dụng sắp xếp
-            query = PaginationHelper.ApplySorting(query, sortOrder, (item, order) =>
-            {
-                switch (order)
-                {
-                    case "title_desc":
-                        return item.OrderByDescending(b => b.Title);
-                    default:
-                        return item.OrderBy(b => b.Title);
-                }
-            });
-
-            // Áp dụng phân trang
-            var books = PaginationHelper.ApplyPagination(query, page, pageSize);
-
-            // Tạo ViewModel chứa dữ liệu
-            var viewModel = new PagedResult<BookViewModel>
-            {
-                Items = Mapper.Map<List<BookViewModel>>(await books.ToListAsync()),
-                Pagination = new PaginationInfo
-                {
-                    PageNumber = page,
-                    PageSize = pageSize,
-                    TotalItems = totalBooks
-                }
-            };
-
-            return View(viewModel);
+            _bookService = bookService;
         }
 
+        // GET: Books
+        public async Task<ActionResult> Index(string searchString, string sortOrder, int? pageNumber, int pageSize = 10)
+        {
+            // Thiết lập thứ tự sắp xếp
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.TitleSortParam = string.IsNullOrEmpty(sortOrder) ? "title_desc" : "";
+            ViewBag.PublisherSortParam = sortOrder == "publisher" ? "publisher_desc" : "publisher";
+            ViewBag.PublishedDateSortParam = sortOrder == "publishedDate" ? "publishedDate_desc" : "publishedDate";
+
+            // Thiết lập trang hiện tại
+            pageNumber = pageNumber ?? 1;
+
+            // Lấy dữ liệu từ service
+            var model = await _bookService.GetBooks(searchString, sortOrder, pageNumber.Value, pageSize);
+
+            return View(model);
+        }
 
         // GET: Book/Details/5
         public async Task<ActionResult> Details(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await _bookService.GetBookById(id);
 
             if (book == null)
                 return HttpNotFound();
 
-            return View(Mapper.Map<BookViewModel>(book));
+            return View(book);
         }
 
         // GET: Book/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
-            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "CategoryName");
-            ViewBag.Authors = new SelectList(_context.Authors, "AuthorId", "AuthorName");
+            ViewBag.Categories = new SelectList(await _bookService.GetCategoriesAsync(), "Id", "Name");
+            ViewBag.Authors = new SelectList(await _bookService.GetAuthorsAsync(), "Id", "AuthorName");
             return View();
         }
 
         // POST: Book/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateBookViewModel model, HttpPostedFileBase CoverImage)
+        public async Task<ActionResult> Create(CreateBookViewModel model, HttpPostedFileBase coverImage)
         {
             if (ModelState.IsValid)
             {
-                // Sử dụng helper để lưu ảnh
-                var savedImagePath = FileHelper.SaveFile(CoverImage, "~/Uploads/Books");
 
-                var book = new Book
+                try
                 {
-                    Title = model.Title,
-                    Description = model.Description,
-                    Publisher = model.Publisher,
-                    PublishedDate = model.PublishedDate,
-                    ISBN = model.ISBN,
-                    TotalCopies = model.TotalCopies,
-                    AvailableCopies = model.TotalCopies, // Initially, available copies = total copies
-                    CoverImage = savedImagePath,
-                };
+                    // Upload ảnh bìa
+                    if (coverImage != null && coverImage.ContentLength > 0)
+                    {
+                        string uploadFolderPath = Server.MapPath("~/Uploads/Books");
+                        model.CoverImage = FileHelper.UploadFile(coverImage, uploadFolderPath);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Vui lòng chọn ảnh bìa.");
+                        return View(model);
+                    }
 
-                // Xử lý quan hệ nhiều-nhiều với Author và Category
-                if (model.AuthorIds != null && model.AuthorIds.Any())
+                    await _bookService.CreateBook(model);
+                    SetToast("Thành công", "Thêm mới sách thành công!", Commons.ToastType.Success);
+                    await LogActionAsync("Thêm mới", "Sách", $"Đã tạo sách có tiêu đề: {model.Title}");
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception ex)
                 {
-                    book.BookAuthors = model.AuthorIds
-                        .Select(authorId => new BookAuthor { AuthorId = authorId })
-                        .ToList();
+                    ModelState.AddModelError("", "Lỗi khi upload ảnh: " + ex.Message);
+                    return View(model);
                 }
 
-                if (model.CategoryIds != null && model.CategoryIds.Any())
-                {
-                    book.BookCategories = model.CategoryIds
-                        .Select(categoryId => new BookCategory { CategoryId = categoryId })
-                        .ToList();
-                }
 
-                _context.Books.Add(book);
-                await _context.SaveChangesAsync();
-                SetToast("Thành công", "Thêm mới sách thành công!", Commons.ToastType.Success);
-                // Log the action
-                await LogActionAsync("Thêm mới", "Sách", $"Đã tạo sách có tiêu đề: {book.Title}");
-                return RedirectToAction(nameof(Index));
+                
             }
             // Nếu ModelState không hợp lệ, load lại danh sách Category
-            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "CategoryName");
-            ViewBag.Authors = new SelectList(_context.Authors, "AuthorId", "AuthorName");
+            ViewBag.Categories = new SelectList(await _bookService.GetCategoriesAsync(), "Id", "Name");
+            ViewBag.Authors = new SelectList(await _bookService.GetAuthorsAsync(), "Id", "AuthorName");
             return View(model);
         }
 
@@ -165,16 +114,13 @@ namespace SmartLibrary.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
             
-            var book = await _context.Books.FindAsync(id);
+            var book = await _bookService.GetBookEditById(id.Value);
 
             if (book == null)
                 return HttpNotFound();
-
-            var bookVM = Mapper.Map<EditBookViewModel>(book);
-
-            ViewBag.Categories = new SelectList(_context.Categories, "CategoryId", "CategoryName", bookVM.CategoryIds);
-            ViewBag.Authors = new SelectList(_context.Authors, "AuthorId", "AuthorName", bookVM.AuthorIds);
-            return View(bookVM);
+            ViewBag.Categories = new SelectList(await _bookService.GetCategoriesAsync(), "Id", "Name", book.CategoryIds);
+            ViewBag.Authors = new SelectList(await _bookService.GetAuthorsAsync(), "Id", "AuthorName", book.AuthorIds);
+            return View(book);
         }
 
         // POST: Book/Edit/5
@@ -190,83 +136,54 @@ namespace SmartLibrary.Controllers
             }
 
             // Tìm sách trong cơ sở dữ liệu
-            var book = await _context.Books
-                .Include(b => b.BookAuthors)
-                .Include(b => b.BookCategories)
-                .FirstOrDefaultAsync(b => b.BookId == model.Id);
+            var book = await _bookService.GetBookEditById(model.Id);
 
             if (book == null)
             {
                 return HttpNotFound();
             }
 
-            // Cập nhật thông tin cơ bản
-            book.Title = model.Title;
-            book.Description = model.Description;
-            book.Publisher = model.Publisher;
-            book.PublishedDate = model.PublishedDate;
-            book.ISBN = model.ISBN;
-            book.TotalCopies = model.TotalCopies;
-            book.AvailableCopies = model.TotalCopies;
-
-            // Cập nhật ảnh bìa nếu có
-            if (CoverImage != null && CoverImage.ContentLength > 0)
+            try
             {
-                var savedImagePath = FileHelper.SaveFile(CoverImage, "~/Uploads/Books");
-                book.CoverImage = savedImagePath;
-            }
-
-            // Cập nhật số lượng có sẵn nếu tổng số lượng giảm
-            if (book.AvailableCopies > book.TotalCopies)
-            {
-                book.AvailableCopies = book.TotalCopies;
-            }
-
-            // Cập nhật quan hệ nhiều-nhiều với Tác giả (Authors)
-            if (model.AuthorIds != null)
-            {
-                // Xóa các tác giả hiện tại
-                book.BookAuthors.Clear();
-
-                // Thêm tác giả mới
-                foreach (var authorId in model.AuthorIds)
+                // Nếu có ảnh mới được upload
+                if (CoverImage != null && CoverImage.ContentLength > 0)
                 {
-                    book.BookAuthors.Add(new BookAuthor { AuthorId = authorId, BookId = book.BookId });
-                }
-            }
+                    // Xóa ảnh cũ nếu tồn tại
+                    if (!string.IsNullOrEmpty(book.CoverImage))
+                    {
+                        FileHelper.DeleteFile(book.CoverImage);
+                    }
 
-            // Cập nhật quan hệ nhiều-nhiều với Thể loại (Categories)
-            if (model.CategoryIds != null)
+                    // Upload ảnh mới
+                    string uploadFolderPath = Server.MapPath("~/Uploads/Books");
+                    model.CoverImage = FileHelper.UploadFile(CoverImage, uploadFolderPath);
+                }
+
+                // Cập nhật thông tin sách
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await _bookService.EditBook(model);
+                SetToast("Thành công", "Chỉnh sửa sách thành công!", Commons.ToastType.Success);
+                await LogActionAsync("Chỉnh sửa", "Sách", $"Đã chỉnh sửa sách có tiêu đề: {book.Title}");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
             {
-                // Xóa các thể loại hiện tại
-                book.BookCategories.Clear();
-
-                // Thêm thể loại mới
-                foreach (var categoryId in model.CategoryIds)
-                {
-                    book.BookCategories.Add(new BookCategory { CategoryId = categoryId, BookId = book.BookId });
-                }
+                ModelState.AddModelError("", "Lỗi khi cập nhật: " + ex.Message);
+                ViewBag.Categories = new SelectList(await _bookService.GetCategoriesAsync(), "Id", "Name", book.CategoryIds);
+                ViewBag.Authors = new SelectList(await _bookService.GetAuthorsAsync(), "Id", "AuthorName", book.AuthorIds);
+                return View(book);
             }
-
-            // Đánh dấu đối tượng đã sửa đổi
-            _context.Entry(book).State = EntityState.Modified;
-
-            // Lưu thay đổi vào cơ sở dữ liệu
-            await _context.SaveChangesAsync();
-            SetToast("Thành công", "Chỉnh sửa sách thành công!", Commons.ToastType.Success);
-            await LogActionAsync("Chỉnh sửa", "Sách", $"Đã chỉnh sửa sách có tiêu đề: {book.Title}");
-            return RedirectToAction(nameof(Index));
         }
 
         // GET: Book/Delete/5
         public async Task<ActionResult> Delete(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await _bookService.GetBookById(id);
 
             if (book == null)
                 return HttpNotFound();
 
-            return View(Mapper.Map<BookViewModel>(book));
+            return View(book);
         }
 
         // POST: Book/Delete/5
@@ -274,25 +191,15 @@ namespace SmartLibrary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            var book = await _context.Books.FindAsync(id);
+            var book = await _bookService.GetBookById(id);
 
             if (book == null)
                 return HttpNotFound();
 
-            _context.Books.Remove(book);
-             await _context.SaveChangesAsync();
+            await _bookService.DeleteBook(id);
             SetToast("Thành công", "Xóa thành công!", Commons.ToastType.Success);
             await LogActionAsync("Xóa", "Sách", $"Đã xóa sách có tiêu đề: {book.Title}");
             return RedirectToAction(nameof(Index));
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _context.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

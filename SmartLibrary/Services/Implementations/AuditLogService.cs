@@ -1,9 +1,10 @@
 ﻿using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
+using SmartLibrary.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 
-namespace SmartLibrary.Services
+namespace SmartLibrary.Services.Implementations
 {
     public class AuditLogService : IAuditLogService
     {

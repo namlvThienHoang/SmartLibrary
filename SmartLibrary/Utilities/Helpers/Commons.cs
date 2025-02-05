@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace SmartLibrary.Helpers
+namespace SmartLibrary.Utilities.Helpers
 {
     public static class Commons
     {

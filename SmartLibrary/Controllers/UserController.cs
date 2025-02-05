@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using SmartLibrary.Helpers;
+using SmartLibrary.Utilities.Helpers;
 using SmartLibrary.Models;
 using SmartLibrary.Models.ViewModels;
 using SmartLibrary.Models.ViewModels.User;
@@ -49,47 +49,57 @@ namespace SmartLibrary.Controllers
         }
 
         // READ: /User/Index (List of users)
-        public async Task<ActionResult> Index(string search, string sortOrder, int page = 1, int pageSize = 10)
+        public async Task<ActionResult> Index(string searchString, string sortOrder, int? pageNumber, int pageSize = 10)
         {
+            // Thiết lập thứ tự sắp xếp
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.UserNameSortParam = string.IsNullOrEmpty(sortOrder) ? "username_desc" : "";
+
             // Lấy dữ liệu ban đầu
             var query = UserManager.Users.AsQueryable();
 
 
             // Áp dụng tìm kiếm
-            if (!string.IsNullOrEmpty(search))
+            if (!string.IsNullOrEmpty(searchString))
             {
                 query = query.Where(b =>
-                    b.UserName.Contains(search));
+                    b.UserName.Contains(searchString));
             }
 
             // Lấy tổng số lượng sách
             int totalUsers = await query.CountAsync();
 
             // Áp dụng sắp xếp
-            query = PaginationHelper.ApplySorting(query, sortOrder, (item, order) =>
+            // Sắp xếp
+            switch (sortOrder)
             {
-                switch (order)
-                {
-                    case "username_desc":
-                        return item.OrderByDescending(b => b.UserName);
-                    default:
-                        return item.OrderBy(b => b.UserName);
-                }
-            });
+                case "username_desc":
+                    query = query.OrderByDescending(b => b.UserName);
+                    break;
+                default:
+                    query = query.OrderBy(b => b.UserName);
+                    break;
+            }
 
-            // Áp dụng phân trang
-            var users = PaginationHelper.ApplyPagination(query, page, pageSize);
+            // Thiết lập trang hiện tại
+            pageNumber = pageNumber ?? 1;
 
+            // Phân trang
+            var users = await query.Skip((pageNumber.Value - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            var userViewModels = Mapper.Map<List<UserViewModel>>(users);
             // Tạo ViewModel chứa dữ liệu
             var viewModel = new PagedResult<UserViewModel>
             {
-                Items = Mapper.Map<List<UserViewModel>>(await users.ToListAsync()),
+                Items = userViewModels,
                 Pagination = new PaginationInfo
                 {
-                    PageNumber = page,
+                    PageNumber = pageNumber.Value,
                     PageSize = pageSize,
                     TotalItems = totalUsers
-                }
+                },
+                SearchString = searchString,
+                SortOrder = sortOrder
             };
 
             return View(viewModel);

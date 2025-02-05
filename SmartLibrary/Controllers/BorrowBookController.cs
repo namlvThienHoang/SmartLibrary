@@ -11,7 +11,7 @@ using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
 using AutoMapper;
 using SmartLibrary.Models.ViewModels.BorrowBook;
-using SmartLibrary.Helpers;
+using SmartLibrary.Utilities.Helpers;
 
 namespace SmartLibrary.Controllers
 {

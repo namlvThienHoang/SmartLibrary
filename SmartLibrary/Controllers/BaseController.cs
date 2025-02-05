@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
-using SmartLibrary.Helpers;
+using SmartLibrary.Utilities.Helpers;
 using SmartLibrary.Models;
 using SmartLibrary.Models.ViewModels;
-using SmartLibrary.Services;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using SmartLibrary.Services.Interfaces;
+using SmartLibrary.Services.Implementations;
 
 namespace SmartLibrary.Controllers
 {
