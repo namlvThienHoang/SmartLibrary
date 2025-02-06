@@ -6,7 +6,7 @@ namespace SmartLibrary.Models.ViewModels.Author
     public class CreateAuthorViewModel
     {
         [Required]
-        [Display(Name = "Tên tác giảm")]
+        [Display(Name = "Tên tác giả")]
         public string AuthorName { get; set; }
 
         [Required]
@@ -15,5 +15,8 @@ namespace SmartLibrary.Models.ViewModels.Author
 
         [Display(Name = "Tiểu sử")]
         public string Biography { get; set; }
+
+        [Display(Name = "Hình ảnh")]
+        public string AvatarImage { get; set; }
     }
 }

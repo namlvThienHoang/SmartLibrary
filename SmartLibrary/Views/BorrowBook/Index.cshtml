@@ -1,63 +1,83 @@
-﻿@model IEnumerable<SmartLibrary.Models.ViewModels.BorrowBook.BorrowBookViewModel>
-@using SmartLibrary.Helpers
+﻿@model SmartLibrary.Models.ViewModels.PagedResult<SmartLibrary.Models.ViewModels.BorrowBook.BorrowBookViewModel>
 
 @{
     ViewBag.Title = "Index";
 }
 
-<p>
-    @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.BookTitle)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.UserName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.BorrowDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.DueDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ReturnDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Status)
-        </th>
-        <th></th>
-    </tr>
+<!-- Tìm kiếm -->
+<div class="card mb-4">
+    <div class="card-header">
+        <h4 class="card-title d-flex justify-content-between align-items-center">
+            <!-- Ô tìm kiếm đơn giản -->
+            <form method="get" action="@Url.Action("Index")" class="d-flex align-items-center">
+                <input type="text" name="searchString" class="form-control me-2" value="@Model.SearchString" placeholder="Tìm kiếm..." />
+                <button type="submit" class="btn btn-primary me-2"><i class="fa-solid fa-search"></i></button>
+                <a type="button" href="@Url.Action("Index", "BorrowBook")" class="btn btn-secondary"><i class="fa-solid fa-refresh"></i></a>
+            </form>
+        </h4>
+    </div>
+</div>
 
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.BookTitle)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.BorrowDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.DueDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReturnDate)
-            </td>
-            <td>
-                <span>@Commons.StatusList.GetStatusText(item.Status)</span>
-            </td>
-            <td>
-                @Html.ActionLink("Chỉnh sửa", "Edit", new { id = item.BorrowTransactionId }) |
-                @Html.ActionLink("Xem chi tiết", "Details", new { id = item.BorrowTransactionId }) |
-                @Html.ActionLink("Xóa", "Delete", new { id = item.BorrowTransactionId })
-            </td>
-        </tr>
-    }
 
-</table>
+<!-- Bảng danh sách sách -->
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h4 class="card-title d-flex justify-content-between">
+            Danh sách
+            @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
+        </h4>
+
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>
+                            <a href="@Url.Action("Index", new { sortOrder = ViewBag.BorrowDateSortParam, searchString = Model.SearchString })">Tiêu đề sách</a>
+                        </th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().UserName)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().BorrowDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().DueDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().ReturnDate)</th>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Status)</th>
+                        <th class="text-center">Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.BookTitle)</td>
+                            <td>@Html.DisplayFor(modelItem => item.UserName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.BorrowDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.DueDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.ReturnDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Status)</td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    <a href="@Url.Action("Edit", new { id = item.BorrowTransactionId })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </a>
+                                    <a href="@Url.Action("Details", new { id = item.BorrowTransactionId })" class="btn btn-sm btn-info text-white" title="Xem chi tiết">
+                                        <i class="fa-solid fa-eye"></i>
+                                    </a>
+                                    <a href="@Url.Action("Delete", new { id = item.BorrowTransactionId })" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="card-footer">
+        @Html.Partial("_Pagination", Model.Pagination)
+    </div>
+
+</div>
+
+

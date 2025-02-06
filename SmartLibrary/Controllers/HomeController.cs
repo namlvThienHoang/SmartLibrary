@@ -1,4 +1,5 @@
 ﻿using SmartLibrary.Models.ViewModels;
+using SmartLibrary.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,10 @@ namespace SmartLibrary.Controllers
 {
     public class HomeController : BaseController
     {
+        public HomeController(IAuditLogService auditLogService, ApplicationUserManager userManager)
+        : base(auditLogService, userManager) // Gọi constructor của BaseController
+        {
+        }
         public ActionResult Index()
         {
             return View();

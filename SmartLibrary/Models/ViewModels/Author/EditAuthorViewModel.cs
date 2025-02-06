@@ -17,5 +17,8 @@ namespace SmartLibrary.Models.ViewModels.Author
 
         [Display(Name = "Tiểu sử")]
         public string Biography { get; set; }
+
+        [Display(Name = "Hình ảnh")]
+        public string AvatarImage { get; set; }
     }
 }

@@ -11,6 +11,9 @@ namespace SmartLibrary.Models.ViewModels.Category
 
         [Display(Name = "Mô tả")]
         public string Description { get; set; }
+
+        [Display(Name = "Hình ảnh")]
+        public string CoverImage { get; set; }
     }
 
 }

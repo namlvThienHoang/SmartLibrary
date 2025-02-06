@@ -21,7 +21,8 @@ namespace SmartLibrary.Controllers
     {
         private readonly ICategoryService _categoryService;
 
-        public CategoryController(ICategoryService categoryService)
+        public CategoryController(IAuditLogService auditLogService, ApplicationUserManager userManager, ICategoryService categoryService)
+        : base(auditLogService, userManager) // Gọi constructor của BaseController
         {
             _categoryService = categoryService;
         }

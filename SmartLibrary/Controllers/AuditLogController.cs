@@ -13,83 +13,42 @@ using AutoMapper;
 using SmartLibrary.Models.ViewModels.AuditLog;
 using SmartLibrary.Utilities.Helpers;
 using SmartLibrary.Models.ViewModels;
+using SmartLibrary.Services.Interfaces;
 
 namespace SmartLibrary.Controllers
 {
     public class AuditLogController : BaseController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        public AuditLogController(IAuditLogService auditLogService, ApplicationUserManager userManager)
+        : base(auditLogService, userManager) // Gọi constructor của BaseController
+        {
+        }
 
         // GET: AuditLog
-        public async Task<ActionResult> Index(string search, string sortOrder, int page = 1, int pageSize = 10)
+        public async Task<ActionResult> Index(string searchString, string sortOrder, int? pageNumber, int pageSize = 10)
         {
-            // Lấy dữ liệu ban đầu
-            var query = db.AuditLogs.AsQueryable();
+            // Thiết lập thứ tự sắp xếp
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.ActionSortParam = string.IsNullOrEmpty(sortOrder) ? "action_desc" : "";
 
+            // Thiết lập trang hiện tại
+            pageNumber = pageNumber ?? 1;
 
-            // Áp dụng tìm kiếm
-            if (!string.IsNullOrEmpty(search))
-            {
-                query = query.Where(b =>
-                    b.Action.Contains(search));
-            }
+            // Lấy dữ liệu từ service
+            var model = await _auditLogService.GetAuditLogs(searchString, sortOrder, pageNumber.Value, pageSize);
 
-            // Lấy tổng số lượng sách
-            int totalBooks = await query.CountAsync();
-
-            // Áp dụng sắp xếp
-            query = PaginationHelper.ApplySorting(query, sortOrder, (item, order) =>
-            {
-                switch (order)
-                {
-                    case "action_desc":
-                        return item.OrderByDescending(b => b.Action);
-                    default:
-                        return item.OrderBy(b => b.Action);
-                }
-            });
-
-            // Áp dụng phân trang
-            var books = PaginationHelper.ApplyPagination(query, page, pageSize);
-
-            // Tạo ViewModel chứa dữ liệu
-            var viewModel = new PagedResult<AuditLogViewModel>
-            {
-                Items = Mapper.Map<List<AuditLogViewModel>>(await books.ToListAsync()),
-                Pagination = new PaginationInfo
-                {
-                    PageNumber = page,
-                    PageSize = pageSize,
-                    TotalItems = totalBooks
-                }
-            };
-
-            return View(viewModel);
+            return View(model);
         }
 
         // GET: AuditLog/Details/5
-        public async Task<ActionResult> Details(int? id)
+        public async Task<ActionResult> Details(int id)
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            AuditLog auditLog = await db.AuditLogs.FindAsync(id);
-            if (auditLog == null)
-            {
-                return HttpNotFound();
-            }
-            return View(Mapper.Map<AuditLogViewModel>(auditLog));
-        }
+            var auditLog = await _auditLogService.GetAuditLogById(id);
 
-        
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
+            if (auditLog == null)
+                return HttpNotFound();
+
+            return View(auditLog);
         }
     }
 }

@@ -204,19 +204,33 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202502051002157_ThemHinhAnhChoAuthorVaCategory.cs" />
+    <Compile Include="Migrations\202502051002157_ThemHinhAnhChoAuthorVaCategory.Designer.cs">
+      <DependentUpon>202502051002157_ThemHinhAnhChoAuthorVaCategory.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Repositories\Implementations\AuditLogRepository.cs" />
     <Compile Include="Repositories\Implementations\AuthorRepository.cs" />
     <Compile Include="Repositories\Implementations\BookRepository.cs" />
+    <Compile Include="Repositories\Implementations\BookReservationRepository.cs" />
+    <Compile Include="Repositories\Implementations\BorrowBookRepository.cs" />
     <Compile Include="Repositories\Implementations\CategoryRepository.cs" />
     <Compile Include="Repositories\Implementations\UnitOfWork.cs" />
+    <Compile Include="Repositories\Interfaces\IAuditLogRepository.cs" />
     <Compile Include="Repositories\Interfaces\IAuthorRepository.cs" />
     <Compile Include="Repositories\Interfaces\IBookRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IBookReservationRepository.cs" />
+    <Compile Include="Repositories\Interfaces\IBorrowBookRepository.cs" />
     <Compile Include="Repositories\Interfaces\ICategoryRepository.cs" />
     <Compile Include="Repositories\Interfaces\IUnitOfWork.cs" />
     <Compile Include="Services\Implementations\AuthorService.cs" />
+    <Compile Include="Services\Implementations\BookReservationService.cs" />
     <Compile Include="Services\Implementations\BookService.cs" />
+    <Compile Include="Services\Implementations\BorrowBookService.cs" />
     <Compile Include="Services\Implementations\CategoryService.cs" />
     <Compile Include="Services\Interfaces\IAuthorService.cs" />
+    <Compile Include="Services\Interfaces\IBookReservationService.cs" />
     <Compile Include="Services\Interfaces\IBookService.cs" />
+    <Compile Include="Services\Interfaces\IBorrowBookService.cs" />
     <Compile Include="Services\Interfaces\ICategoryService.cs" />
     <Compile Include="Utilities\Helpers\BreadcrumbConfiguration.cs" />
     <Compile Include="Utilities\Helpers\Commons.cs" />
@@ -529,6 +543,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202501140828318_UpdateBook.resx">
       <DependentUpon>202501140828318_UpdateBook.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202502051002157_ThemHinhAnhChoAuthorVaCategory.resx">
+      <DependentUpon>202502051002157_ThemHinhAnhChoAuthorVaCategory.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

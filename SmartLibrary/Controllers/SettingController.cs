@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SmartLibrary.Services.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,6 +9,11 @@ namespace SmartLibrary.Controllers
 {
     public class SettingController : BaseController
     {
+
+        public SettingController(IAuditLogService auditLogService, ApplicationUserManager userManager)
+        : base(auditLogService, userManager) // Gọi constructor của BaseController
+        {
+        }
         // GET: Setting
         public ActionResult Index()
         {

@@ -21,10 +21,12 @@ namespace SmartLibrary.Controllers
     {
         private readonly IAuthorService _authorService;
 
-        public AuthorController(IAuthorService authorService)
+        public AuthorController(IAuditLogService auditLogService, ApplicationUserManager userManager, IAuthorService authorService)
+       : base(auditLogService, userManager) // Gọi constructor của BaseController
         {
             _authorService = authorService;
         }
+
 
         // GET: Authors
         public async Task<ActionResult> Index(string searchString, string sortOrder, int? pageNumber, int pageSize = 10)

@@ -22,7 +22,8 @@ namespace SmartLibrary.Controllers
     {
         private readonly IBookService _bookService;
 
-        public BookController(IBookService bookService)
+        public BookController(IAuditLogService auditLogService, ApplicationUserManager userManager, IBookService bookService)
+            : base(auditLogService, userManager)
         {
             _bookService = bookService;
         }
@@ -96,9 +97,6 @@ namespace SmartLibrary.Controllers
                     ModelState.AddModelError("", "Lỗi khi upload ảnh: " + ex.Message);
                     return View(model);
                 }
-
-
-                
             }
             // Nếu ModelState không hợp lệ, load lại danh sách Category
             ViewBag.Categories = new SelectList(await _bookService.GetCategoriesAsync(), "Id", "Name");

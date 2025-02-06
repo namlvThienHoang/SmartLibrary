@@ -1,100 +1,44 @@
 ﻿@model SmartLibrary.Models.ViewModels.Book.BookViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Chi Tiết Sách";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
-
-<div>
-    <h4>BookViewModel</h4>
-    <hr />
-    <dl class="dl-horizontal">
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Authors)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Authors)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Categories)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Categories)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Publisher)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Publisher)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.PublishedDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.PublishedDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ISBN)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ISBN)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.TotalCopies)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.TotalCopies)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.AvailableCopies)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.AvailableCopies)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CoverImage)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CoverImage)
-        </dd>
-
-    </dl>
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="row g-0">
+            <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
+                @if (!string.IsNullOrEmpty(Model.CoverImage))
+                {
+                    <img src="@Url.Content(Model.CoverImage)" class="img-fluid rounded shadow" alt="Bìa sách" style="max-width: 100%;">
+                }
+                else
+                {
+                    <div class="text-muted">Không có ảnh</div>
+                }
+            </div>
+            <div class="col-md-8">
+                <div class="card-body">
+                    <h3 class="card-title fw-bold">@Model.Title</h3>
+                    <p class="text-muted">Tác giả: <span class="badge bg-primary">@Model.Authors</span></p>
+                    <p class="text-muted">Thể loại: <span class="badge bg-success">@Model.Categories</span></p>
+                    <p class="card-text"><strong>Nhà xuất bản:</strong> @Model.Publisher</p>
+                    <p class="card-text"><strong>Ngày xuất bản:</strong> @Model.PublishedDate.ToShortDateString()</p>
+                    <p class="card-text"><strong>ISBN:</strong> @Model.ISBN</p>
+                    <p class="card-text"><strong>Số lượng tổng:</strong> @Model.TotalCopies</p>
+                    <p class="card-text"><strong>Còn lại:</strong> <span class="badge @(Model.AvailableCopies > 0 ? "bg-success" : "bg-danger")">@Model.AvailableCopies</span></p>
+                    <p class="card-text"><strong>Mô tả:</strong> @Model.Description</p>
+                    <div class="mt-3">
+                        <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-warning me-2">
+                            <i class="bi bi-pencil-square"></i> Chỉnh sửa
+                        </a>
+                        <a href="@Url.Action("Index")" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Quay lại
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Chỉnh sửa", "Edit", new {  id = Model.Id }) |
-    @Html.ActionLink("Quay lại danh sách", "Index")
-</p>

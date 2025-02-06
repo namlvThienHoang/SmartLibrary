@@ -10,16 +10,15 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
+using SmartLibrary.Services.Interfaces;
 
 namespace SmartLibrary.Controllers
 {
     public class UserController : BaseController
     {
-        private ApplicationUserManager UserManager;
-        public UserController()
+        public UserController(IAuditLogService auditLogService, ApplicationUserManager userManager)
+        : base(auditLogService, userManager) // Gọi constructor của BaseController
         {
-            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
-            UserManager = new ApplicationUserManager(userStore);
         }
 
         // CREATE: /User/Create
@@ -36,11 +35,11 @@ namespace SmartLibrary.Controllers
             if (ModelState.IsValid)
             {
                 var user = Mapper.Map<ApplicationUser>(model);
-                var result = await UserManager.CreateAsync(user, model.Password);
+                var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
                     // Optionally assign default role to the user after creation
-                    await UserManager.AddToRoleAsync(user.Id, "User");
+                    await _userManager.AddToRoleAsync(user.Id, "User");
                     return RedirectToAction("Index");
                 }
                 AddErrors(result);
@@ -56,7 +55,7 @@ namespace SmartLibrary.Controllers
             ViewBag.UserNameSortParam = string.IsNullOrEmpty(sortOrder) ? "username_desc" : "";
 
             // Lấy dữ liệu ban đầu
-            var query = UserManager.Users.AsQueryable();
+            var query = _userManager.Users.AsQueryable();
 
 
             // Áp dụng tìm kiếm
@@ -109,7 +108,7 @@ namespace SmartLibrary.Controllers
         [HttpGet]
         public async Task<ActionResult> Details(string id)
         {
-            var user = await UserManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return HttpNotFound();
@@ -122,7 +121,7 @@ namespace SmartLibrary.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(string id)
         {
-            var user = await UserManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return HttpNotFound();
@@ -139,7 +138,7 @@ namespace SmartLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await UserManager.FindByIdAsync(model.Id);
+                var user = await _userManager.FindByIdAsync(model.Id);
                 if (user == null)
                 {
                     return HttpNotFound();
@@ -154,7 +153,7 @@ namespace SmartLibrary.Controllers
                 user.Status = model.Status;
                 // Update other properties as needed
 
-                var result = await UserManager.UpdateAsync(user);
+                var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index");
@@ -168,7 +167,7 @@ namespace SmartLibrary.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(string id)
         {
-            var user = await UserManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return HttpNotFound();
@@ -180,13 +179,13 @@ namespace SmartLibrary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(string id)
         {
-            var user = await UserManager.FindByIdAsync(id);
+            var user = await _userManager.FindByIdAsync(id);
             if (user == null)
             {
                 return HttpNotFound();
             }
 
-            var result = await UserManager.DeleteAsync(user);
+            var result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)
             {
                 return RedirectToAction("Index");

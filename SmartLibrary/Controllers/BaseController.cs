@@ -14,15 +14,13 @@ namespace SmartLibrary.Controllers
 {
     public class BaseController : Controller
     {
-        private readonly IAuditLogService _auditLogService;
-        private readonly ApplicationUserManager _userManager;
+        protected readonly IAuditLogService _auditLogService;
+        protected readonly ApplicationUserManager _userManager;
 
-        public BaseController()
+        public BaseController(IAuditLogService auditLogService, ApplicationUserManager userManager)
         {
-            // Manually create instances if not using DI
-            _auditLogService = new AuditLogService(new ApplicationDbContext());
-            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
-            _userManager = new ApplicationUserManager(userStore);
+            _auditLogService = auditLogService;
+            _userManager = userManager;
         }
 
         // Method to log actions

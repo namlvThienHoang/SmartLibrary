@@ -12,156 +12,105 @@ using SmartLibrary.Models.EntityModels;
 using AutoMapper;
 using SmartLibrary.Models.ViewModels.Reservation;
 using Microsoft.AspNet.Identity;
+using SmartLibrary.Services.Interfaces;
+using SmartLibrary.Utilities.Helpers;
 
 namespace SmartLibrary.Controllers
 {
     public class BookReservationController : BaseController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
-
-        // GET: BookReservation
-        public async Task<ActionResult> Index()
+        public BookReservationController(IAuditLogService auditLogService, ApplicationUserManager userManager)
+        : base(auditLogService, userManager) // Gọi constructor của BaseController
         {
-            var reservations = await db.Reservations.ToListAsync();
-            return View(Mapper.Map<List<ReservationViewModel>>(reservations));
         }
 
-        // GET: BookReservation/Details/5
+        private readonly IBookReservationService _bookReservationService;
+
+        public BookReservationController(IAuditLogService auditLogService, ApplicationUserManager userManager, IBookReservationService bookReservationService)
+            : base(auditLogService, userManager)
+        {
+            _bookReservationService = bookReservationService;
+        }
+
+        // GET: BookReservations
+        public async Task<ActionResult> Index(string searchString, string sortOrder, int? pageNumber, int pageSize = 10)
+        {
+            // Thiết lập thứ tự sắp xếp
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.ReservationDateSortParam = string.IsNullOrEmpty(sortOrder) ? "reservationDate_desc" : "";
+
+            pageNumber = pageNumber ?? 1;
+
+            var model = await _bookReservationService.GetReservations(searchString, sortOrder, pageNumber.Value, pageSize);
+
+            return View(model);
+        }
+
+        // GET: BookReservations/Details/5
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Reservation reservation = await db.Reservations.FindAsync(id);
+            var reservation = await _bookReservationService.GetReservationById(id.Value);
+
             if (reservation == null)
-            {
                 return HttpNotFound();
-            }
-            return View(Mapper.Map<ReservationViewModel>(reservation));
+
+            return View(reservation);
         }
 
-        // GET: BookReservation/Create
+        // GET: BookReservations/Create
         public ActionResult Create()
         {
-            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title");
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName");
             return View();
         }
 
-        // POST: BookReservation/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: BookReservations/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateReservationViewModel reservationVM)
         {
             if (ModelState.IsValid)
             {
-                var reservation = Mapper.Map<Reservation>(reservationVM);
-                db.Reservations.Add(reservation);
-                await db.SaveChangesAsync();
+                await _bookReservationService.CreateReservation(reservationVM);
+                SetToast("Thành công", "Đặt sách thành công!", Commons.ToastType.Success);
                 return RedirectToAction("Index");
             }
 
-            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", reservationVM.BookId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", reservationVM.UserId);
             return View(reservationVM);
         }
 
-        // GET: BookReservation/Edit/5
-        public async Task<ActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Reservation reservation = await db.Reservations.FindAsync(id);
-            if (reservation == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", reservation.BookId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", reservation.UserId);
-            return View(Mapper.Map<EditReservationViewModel>(reservation));
-        }
-
-        // POST: BookReservation/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit( EditReservationViewModel reservationVM)
-        {
-            if (ModelState.IsValid)
-            {
-                var reservation = Mapper.Map<Reservation>(reservationVM);
-                db.Entry(reservation).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", reservationVM.BookId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", reservationVM.UserId);
-            return View(reservationVM);
-        }
-
-        // GET: BookReservation/Delete/5
+        // GET: BookReservations/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Reservation reservation = await db.Reservations.FindAsync(id);
+            var reservation = await _bookReservationService.GetReservationById(id.Value);
+
             if (reservation == null)
-            {
                 return HttpNotFound();
-            }
+
             return View(reservation);
         }
 
-        // POST: BookReservation/Delete/5
+        // POST: BookReservations/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            Reservation reservation = await db.Reservations.FindAsync(id);
-            db.Reservations.Remove(reservation);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
+            var reservation = await _bookReservationService.GetReservationById(id);
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
-        }
-
-        // GET: BookReservation/Status
-        public async Task<ActionResult> Status()
-        {
-            var userId = User.Identity.GetUserId();
-            var reservations = await db.Reservations
-                                       .Where(r => r.UserId == userId)
-                                       .Include(r => r.Book)
-                                       .ToListAsync();
-            return View(reservations);
-        }
-
-        public async Task<ActionResult> UpdateStatus(int reservationId, string status)
-        {
-            var reservation = db.Reservations.Find(reservationId);
             if (reservation == null)
-            {
                 return HttpNotFound();
-            }
 
-            reservation.Status = status;
-            await db.SaveChangesAsync();
-            return RedirectToAction("Status");
+            await _bookReservationService.DeleteReservation(id);
+            SetToast("Thành công", "Xóa đặt sách thành công!", Commons.ToastType.Success);
+            await LogActionAsync("Xóa", "Đặt sách", $"Đã xóa đặt sách có ID: {id}");
+            return RedirectToAction(nameof(Index));
         }
 
     }

@@ -41,6 +41,15 @@
                 htmlAttributes: new { title = "Manage", @class = "dropdown-item" }
             )
         </li>
+        <li class="nav-item">
+            @Html.ActionLink(
+                "Nhập ký hoạt động",
+                "Index",
+                "AuditLog",
+                routeValues: null,
+                htmlAttributes: new { title = "Nhập ký hoạt động", @class = "dropdown-item" }
+            )
+        </li>
         <li><hr class="dropdown-divider"></li>
         <li class="nav-item">
             <a href="javascript:document.getElementById('logoutForm').submit()"

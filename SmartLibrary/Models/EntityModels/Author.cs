@@ -9,7 +9,7 @@ namespace SmartLibrary.Models.EntityModels
         public string AuthorName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Biography { get; set; }
-
+        public string AvatarImage { get; set; }
         // Navigation property for BookAuthor
         public virtual ICollection<BookAuthor> BookAuthors { get; set; }
     }

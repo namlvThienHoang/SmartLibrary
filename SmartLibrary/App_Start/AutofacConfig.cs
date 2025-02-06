@@ -1,6 +1,8 @@
 ﻿using Autofac;
 using Autofac.Integration.Mvc;
 using AutoMapper;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using SmartLibrary.Models;
 using SmartLibrary.Models.Mappings;
 using SmartLibrary.Repositories.Implementations;
@@ -48,11 +50,26 @@ namespace SmartLibrary.App_Start
             builder.RegisterType<BookRepository>().As<IBookRepository>().InstancePerRequest();
             builder.RegisterType<CategoryRepository>().As<ICategoryRepository>().InstancePerRequest();
             builder.RegisterType<AuthorRepository>().As<IAuthorRepository>().InstancePerRequest();
+            builder.RegisterType<AuditLogRepository>().As<IAuditLogRepository>().InstancePerRequest();
+            builder.RegisterType<BorrowBookRepository>().As<IBorrowBookRepository>().InstancePerRequest();
+            builder.RegisterType<BookReservationRepository>().As<IBookReservationRepository>().InstancePerRequest();
 
             // Đăng ký Service
             builder.RegisterType<BookService>().As<IBookService>().InstancePerRequest();
             builder.RegisterType<CategoryService>().As<ICategoryService>().InstancePerRequest();
             builder.RegisterType<AuthorService>().As<IAuthorService>().InstancePerRequest();
+            builder.RegisterType<AuditLogService>().As<IAuditLogService>().InstancePerRequest();
+            builder.RegisterType<BorrowBookService>().As<IBorrowBookService>().InstancePerRequest();
+            builder.RegisterType<BookReservationService>().As<IBookReservationService>().InstancePerRequest();
+
+            builder.RegisterType<UserStore<ApplicationUser>>()
+                   .As<IUserStore<ApplicationUser>>() // Đăng ký IUserStore<ApplicationUser>
+                   .InstancePerLifetimeScope();
+
+            builder.RegisterType<ApplicationUserManager>()
+                   .AsSelf()
+                   .InstancePerLifetimeScope();
+
 
             // Đăng ký các Controller
             builder.RegisterControllers(Assembly.GetExecutingAssembly());

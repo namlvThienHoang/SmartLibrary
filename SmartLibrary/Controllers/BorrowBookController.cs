@@ -12,140 +12,99 @@ using SmartLibrary.Models.EntityModels;
 using AutoMapper;
 using SmartLibrary.Models.ViewModels.BorrowBook;
 using SmartLibrary.Utilities.Helpers;
+using SmartLibrary.Services.Interfaces;
 
 namespace SmartLibrary.Controllers
 {
     public class BorrowBookController : BaseController
     {
-        private ApplicationDbContext db = new ApplicationDbContext();
+        private readonly IBorrowBookService _borrowBookService;
 
-        // GET: BorrowBook
-        public async Task<ActionResult> Index()
+        public BorrowBookController(IAuditLogService auditLogService, ApplicationUserManager userManager, IBorrowBookService borrowBookService)
+            : base(auditLogService, userManager)
         {
-            var borrowTransactions = await db.BorrowTransactions.ToListAsync();
-            return View(Mapper.Map<List<BorrowBookViewModel>>(borrowTransactions));
+            _borrowBookService = borrowBookService;
         }
 
-        // GET: BorrowBook/Details/5
+        // GET: BorrowBooks
+        public async Task<ActionResult> Index(string searchString, string sortOrder, int? pageNumber, int pageSize = 10)
+        {
+            // Thiết lập thứ tự sắp xếp
+            ViewBag.CurrentSort = sortOrder;
+            ViewBag.BorrowDateSortParam = string.IsNullOrEmpty(sortOrder) ? "borrowDate_desc" : "";
+
+            pageNumber = pageNumber ?? 1;
+
+            var model = await _borrowBookService.GetBorrowedBooks(searchString, sortOrder, pageNumber.Value, pageSize);
+
+            return View(model);
+        }
+
+        // GET: BorrowBooks/Details/5
         public async Task<ActionResult> Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            BorrowTransaction borrowTransaction = await db.BorrowTransactions.FindAsync(id);
-            if (borrowTransaction == null)
-            {
+            var borrowBook = await _borrowBookService.GetBorrowBookById(id.Value);
+
+            if (borrowBook == null)
                 return HttpNotFound();
-            }
-            return View(Mapper.Map<BorrowBookViewModel>(borrowTransaction));
+
+            return View(borrowBook);
         }
 
-        // GET: BorrowBook/Create
+        // GET: BorrowBooks/Create
         public ActionResult Create()
         {
-            // Giả sử bạn đã có danh sách users và books từ cơ sở dữ liệu
-            var users = db.Users.Select(u => new SelectListItem { Text = u.FullName, Value = u.Id.ToString() }).ToList();
-            var books = db.Books.Select(b => new SelectListItem { Text = b.Title, Value = b.BookId.ToString() }).ToList();
-
-            ViewBag.Users = new SelectList(users, "Value", "Text");
-            ViewBag.Books = new SelectList(books, "Value", "Text");
-
-            ViewBag.Statuses = new SelectList(Commons.StatusList.GetStatuses(), "Value", "Text");
-
             return View();
         }
 
-        // POST: BorrowBook/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: BorrowBooks/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateBorrowBookViewModel borrowTransactionVM)
+        public async Task<ActionResult> Create(CreateBorrowBookViewModel borrowBookVM)
         {
-            var borrowTransaction = Mapper.Map<BorrowTransaction>(borrowTransactionVM);
             if (ModelState.IsValid)
             {
-                db.BorrowTransactions.Add(borrowTransaction);
-                await db.SaveChangesAsync();
+                await _borrowBookService.CreateBorrowBook(borrowBookVM);
+                SetToast("Thành công", "Mượn sách thành công!", Commons.ToastType.Success);
                 return RedirectToAction("Index");
             }
 
-            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", borrowTransactionVM.BookId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", borrowTransactionVM.UserId) ;
-            return View(borrowTransactionVM);
+            return View(borrowBookVM);
         }
 
-        // GET: BorrowBook/Edit/5
-        public async Task<ActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            BorrowTransaction borrowTransaction = await db.BorrowTransactions.FindAsync(id);
-            if (borrowTransaction == null)
-            {
-                return HttpNotFound();
-            }
-            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", borrowTransaction.BookId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", borrowTransaction.UserId);
-            ViewBag.Statuses = new SelectList(Commons.StatusList.GetStatuses(), "Value", "Text");
-            return View(Mapper.Map<EditBorrowBookViewModel>(borrowTransaction));
-        }
-
-        // POST: BorrowBook/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(EditBorrowBookViewModel borrowTransactionVM)
-        {
-            var borrowTransaction = Mapper.Map<BorrowTransaction>(borrowTransactionVM);
-            if (ModelState.IsValid)
-            {
-                db.Entry(borrowTransaction).State = EntityState.Modified;
-                await db.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            ViewBag.BookId = new SelectList(db.Books, "BookId", "Title", borrowTransactionVM.BookId);
-            ViewBag.UserId = new SelectList(db.Users, "Id", "FullName", borrowTransactionVM.UserId);
-            return View(borrowTransactionVM);
-        }
-
-        // GET: BorrowBook/Delete/5
+        // GET: BorrowBooks/Delete/5
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            BorrowTransaction borrowTransaction = await db.BorrowTransactions.FindAsync(id);
-            if (borrowTransaction == null)
-            {
+            var borrowBook = await _borrowBookService.GetBorrowBookById(id.Value);
+
+            if (borrowBook == null)
                 return HttpNotFound();
-            }
-            return View(borrowTransaction);
+
+            return View(borrowBook);
         }
 
-        // POST: BorrowBook/Delete/5
+        // POST: BorrowBooks/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
-            BorrowTransaction borrowTransaction = await db.BorrowTransactions.FindAsync(id);
-            db.BorrowTransactions.Remove(borrowTransaction);
-            await db.SaveChangesAsync();
-            return RedirectToAction("Index");
-        }
+            var borrowBook = await _borrowBookService.GetBorrowBookById(id);
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
+            if (borrowBook == null)
+                return HttpNotFound();
+
+            await _borrowBookService.DeleteBorrowBook(id);
+            SetToast("Thành công", "Xóa mượn sách thành công!", Commons.ToastType.Success);
+            await LogActionAsync("Xóa", "Mượn sách", $"Đã xóa mượn sách có ID: {id}");
+            return RedirectToAction(nameof(Index));
         }
     }
 }

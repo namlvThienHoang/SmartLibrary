@@ -15,15 +15,27 @@ namespace SmartLibrary.Repositories.Implementations
         public ICategoryRepository CategoryRepository { get; }
         public IAuthorRepository AuthorRepository { get; }
 
+        public IAuditLogRepository AuditLogRepository { get; }
+
+        public IBorrowBookRepository BorrowBookRepository { get; }
+
+        public IBookReservationRepository BookReservationRepository { get; }
+
         public UnitOfWork(ApplicationDbContext context,
                           IBookRepository bookRepository,
                           ICategoryRepository categoryRepository,
-                          IAuthorRepository authorRepository)
+                          IAuthorRepository authorRepository,
+                          IAuditLogRepository auditLogRepository,
+                          IBorrowBookRepository borrowBookRepository,
+                          IBookReservationRepository bookReservationRepository)
         {
             _context = context;
             BookRepository = bookRepository;
             CategoryRepository = categoryRepository;
             AuthorRepository = authorRepository;
+            AuditLogRepository = auditLogRepository;
+            BorrowBookRepository = borrowBookRepository;
+            BookReservationRepository = bookReservationRepository;
         }
 
         public int SaveChanges()
