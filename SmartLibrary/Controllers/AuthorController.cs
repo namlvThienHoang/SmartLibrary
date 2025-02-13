@@ -17,6 +17,8 @@ using SmartLibrary.Services.Interfaces;
 
 namespace SmartLibrary.Controllers
 {
+    [AutoLogAndToast]
+    [Authorize]
     public class AuthorController : BaseController
     {
         private readonly IAuthorService _authorService;
@@ -70,13 +72,33 @@ namespace SmartLibrary.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateAuthorViewModel authorVM)
+        public async Task<ActionResult> Create(CreateAuthorViewModel authorVM, HttpPostedFileBase coverImage)
         {
             if (ModelState.IsValid)
             {
-                await _authorService.CreateAuthor(authorVM);
-                SetToast("Thành công", "Thêm mới tác giả thành công!", Commons.ToastType.Success);
-                return RedirectToAction("Index");
+                try
+                {
+                    // Upload ảnh bìa
+                    if (coverImage != null && coverImage.ContentLength > 0)
+                    {
+                        string uploadFolderPath = Server.MapPath("~/Uploads/Authors");
+                        authorVM.AvatarImage = FileHelper.UploadFile(coverImage, uploadFolderPath, "/Uploads/Authors");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Vui lòng chọn ảnh bìa.");
+                        return View(authorVM);
+                    }
+
+                    await _authorService.CreateAuthor(authorVM);
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Lỗi khi upload ảnh: " + ex.Message);
+                    return View(authorVM);
+                }
+                
             }
 
             return View(authorVM);
@@ -102,11 +124,10 @@ namespace SmartLibrary.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(EditAuthorViewModel authorVM)
+        public async Task<ActionResult> Edit(EditAuthorViewModel authorVM, HttpPostedFileBase AvatarImage)
         {
             if (!ModelState.IsValid)
             {
-                SetToast("Thất bại", "Dữ liệu không hợp lệ!", Commons.ToastType.Error);
                 // Trả lại view với thông báo lỗi nếu ModelState không hợp lệ
                 return View(authorVM);
             }
@@ -118,10 +139,34 @@ namespace SmartLibrary.Controllers
                 return HttpNotFound();
             }
 
-            await _authorService.EditAuthor(authorVM);
-            SetToast("Thành công", "Chỉnh sửa tác giả thành công!", Commons.ToastType.Success);
-            await LogActionAsync("Chỉnh sửa", "Tác giả", $"Đã chỉnh sửa tác giả có tên: {author.AuthorName}");
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                // Nếu có ảnh mới được upload
+                if (AvatarImage != null && AvatarImage.ContentLength > 0)
+                {
+                    // Xóa ảnh cũ nếu tồn tại
+                    if (!string.IsNullOrEmpty(author.AvatarImage))
+                    {
+                        FileHelper.DeleteFile(author.AvatarImage);
+                    }
+
+                    // Upload ảnh mới
+                    string uploadFolderPath = Server.MapPath("~/Uploads/Authors");
+                    authorVM.AvatarImage = FileHelper.UploadFile(AvatarImage, uploadFolderPath, "/Uploads/Authors");
+                }
+
+                // Cập nhật thông tin sách
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await _authorService.EditAuthor(authorVM);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Lỗi khi cập nhật: " + ex.Message);
+                return View(authorVM);
+            }
+
+            
         }
 
         // GET: Authors/Delete/5

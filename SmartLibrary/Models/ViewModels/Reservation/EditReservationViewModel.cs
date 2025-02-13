@@ -19,11 +19,12 @@ namespace SmartLibrary.Models.ViewModels.Reservation
         [Display(Name = "Tên người dùng")]
         public string UserId { get; set; }
 
-        [Required]
         [Display(Name = "Trạng thái")]
         public string Status { get; set; }
 
         [Display(Name = "Ngày hủy")]
         public DateTime? CancelDate { get; set; }
+        public string UserName { get; set; }
+        public string BookTitle { get; set; }
     }
 }

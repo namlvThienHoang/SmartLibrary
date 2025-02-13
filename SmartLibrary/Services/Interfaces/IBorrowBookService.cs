@@ -12,7 +12,9 @@ namespace SmartLibrary.Services.Interfaces
     {
         Task<PagedResult<BorrowBookViewModel>> GetBorrowedBooks(string searchString, string sortOrder, int pageNumber, int pageSize);
         Task<BorrowBookViewModel> GetBorrowBookById(int id);
+        Task<EditBorrowBookViewModel> GetBorrowBookEditById(int id);
         Task CreateBorrowBook(CreateBorrowBookViewModel borrowBookVM);
+        Task EditBorrowBook(EditBorrowBookViewModel borrowBookVM);
         Task DeleteBorrowBook(int id);
     }
 }

@@ -51,17 +51,29 @@
                             <td>@Html.DisplayFor(modelItem => item.UserName)</td>
                             <td>@Html.DisplayFor(modelItem => item.ReservationDate)</td>
                             <td>@Html.DisplayFor(modelItem => item.CancelDate)</td>
-                            <td>
+                            <td class="text-center">
                                 <div class="btn-group" role="group">
-                                    <a href="@Url.Action("Edit", new { id = item.ReservationId })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </a>
-                                    <a href="@Url.Action("Details", new { id = item.ReservationId })" class="btn btn-sm btn-info text-white" title="Xem chi tiết">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </a>
-                                    <a href="@Url.Action("Delete", new { id = item.ReservationId })" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </a>
+                                    <!-- Dropdown nhóm các thao tác với kích thước nhỏ -->
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="Thao tác">
+                                        <i class="fa-solid fa-gear"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a href="@Url.Action("HuyDatTruoc", new { id = item.ReservationId })" class="dropdown-item" title="Chỉnh sửa">
+                                                <i class="fa-solid fa-ban me-2"></i> Hủy đặt trước
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Details", new { id = item.ReservationId })" class="dropdown-item" title="Xem chi tiết">
+                                                <i class="fa-solid fa-eye me-2"></i> Xem chi tiết
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="@Url.Action("Delete", new { id = item.ReservationId })" class="dropdown-item text-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                <i class="fa-solid fa-trash me-2"></i> Xóa
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </div>
                             </td>
                         </tr>

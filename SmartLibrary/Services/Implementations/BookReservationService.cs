@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using static SmartLibrary.Models.ModelCommons;
 
 namespace SmartLibrary.Services.Implementations
 {
@@ -50,6 +51,7 @@ namespace SmartLibrary.Services.Implementations
         public async Task CreateReservation(CreateReservationViewModel reservationVM)
         {
             var reservation = _mapper.Map<Reservation>(reservationVM);
+            reservation.Status = ReservationStatus.DangCho;
             await _unitOfWork.BookReservationRepository.AddReservationAsync(reservation);
             await _unitOfWork.SaveChangesAsync();
         }
@@ -57,6 +59,19 @@ namespace SmartLibrary.Services.Implementations
         public async Task DeleteReservation(int id)
         {
             await _unitOfWork.BookReservationRepository.DeleteReservationAsync(id);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<EditReservationViewModel> GetReservationEditById(int id)
+        {
+            var reservation = await _unitOfWork.BookReservationRepository.GetReservationByIdAsync(id);
+            return _mapper.Map<EditReservationViewModel>(reservation);
+        }
+
+        public async Task EditReservation(EditReservationViewModel reservationVM)
+        {
+            var reservation = _mapper.Map<Reservation>(reservationVM);
+            await _unitOfWork.BookReservationRepository.UpdateReservationAsync(reservation);
             await _unitOfWork.SaveChangesAsync();
         }
     }

@@ -1,6 +1,7 @@
 ﻿using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
 using SmartLibrary.Repositories.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -62,7 +63,16 @@ namespace SmartLibrary.Repositories.Implementations
 
         public async Task UpdateCategoryAsync(Category Category)
         {
-            _context.Entry(Category).State = EntityState.Modified;
+            var existingCategory = await _context.Categories
+                .FindAsync(Category.CategoryId);
+
+            if (existingCategory == null)
+            {
+                throw new InvalidOperationException("Không tìm thấy loại sách.");
+            }
+
+            // Cập nhật thông tin sách
+            _context.Entry(existingCategory).CurrentValues.SetValues(Category);
         }
 
         public async Task DeleteAsync(int id)

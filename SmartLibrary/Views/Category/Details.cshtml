@@ -1,36 +1,49 @@
 ﻿@model SmartLibrary.Models.ViewModels.Category.CategoryViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Chi Tiết Loại Sách";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0">Chi Tiết Loại Sách</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <h4 class="fw-bold">Thông Tin Loại Sách</h4>
+                    <hr />
+                    <dl class="row">
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Name)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Name)
+                        </dd>
 
-<div>
-    <h4>CategoryViewModel</h4>
-    <hr />
-    <dl class="dl-horizontal">
+                        <dt class="col-sm-4">
+                            @Html.DisplayNameFor(model => model.Description)
+                        </dt>
+                        <dd class="col-sm-8">
+                            @Html.DisplayFor(model => model.Description)
+                        </dd>
+                    </dl>
+                </div>
+                <div class="col-md-6">
+                    <img src="@Model.CoverImage" alt="Ảnh Bìa Loại Sách" class="img-fluid rounded shadow-sm" />
+                </div>
+            </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-
-    </dl>
+            <div class="mt-4 text-center">
+                <a href="@Url.Action("Edit", "Category", new { id = Model.Id })" class="btn btn-warning"><i class="bi bi-pencil"></i> Chỉnh sửa</a>
+                <a href="@Url.Action("Index", "Category")" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại danh sách</a>
+            </div>
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Chỉnh sửa", "Edit", new { /* id = Model.PrimaryKey */ }) |
-    @Html.ActionLink("Quay lại danh sách", "Index")
-</p>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

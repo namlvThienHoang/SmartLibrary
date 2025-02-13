@@ -1,21 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using SmartLibrary.Models;
-using SmartLibrary.Models.EntityModels;
-using AutoMapper;
 using SmartLibrary.Models.ViewModels.BorrowBook;
 using SmartLibrary.Utilities.Helpers;
 using SmartLibrary.Services.Interfaces;
+using SmartLibrary.Models;
+using System.Data.Entity;
+using System;
+using System.Collections.Generic;
 
 namespace SmartLibrary.Controllers
 {
+    [Authorize]
+    [AutoLogAndToast]
     public class BorrowBookController : BaseController
     {
         private readonly IBorrowBookService _borrowBookService;
@@ -56,8 +53,16 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: BorrowBooks/Create
-        public ActionResult Create()
+        public async Task<ActionResult> Create()
         {
+            using (var context = new ApplicationDbContext())
+            {
+                var users = await context.Users.ToListAsync();
+                var books = await context.Books.ToListAsync();
+                ViewBag.Users = new SelectList(users, "Id", "FullName");
+                ViewBag.Books = new SelectList(books, "BookId", "Title");
+            }
+
             return View();
         }
 
@@ -72,8 +77,74 @@ namespace SmartLibrary.Controllers
                 SetToast("Thành công", "Mượn sách thành công!", Commons.ToastType.Success);
                 return RedirectToAction("Index");
             }
-
+            using (var context = new ApplicationDbContext())
+            {
+                var users = await context.Users.ToListAsync();
+                var books = await context.Books.ToListAsync();
+                ViewBag.Users = new SelectList(users, "Id", "FullName");
+                ViewBag.Books = new SelectList(books, "BookId", "Title");
+            }
             return View(borrowBookVM);
+        }
+
+        // GET: BorrowBook/Edit/5
+        public async Task<ActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            var borrowBook = await _borrowBookService.GetBorrowBookEditById(id.Value);
+
+            if (borrowBook == null)
+                return HttpNotFound();
+            using (var context = new ApplicationDbContext())
+            {
+                var users = await context.Users.ToListAsync();
+                var books = await context.Books.ToListAsync();
+                ViewBag.Users = new SelectList(users, "Id", "FullName", borrowBook.UserId);
+                ViewBag.Books = new SelectList(books, "BookId", "Title", borrowBook.BookId);
+            }
+            return View(borrowBook);
+        }
+
+        // POST: Book/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(EditBorrowBookViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            // Tìm sách trong cơ sở dữ liệu
+            var borrowBook = await _borrowBookService.GetBorrowBookEditById(model.BorrowTransactionId);
+
+            if (borrowBook == null)
+            {
+                return HttpNotFound();
+            }
+
+            try
+            {
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await _borrowBookService.EditBorrowBook(borrowBook);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    var users = await context.Users.ToListAsync();
+                    var books = await context.Books.ToListAsync();
+                    ViewBag.Users = new SelectList(users, "Id", "FullName", borrowBook.UserId);
+                    ViewBag.Books = new SelectList(books, "BookId", "Title", borrowBook.BookId);
+                }
+                ModelState.AddModelError("", "Lỗi khi cập nhật: " + ex.Message);
+                return View(borrowBook);
+            }
         }
 
         // GET: BorrowBooks/Delete/5
@@ -102,8 +173,6 @@ namespace SmartLibrary.Controllers
                 return HttpNotFound();
 
             await _borrowBookService.DeleteBorrowBook(id);
-            SetToast("Thành công", "Xóa mượn sách thành công!", Commons.ToastType.Success);
-            await LogActionAsync("Xóa", "Mượn sách", $"Đã xóa mượn sách có ID: {id}");
             return RedirectToAction(nameof(Index));
         }
     }

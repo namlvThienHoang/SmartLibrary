@@ -47,5 +47,7 @@ namespace SmartLibrary.Models.ViewModels.User
 
         [Display(Name = "Trạng thái")]
         public string Status { get; set; }
+        [Display(Name = "Hình ảnh")]
+        public string AvatarURL { get; set; }
     }
 }

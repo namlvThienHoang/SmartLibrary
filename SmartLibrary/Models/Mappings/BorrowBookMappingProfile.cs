@@ -17,7 +17,9 @@ namespace SmartLibrary.Models.Mappings
             CreateMap<CreateBorrowBookViewModel, BorrowTransaction>();
 
             CreateMap<EditBorrowBookViewModel, BorrowTransaction>();
-            CreateMap<BorrowTransaction, EditBorrowBookViewModel>();
+            CreateMap<BorrowTransaction, EditBorrowBookViewModel>()
+                .ForMember(des => des.BookTitle, act => act.MapFrom(src => src.Book.Title))
+                .ForMember(des => des.UserName, act => act.MapFrom(src => src.User.FullName));
         }
     }
 }

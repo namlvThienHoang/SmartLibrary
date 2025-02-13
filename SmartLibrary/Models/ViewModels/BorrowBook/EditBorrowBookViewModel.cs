@@ -21,5 +21,7 @@ namespace SmartLibrary.Models.ViewModels.BorrowBook
 
         [Display(Name = "Trạng thái")]
         public string Status { get; set; }
+        public string UserName { get; set; }
+        public string BookTitle { get; set; }
     }
 }

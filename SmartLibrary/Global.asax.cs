@@ -1,5 +1,10 @@
-﻿using AutoMapper;
+﻿using Autofac;
+using Autofac.Integration.Mvc;
+using AutoMapper;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using SmartLibrary.App_Start;
+using SmartLibrary.Models;
 using SmartLibrary.Models.Mappings;
 using System;
 using System.Collections.Generic;
@@ -31,6 +36,7 @@ namespace SmartLibrary
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
             // Đăng ký Autofac
             AutofacConfig.RegisterDependencies();
         }

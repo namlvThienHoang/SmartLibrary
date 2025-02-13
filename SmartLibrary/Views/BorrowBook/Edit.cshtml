@@ -1,82 +1,89 @@
 ﻿@model SmartLibrary.Models.ViewModels.BorrowBook.EditBorrowBookViewModel
 
 @{
-    ViewBag.Title = "Edit";
+    ViewBag.Title = "Trả sách";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Edit</h2>
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0"><i class="fas fa-book-open"></i> Trả Sách</h3>
+        </div>
+        <div class="card-body">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
+                @Html.HiddenFor(model => model.BorrowTransactionId)
 
+                <div class="row">
+                    <!-- Người mượn -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"><i class="fas fa-user"></i> Người mượn</label>
+                            <p class="form-control-plaintext">@Model.UserName</p>
+                        </div>
+                    </div>
 
-@using (Html.BeginForm())
-{
-    @Html.AntiForgeryToken()
-    
-<div class="form-horizontal">
-    <h4>BorrowTransaction</h4>
-    <hr />
-    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    @Html.HiddenFor(model => model.BorrowTransactionId)
+                    <!-- Sách -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"><i class="fas fa-book"></i> Sách</label>
+                            <p class="form-control-plaintext">@Model.BookTitle</p>
+                        </div>
+                    </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.UserId, "UserId", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownList("UserId", null, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
+                    <!-- Ngày mượn -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"><i class="fas fa-calendar-alt"></i> Ngày mượn</label>
+                            <p class="form-control-plaintext">@Model.BorrowDate.ToString("dd/MM/yyyy")</p>
+                        </div>
+                    </div>
+
+                    <!-- Ngày đến hạn -->
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold"><i class="fas fa-clock"></i> Ngày đến hạn</label>
+                            <p class="form-control-plaintext">@Model.DueDate</p>
+                        </div>
+                    </div>
+
+                    <!-- Ngày trả (editable) -->
+                    <div class="col-md-12">
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.ReturnDate, "Ngày trả", new { @class = "form-label fw-bold" })
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-undo"></i></span>
+                                @Html.TextBoxFor(model => model.ReturnDate, new { @class = "form-control", type = "date" })
+                            </div>
+                            @Html.ValidationMessageFor(model => model.ReturnDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-success btn-save">
+                        <i class="fas fa-save"></i> Lưu thay đổi
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            }
         </div>
     </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.BookId, "BookId", htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownList("BookId", null, htmlAttributes: new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.BookId, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.BorrowDate, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(model => model.BorrowDate, new { @class = "form-control", type = "date" })
-            @Html.ValidationMessageFor(model => model.BorrowDate, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.DueDate, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(model => model.DueDate, new { @class = "form-control", type = "date" })
-            @Html.ValidationMessageFor(model => model.DueDate, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.ReturnDate, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.TextBoxFor(model => model.ReturnDate, new { @class = "form-control", type = "date" })
-            @Html.ValidationMessageFor(model => model.ReturnDate, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        @Html.LabelFor(model => model.Status, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownListFor(model => model.Status, (SelectList)ViewBag.Statuses, "Chọn trạng thái", new { @class = "form-control" })
-            @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    <div class="form-group">
-        <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Lưu" class="btn btn-primary" />
-        </div>
-    </div>
-</div>
-}
-
-<div>
-    @Html.ActionLink("Quay lại danh sách", "Index")
 </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $(document).ready(function () {
+            $(".btn-save").on("click", function () {
+                $(this).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...').prop("disabled", true);
+                $("form").submit();
+            });
+        });
+    </script>
 }

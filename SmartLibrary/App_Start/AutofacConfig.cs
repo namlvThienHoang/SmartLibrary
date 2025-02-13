@@ -27,7 +27,7 @@ namespace SmartLibrary.App_Start
             // Đăng ký DbContext
             builder.RegisterType<ApplicationDbContext>()
                    .AsSelf()  // Đăng ký là ApplicationDbContext
-                   .InstancePerRequest(); // Hoặc có thể là InstancePerLifetimeScope tùy vào phạm vi
+                   .InstancePerLifetimeScope(); // Hoặc có thể là InstancePerLifetimeScope tùy vào phạm vi
 
 
             // Đăng ký AutoMapper

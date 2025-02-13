@@ -16,6 +16,10 @@ namespace SmartLibrary.Models.Mappings
             CreateMap<EditCategoryViewModel, Category>()
                 .ForMember(des => des.CategoryId, act => act.MapFrom(src => src.Id))
                 .ForMember(des => des.CategoryName, act => act.MapFrom(src => src.Name));
+
+            CreateMap<Category, EditCategoryViewModel>()
+                .ForMember(des => des.Id, act => act.MapFrom(src => src.CategoryId))
+                .ForMember(des => des.Name, act => act.MapFrom(src => src.CategoryName));
         }
     }
 }

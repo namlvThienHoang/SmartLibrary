@@ -18,6 +18,8 @@ using System.IO;
 
 namespace SmartLibrary.Controllers
 {
+    [Authorize]
+    [AutoLogAndToast]
     public class BookController : BaseController
     {
         private readonly IBookService _bookService;
@@ -79,7 +81,7 @@ namespace SmartLibrary.Controllers
                     if (coverImage != null && coverImage.ContentLength > 0)
                     {
                         string uploadFolderPath = Server.MapPath("~/Uploads/Books");
-                        model.CoverImage = FileHelper.UploadFile(coverImage, uploadFolderPath);
+                        model.CoverImage = FileHelper.UploadFile(coverImage, uploadFolderPath, "/Uploads/Books");
                     }
                     else
                     {
@@ -154,7 +156,7 @@ namespace SmartLibrary.Controllers
 
                     // Upload ảnh mới
                     string uploadFolderPath = Server.MapPath("~/Uploads/Books");
-                    model.CoverImage = FileHelper.UploadFile(CoverImage, uploadFolderPath);
+                    model.CoverImage = FileHelper.UploadFile(CoverImage, uploadFolderPath, "/Uploads/Books");
                 }
 
                 // Cập nhật thông tin sách

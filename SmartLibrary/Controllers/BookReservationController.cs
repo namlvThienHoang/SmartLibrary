@@ -1,22 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Data.Entity;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using SmartLibrary.Models;
-using SmartLibrary.Models.EntityModels;
-using AutoMapper;
 using SmartLibrary.Models.ViewModels.Reservation;
-using Microsoft.AspNet.Identity;
 using SmartLibrary.Services.Interfaces;
 using SmartLibrary.Utilities.Helpers;
+using SmartLibrary.Models;
+using System.Data.Entity;
+using System.Collections.Generic;
+using System;
+using static SmartLibrary.Models.ModelCommons;
 
 namespace SmartLibrary.Controllers
 {
+    [Authorize]
+    [AutoLogAndToast]
     public class BookReservationController : BaseController
     {
         public BookReservationController(IAuditLogService auditLogService, ApplicationUserManager userManager)
@@ -62,8 +59,23 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: BookReservations/Create
-        public ActionResult Create()
+        public async  Task<ActionResult> Create()
         {
+            using (var context = new ApplicationDbContext())
+            {
+                var users = await context.Users.ToListAsync();
+                var books = await context.Books.ToListAsync();
+                ViewBag.Users = new SelectList(users, "Id", "FullName");
+                ViewBag.Books = new SelectList(books, "BookId", "Title");
+            }
+            var statuses = new List<string>
+                {
+                    ModelCommons.ReservationStatus.DangCho,
+                    ModelCommons.ReservationStatus.DaHuy,
+                    ModelCommons.ReservationStatus.HoanTat
+                };
+
+            ViewBag.Statuses = new SelectList(statuses);
             return View();
         }
 
@@ -75,11 +87,70 @@ namespace SmartLibrary.Controllers
             if (ModelState.IsValid)
             {
                 await _bookReservationService.CreateReservation(reservationVM);
-                SetToast("Thành công", "Đặt sách thành công!", Commons.ToastType.Success);
                 return RedirectToAction("Index");
             }
-
+            using (var context = new ApplicationDbContext())
+            {
+                var users = await context.Users.ToListAsync();
+                var books = await context.Books.ToListAsync();
+                ViewBag.Users = new SelectList(users, "Id", "FullName");
+                ViewBag.Books = new SelectList(books, "BookId", "Title");
+            }
             return View(reservationVM);
+        }
+
+
+        // GET: BookReservations/HuyDatTruoc/5
+        public async Task<ActionResult> HuyDatTruoc(int? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            var reservation = await _bookReservationService.GetReservationEditById(id.Value);
+
+            if (reservation == null)
+            {
+                return HttpNotFound();
+            }
+            return View(reservation);
+        }
+
+        // POST: BookReservations/HuyDatTruoc/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> HuyDatTruoc(EditReservationViewModel reservationViewModel)
+        {
+
+            if (!ModelState.IsValid)
+            {
+                return View(reservationViewModel);
+            }
+
+            // Tìm sách trong cơ sở dữ liệu
+            var category = await _bookReservationService.GetReservationEditById(reservationViewModel.ReservationId);
+            if (category == null)
+            {
+                return HttpNotFound();
+            }
+
+            try
+            {
+                if(reservationViewModel.CancelDate.HasValue)
+                {
+                    reservationViewModel.Status = ReservationStatus.DaHuy;
+                }
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await _bookReservationService.EditReservation(reservationViewModel);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Lỗi khi cập nhật: " + ex.Message);
+                return View(reservationViewModel);
+            }
         }
 
         // GET: BookReservations/Delete/5
@@ -108,8 +179,6 @@ namespace SmartLibrary.Controllers
                 return HttpNotFound();
 
             await _bookReservationService.DeleteReservation(id);
-            SetToast("Thành công", "Xóa đặt sách thành công!", Commons.ToastType.Success);
-            await LogActionAsync("Xóa", "Đặt sách", $"Đã xóa đặt sách có ID: {id}");
             return RedirectToAction(nameof(Index));
         }
 

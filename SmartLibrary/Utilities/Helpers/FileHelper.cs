@@ -38,7 +38,7 @@ namespace SmartLibrary.Utilities.Helpers
         }
 
         // Phương thức upload file
-        public static string UploadFile(HttpPostedFileBase file, string uploadFolderPath)
+        public static string UploadFile(HttpPostedFileBase file, string uploadFolderPath, string folderBasePath)
         {
             if (file == null || file.ContentLength == 0)
                 throw new ArgumentException("File không hợp lệ.");
@@ -61,7 +61,8 @@ namespace SmartLibrary.Utilities.Helpers
             file.SaveAs(fullPath);
 
             // Trả về đường dẫn tương đối
-            return $"/Uploads/Books/{fileName}";
+            //return $"/Uploads/Books/{fileName}";
+            return $"{folderBasePath}/{fileName}";
         }
 
         // Phương thức xóa file

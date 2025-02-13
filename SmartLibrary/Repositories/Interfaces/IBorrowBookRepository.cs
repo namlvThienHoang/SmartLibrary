@@ -12,6 +12,7 @@ namespace SmartLibrary.Repositories.Interfaces
         Task<(IEnumerable<BorrowTransaction> BorrowedBooks, int TotalCount)> GetBorrowedBooksAsync(string searchString, string sortOrder, int pageNumber, int pageSize);
         Task<BorrowTransaction> GetBorrowBookByIdAsync(int id);
         Task AddBorrowBookAsync(BorrowTransaction borrowBook);
+        Task UpdateBorrowBookAsync(BorrowTransaction borrowBook);
         Task DeleteBorrowBookAsync(int id);
     }
 }

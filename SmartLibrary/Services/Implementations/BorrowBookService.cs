@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using static SmartLibrary.Models.ModelCommons;
 
 namespace SmartLibrary.Services.Implementations
 {
@@ -49,8 +50,8 @@ namespace SmartLibrary.Services.Implementations
 
         public async Task CreateBorrowBook(CreateBorrowBookViewModel borrowBookVM)
         {
-            
             var borrowBook = _mapper.Map<BorrowTransaction>(borrowBookVM);
+            borrowBook.Status = BorrowBookStatus.ChưaTra;
             await _unitOfWork.BorrowBookRepository.AddBorrowBookAsync(borrowBook);
             await _unitOfWork.SaveChangesAsync();
         }
@@ -58,6 +59,25 @@ namespace SmartLibrary.Services.Implementations
         public async Task DeleteBorrowBook(int id)
         {
             await _unitOfWork.BorrowBookRepository.DeleteBorrowBookAsync(id);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<EditBorrowBookViewModel> GetBorrowBookEditById(int id)
+        {
+            var borrowBook = await _unitOfWork.BorrowBookRepository.GetBorrowBookByIdAsync(id);
+            return _mapper.Map<EditBorrowBookViewModel>(borrowBook); 
+        }
+
+        public async Task EditBorrowBook(EditBorrowBookViewModel borrowBookVM)
+        {
+
+            var borrowBook = await _unitOfWork.BorrowBookRepository.GetBorrowBookByIdAsync(borrowBookVM.BorrowTransactionId);
+            if (borrowBookVM.ReturnDate.HasValue)
+            {
+                borrowBook.ReturnDate = borrowBookVM.ReturnDate.Value;
+                borrowBook.Status = BorrowBookStatus.DaTra;
+            }
+            await _unitOfWork.BorrowBookRepository.UpdateBorrowBookAsync(borrowBook);
             await _unitOfWork.SaveChangesAsync();
         }
     }

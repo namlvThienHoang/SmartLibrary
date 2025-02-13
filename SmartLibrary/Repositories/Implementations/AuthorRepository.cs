@@ -1,6 +1,7 @@
 ﻿using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
 using SmartLibrary.Repositories.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -62,8 +63,16 @@ namespace SmartLibrary.Repositories.Implementations
 
         public async Task UpdateAuthorAsync(Author Author)
         {
-            // Đánh dấu đối tượng đã sửa đổi
-            _context.Entry(Author).State = EntityState.Modified;
+            var existingAuthor = await _context.Authors
+                .FindAsync(Author.AuthorId);
+
+            if (existingAuthor == null)
+            {
+                throw new InvalidOperationException("Không tìm thấy tác giả.");
+            }
+
+            // Cập nhật thông tin sách
+            _context.Entry(existingAuthor).CurrentValues.SetValues(Author);
         }
 
         public async Task DeleteAuthorAsync(int id)

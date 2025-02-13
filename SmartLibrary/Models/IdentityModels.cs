@@ -16,6 +16,7 @@ namespace SmartLibrary.Models
         public DateTime? DateOfBirth { get; set; }
         public string Address { get; set; }
         public string Status { get; set; }
+        public string AvatarURL { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 

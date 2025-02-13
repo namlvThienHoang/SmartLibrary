@@ -1,56 +1,81 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "Giới thiệu";
 }
 
-<div class="container mt-4">
-    <h1 class="text-center text-primary">Giới thiệu về SmartLibrary</h1>
-    <p class="text-center">Hệ thống quản lý thư viện thông minh - Đơn giản, Hiệu quả, Chuyên nghiệp.</p>
+<div class="container mt-5">
+    <h1 class="text-center text-primary fw-bold">📖 Giới thiệu về SmartLibrary</h1>
+    <p class="text-center text-muted fs-5">Hệ thống quản lý thư viện thông minh - Đơn giản, Hiệu quả, Chuyên nghiệp.</p>
 
     <div class="row mt-5">
         <!-- Mục tiêu -->
         <div class="col-md-6">
-            <h3 class="text-primary">Mục tiêu</h3>
-            <p>
-                SmartLibrary được phát triển nhằm mục đích:
-            </p>
-            <ul>
-                <li>Quản lý sách và tài liệu trong thư viện một cách khoa học.</li>
-                <li>Đơn giản hóa quá trình mượn trả sách.</li>
-                <li>Hỗ trợ người dùng tìm kiếm và truy cập tài liệu nhanh chóng.</li>
-            </ul>
+            <div class="card shadow-sm border-0 rounded-lg p-3 custom-card">
+                <div class="card-body">
+                    <h3 class="text-primary fw-bold"><i class="fas fa-bullseye"></i> Mục tiêu</h3>
+                    <p class="text-muted">SmartLibrary được phát triển nhằm mục đích:</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-check-circle text-success"></i> Quản lý sách và tài liệu trong thư viện một cách khoa học.</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Đơn giản hóa quá trình mượn trả sách.</li>
+                        <li><i class="fas fa-check-circle text-success"></i> Hỗ trợ người dùng tìm kiếm và truy cập tài liệu nhanh chóng.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
 
         <!-- Tính năng chính -->
         <div class="col-md-6">
-            <h3 class="text-primary">Tính năng chính</h3>
-            <ul>
-                <li>Quản lý danh sách sách, người dùng, danh mục.</li>
-                <li>Quản lý mượn trả sách.</li>
-                <li>Thống kê và báo cáo.</li>
-                <li>Tùy chỉnh cấu hình hệ thống.</li>
-            </ul>
+            <div class="card shadow-sm border-0 rounded-lg p-3 custom-card">
+                <div class="card-body">
+                    <h3 class="text-primary fw-bold"><i class="fas fa-cogs"></i> Tính năng chính</h3>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-book text-info"></i> Quản lý danh sách sách, người dùng, danh mục.</li>
+                        <li><i class="fas fa-exchange-alt text-warning"></i> Quản lý mượn trả sách.</li>
+                        <li><i class="fas fa-chart-line text-success"></i> Thống kê và báo cáo.</li>
+                        <li><i class="fas fa-sliders-h text-secondary"></i> Tùy chỉnh cấu hình hệ thống.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="row mt-5">
         <!-- Đội ngũ phát triển -->
         <div class="col-md-6">
-            <h3 class="text-primary">Đội ngũ phát triển</h3>
-            <p>
-                SmartLibrary được phát triển bởi một nhóm các lập trình viên đam mê công nghệ và mong muốn mang lại giải pháp quản lý thư viện tốt nhất cho các tổ chức và doanh nghiệp.
-            </p>
+            <div class="card shadow-sm border-0 rounded-lg p-3 custom-card">
+                <div class="card-body">
+                    <h3 class="text-primary fw-bold"><i class="fas fa-users"></i> Đội ngũ phát triển</h3>
+                    <p class="text-muted">
+                        SmartLibrary được phát triển bởi một nhóm các lập trình viên đam mê công nghệ và mong muốn mang lại giải pháp quản lý thư viện tốt nhất cho các tổ chức và doanh nghiệp.
+                    </p>
+                </div>
+            </div>
         </div>
 
         <!-- Liên hệ -->
         <div class="col-md-6">
-            <h3 class="text-primary">Liên hệ</h3>
-            <p>Để biết thêm thông tin hoặc hỗ trợ, vui lòng liên hệ:</p>
-            <ul>
-                <li>Email: support@smartlibrary.com</li>
-                <li>Điện thoại: 0123-456-789</li>
-                <li>Địa chỉ: 123 Thư viện, Thành phố Công nghệ</li>
-            </ul>
+            <div class="card shadow-sm border-0 rounded-lg p-3 custom-card">
+                <div class="card-body">
+                    <h3 class="text-primary fw-bold"><i class="fas fa-envelope"></i> Liên hệ</h3>
+                    <p class="text-muted">Để biết thêm thông tin hoặc hỗ trợ, vui lòng liên hệ:</p>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-envelope text-danger"></i> Email: <a href="mailto:support@smartlibrary.com">support@smartlibrary.com</a></li>
+                        <li><i class="fas fa-phone text-primary"></i> Điện thoại: 0123-456-789</li>
+                        <li><i class="fas fa-map-marker-alt text-success"></i> Địa chỉ: 123 Thư viện, Thành phố Công nghệ</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<style>
+    .custom-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 12px;
+    }
+
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        }
+</style>

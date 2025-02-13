@@ -19,7 +19,9 @@ namespace SmartLibrary.Models.Mappings
             CreateMap<CreateReservationViewModel, Reservation>();
 
             CreateMap<EditReservationViewModel, Reservation>();
-            CreateMap<Reservation, EditReservationViewModel>();
+            CreateMap<Reservation, EditReservationViewModel>()
+                .ForMember(des => des.BookTitle, act => act.MapFrom(src => src.Book.Title))
+                .ForMember(des => des.UserName, act => act.MapFrom(src => src.User.FullName));
         }
     }
 }

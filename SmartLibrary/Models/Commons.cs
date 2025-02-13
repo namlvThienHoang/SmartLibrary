@@ -9,5 +9,24 @@
             public static string User = "User";
         }
 
+        public static class UserStatus
+        {
+            public static string HoatDong = "Hoạt động";
+            public static string KhongHoatDong = "Không hoạt động";
+        }
+
+        public static class BorrowBookStatus
+        {
+            public static string DaTra = "Đã trả";
+            public static string ChưaTra = "Chưa trả";
+        }
+
+        public static class ReservationStatus
+        {
+            public static string DangCho = "Đang chờ";
+            public static string DaHuy = "Đã hủy";
+            public static string HoanTat = "Hoàn tất";
+        }
+
     }
 }

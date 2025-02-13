@@ -2,77 +2,103 @@
     ViewBag.Title = "Trang Chủ";
 }
 
-<div class="container mt-4">
-    <h1 class="text-center text-primary">Chào mừng đến với Hệ thống Thư viện Thông minh</h1>
-    <p class="text-center">Quản lý sách, danh mục, người dùng và mượn trả sách một cách dễ dàng.</p>
+<div class="container mt-5">
+    <h1 class="text-center text-primary fw-bold">📚 Chào mừng đến với Hệ thống Thư viện Thông minh</h1>
+    <p class="text-center text-muted">Quản lý sách, danh mục, người dùng và mượn trả sách một cách dễ dàng.</p>
 
-    <div class="row mt-5">
-        <!-- Card: Quản lý sách -->
+    <div class="row mt-4">
+        <!-- Quản lý Sách -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm rounded-lg custom-card">
                 <div class="card-body">
-                    <h5 class="card-title">Quản lý Sách</h5>
-                    <p class="card-text">Thêm mới, chỉnh sửa và theo dõi danh sách sách trong thư viện.</p>
-                    <a href="@Url.Action("Index", "Book")" class="btn btn-primary">Xem chi tiết</a>
+                    <i class="fas fa-book fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title fw-bold">Quản lý Sách</h5>
+                    <p class="card-text text-muted">Thêm mới, chỉnh sửa và theo dõi danh sách sách trong thư viện.</p>
+                    <a href="@Url.Action("Index", "Book")" class="btn btn-outline-primary">📖 Xem chi tiết</a>
                 </div>
             </div>
         </div>
 
-        <!-- Card: Quản lý Danh mục -->
+        <!-- Quản lý Danh mục -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm rounded-lg custom-card">
                 <div class="card-body">
-                    <h5 class="card-title">Quản lý Danh mục</h5>
-                    <p class="card-text">Quản lý danh mục sách để dễ dàng tổ chức và tìm kiếm.</p>
-                    <a href="@Url.Action("Index", "Category")" class="btn btn-primary">Xem chi tiết</a>
+                    <i class="fas fa-list-alt fa-3x text-success mb-3"></i>
+                    <h5 class="card-title fw-bold">Quản lý Danh mục</h5>
+                    <p class="card-text text-muted">Quản lý danh mục sách để dễ dàng tổ chức và tìm kiếm.</p>
+                    <a href="@Url.Action("Index", "Category")" class="btn btn-outline-success">📂 Xem chi tiết</a>
                 </div>
             </div>
         </div>
 
-        <!-- Card: Quản lý Người dùng -->
+        <!-- Quản lý Người dùng -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm rounded-lg custom-card">
                 <div class="card-body">
-                    <h5 class="card-title">Quản lý Người dùng</h5>
-                    <p class="card-text">Quản lý tài khoản người dùng và phân quyền.</p>
-                    <a href="@Url.Action("Index", "User")" class="btn btn-primary">Xem chi tiết</a>
+                    <i class="fas fa-users fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title fw-bold">Quản lý Người dùng</h5>
+                    <p class="card-text text-muted">Quản lý tài khoản người dùng và phân quyền.</p>
+                    <a href="@Url.Action("Index", "User")" class="btn btn-outline-danger">👤 Xem chi tiết</a>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row mt-5">
-        <!-- Card: Mượn trả sách -->
+    <div class="row mt-4">
+        <!-- Mượn trả sách -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm rounded-lg custom-card">
                 <div class="card-body">
-                    <h5 class="card-title">Mượn Trả Sách</h5>
-                    <p class="card-text">Quản lý mượn trả sách dễ dàng và nhanh chóng.</p>
-                    <a href="@Url.Action("Index", "BorrowBook")" class="btn btn-primary">Xem chi tiết</a>
+                    <i class="fas fa-exchange-alt fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title fw-bold">Mượn Trả Sách</h5>
+                    <p class="card-text text-muted">Quản lý mượn trả sách dễ dàng và nhanh chóng.</p>
+                    <a href="@Url.Action("Index", "BorrowBook")" class="btn btn-outline-warning">📖 Xem chi tiết</a>
                 </div>
             </div>
         </div>
 
-        <!-- Card: Thống kê -->
+        <!-- Thống kê -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm rounded-lg custom-card">
                 <div class="card-body">
-                    <h5 class="card-title">Thống kê</h5>
-                    <p class="card-text">Xem báo cáo và thống kê tình trạng thư viện.</p>
-                    <a href="@Url.Action("Report", "Statistics")" class="btn btn-primary">Xem chi tiết</a>
+                    <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+                    <h5 class="card-title fw-bold">Thống kê</h5>
+                    <p class="card-text text-muted">Xem báo cáo và thống kê tình trạng thư viện.</p>
+                    <a href="@Url.Action("Report", "Statistics")" class="btn btn-outline-info">📊 Xem chi tiết</a>
                 </div>
             </div>
         </div>
 
-        <!-- Card: Cài đặt hệ thống -->
+        <!-- Cài đặt hệ thống -->
         <div class="col-md-4">
-            <div class="card text-center shadow-sm">
+            <div class="card text-center shadow-sm rounded-lg custom-card">
                 <div class="card-body">
-                    <h5 class="card-title">Cài đặt hệ thống</h5>
-                    <p class="card-text">Tùy chỉnh cài đặt và cấu hình hệ thống.</p>
-                    <a href="@Url.Action("Settings", "Admin")" class="btn btn-primary">Xem chi tiết</a>
+                    <i class="fas fa-cogs fa-3x text-secondary mb-3"></i>
+                    <h5 class="card-title fw-bold">Cài đặt hệ thống</h5>
+                    <p class="card-text text-muted">Tùy chỉnh cài đặt và cấu hình hệ thống.</p>
+                    <a href="@Url.Action("Settings", "Admin")" class="btn btn-outline-secondary">⚙️ Xem chi tiết</a>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    .custom-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 12px;
+    }
+
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+        }
+
+    .card-body i {
+        transition: transform 0.3s ease;
+    }
+
+    .custom-card:hover .card-body i {
+        transform: scale(1.1);
+    }
+</style>

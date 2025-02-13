@@ -1,43 +1,47 @@
 ﻿@model SmartLibrary.Models.ViewModels.Author.AuthorViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Chi Tiết Tác Giả";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0">Chi Tiết Tác Giả</h3>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 d-flex flex-column align-items-center">
+                    <label class="form-label fw-bold">Ảnh đại diện</label>
+                    <img src="@Model.AvatarImage" alt="Ảnh đại diện" class="img-fluid rounded shadow" style="max-width: 200px; max-height: 200px;" />
+                </div>
+                <div class="col-md-8">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tên Tác Giả</label>
+                        <p>@Model.AuthorName</p>
+                    </div>
 
-<div>
-    <h4>Author</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.AuthorName)
-        </dt>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Ngày Sinh</label>
+                        <p>@Model.DateOfBirth.ToString("dd/MM/yyyy")</p>
+                    </div>
 
-        <dd>
-            @Html.DisplayFor(model => model.AuthorName)
-        </dd>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Tiểu Sử</label>
+                        <p>@Model.Biography</p>
+                    </div>
 
-        <dt>
-            @Html.DisplayNameFor(model => model.DateOfBirth)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.DateOfBirth)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.Biography)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.Biography)
-        </dd>
-
-    </dl>
+                    <div class="text-center mt-4">
+                        <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-warning"><i class="bi bi-pencil"></i> Chỉnh sửa</a>
+                        <a href="@Url.Action("Index")" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Chỉnh sửa", "Edit", new { id = Model.AuthorId }) |
-    @Html.ActionLink("Quay lại danh sách", "Index")
-</p>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

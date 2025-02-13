@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
 using SmartLibrary.Utilities.Helpers;
-using SmartLibrary.Models;
 using SmartLibrary.Models.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using SmartLibrary.Services.Interfaces;
-using SmartLibrary.Services.Implementations;
 
 namespace SmartLibrary.Controllers
 {
@@ -30,6 +27,16 @@ namespace SmartLibrary.Controllers
             await _auditLogService.LogActionAsync(action, entity, details, userId);
         }
 
+        public async Task LogSuccessAsync(string action, string entity, string details)
+        {
+            await LogActionAsync(action, entity, $"Thành công: {details}");
+        }
+
+        public async Task LogErrorAsync(string action, string entity, string errorMessage)
+        {
+            await LogActionAsync(action, entity, $"Thất bại: {errorMessage}");
+        }
+
         // Handle common error response or actions
         protected ActionResult HandleError(string errorMessage)
         {
@@ -43,6 +50,16 @@ namespace SmartLibrary.Controllers
             TempData["ToastTitle"] = HttpUtility.HtmlEncode(title);    // Mã hóa nội dung
             TempData["ToastMessage"] = HttpUtility.HtmlEncode(message);
             TempData["ToastType"] = type;
+        }
+
+        public void SetSuccessToast(string message)
+        {
+            SetToast("Thành công", message, "success");
+        }
+
+        public void SetErrorToast(string message)
+        {
+            SetToast("Thất bại", message, "error");
         }
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)

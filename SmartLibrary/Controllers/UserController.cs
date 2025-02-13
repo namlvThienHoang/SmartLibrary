@@ -11,39 +11,87 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 using SmartLibrary.Services.Interfaces;
+using System.Web;
+using System;
 
 namespace SmartLibrary.Controllers
 {
+    [AutoLogAndToast]
+    [Authorize]
     public class UserController : BaseController
     {
+        private ApplicationUserManager UserManager;
         public UserController(IAuditLogService auditLogService, ApplicationUserManager userManager)
         : base(auditLogService, userManager) // Gọi constructor của BaseController
         {
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            UserManager = new ApplicationUserManager(userStore);
         }
 
         // CREATE: /User/Create
         [HttpGet]
         public ActionResult Create()
         {
+            // Use the static roles from ModelCommons.Roles
+            var roles = new List<string>
+                {
+                    ModelCommons.Roles.Admin,
+                    ModelCommons.Roles.Manager,
+                    ModelCommons.Roles.User
+                };
+
+            // Set the roles to ViewBag.Roles as a SelectList
+            ViewBag.Roles = new SelectList(roles);
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateUserViewModel model)
+        public async Task<ActionResult> Create(CreateUserViewModel model, HttpPostedFileBase coverImage)
         {
             if (ModelState.IsValid)
             {
-                var user = Mapper.Map<ApplicationUser>(model);
-                var result = await _userManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                try
                 {
-                    // Optionally assign default role to the user after creation
-                    await _userManager.AddToRoleAsync(user.Id, "User");
-                    return RedirectToAction("Index");
+                    // Upload ảnh bìa
+                    if (coverImage != null && coverImage.ContentLength > 0)
+                    {
+                        string uploadFolderPath = Server.MapPath("~/Uploads/Users");
+                        model.AvatarURL = FileHelper.UploadFile(coverImage, uploadFolderPath, "/Uploads/Users");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Vui lòng chọn hình ảnh.");
+                        return View(model);
+                    }
+
+                    var user = Mapper.Map<ApplicationUser>(model);
+                    var result = await UserManager.CreateAsync(user, model.Password);
+                    if (result.Succeeded)
+                    {
+                        // Optionally assign default role to the user after creation
+                        await UserManager.AddToRoleAsync(user.Id, model.Role);
+                        return RedirectToAction("Index");
+                    }
+                    AddErrors(result);
                 }
-                AddErrors(result);
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Lỗi khi upload ảnh: " + ex.Message);
+                    return View(model);
+                }
+                
             }
+            // Use the static roles from ModelCommons.Roles
+            var roles = new List<string>
+                {
+                    ModelCommons.Roles.Admin,
+                    ModelCommons.Roles.Manager,
+                    ModelCommons.Roles.User
+                };
+
+            // Set the roles to ViewBag.Roles as a SelectList
+            ViewBag.Roles = new SelectList(roles);
             return View(model);
         }
 
@@ -55,7 +103,7 @@ namespace SmartLibrary.Controllers
             ViewBag.UserNameSortParam = string.IsNullOrEmpty(sortOrder) ? "username_desc" : "";
 
             // Lấy dữ liệu ban đầu
-            var query = _userManager.Users.AsQueryable();
+            var query = UserManager.Users.AsQueryable();
 
 
             // Áp dụng tìm kiếm
@@ -108,7 +156,7 @@ namespace SmartLibrary.Controllers
         [HttpGet]
         public async Task<ActionResult> Details(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await UserManager.FindByIdAsync(id);
             if (user == null)
             {
                 return HttpNotFound();
@@ -121,14 +169,21 @@ namespace SmartLibrary.Controllers
         [HttpGet]
         public async Task<ActionResult> Edit(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await UserManager.FindByIdAsync(id);
             if (user == null)
             {
                 return HttpNotFound();
             }
 
             var model = Mapper.Map<EditUserViewModel>(user);
+            var roles = new List<string>
+                {
+                    ModelCommons.Roles.Admin,
+                    ModelCommons.Roles.Manager,
+                    ModelCommons.Roles.User
+                };
 
+            ViewBag.Roles = new SelectList(roles, model.Role);
             return View(model);
         }
 
@@ -138,7 +193,7 @@ namespace SmartLibrary.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = await _userManager.FindByIdAsync(model.Id);
+                var user = await UserManager.FindByIdAsync(model.Id);
                 if (user == null)
                 {
                     return HttpNotFound();
@@ -153,13 +208,21 @@ namespace SmartLibrary.Controllers
                 user.Status = model.Status;
                 // Update other properties as needed
 
-                var result = await _userManager.UpdateAsync(user);
+                var result = await UserManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
                     return RedirectToAction("Index");
                 }
                 AddErrors(result);
             }
+            var roles = new List<string>
+                {
+                    ModelCommons.Roles.Admin,
+                    ModelCommons.Roles.Manager,
+                    ModelCommons.Roles.User
+                };
+
+            ViewBag.Roles = new SelectList(roles, model.Role);
             return View(model);
         }
 
@@ -167,7 +230,7 @@ namespace SmartLibrary.Controllers
         [HttpGet]
         public async Task<ActionResult> Delete(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await UserManager.FindByIdAsync(id);
             if (user == null)
             {
                 return HttpNotFound();
@@ -179,13 +242,13 @@ namespace SmartLibrary.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteConfirmed(string id)
         {
-            var user = await _userManager.FindByIdAsync(id);
+            var user = await UserManager.FindByIdAsync(id);
             if (user == null)
             {
                 return HttpNotFound();
             }
 
-            var result = await _userManager.DeleteAsync(user);
+            var result = await UserManager.DeleteAsync(user);
             if (result.Succeeded)
             {
                 return RedirectToAction("Index");

@@ -67,8 +67,15 @@
                             <li><a class="dropdown-item" href="@Url.Action("Index", "Category")">Loại sách</a></li>
                         </ul>
                     </li>
-
-                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "BorrowBook")">📚 Mượn/Trả sách</a></li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="bookManagementDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            📚 Mượn/Trả/Đặt trước sách
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="bookManagementDropdown">
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "BorrowBook")">Mượn sách</a></li>
+                            <li><a class="dropdown-item" href="@Url.Action("Index", "BookReservation")">Đặt trước sách</a></li>
+                        </ul>
+                    </li>
                 </ul>
 
                 <div class="ms-auto d-flex align-items-center">

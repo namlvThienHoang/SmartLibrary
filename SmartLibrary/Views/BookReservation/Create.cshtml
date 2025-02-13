@@ -1,64 +1,93 @@
 ﻿@model SmartLibrary.Models.ViewModels.Reservation.CreateReservationViewModel
 
 @{
-    ViewBag.Title = "Create";
+    ViewBag.Title = "Đặt trước sách";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Create</h2>
-
-
-@using (Html.BeginForm()) 
-{
-    @Html.AntiForgeryToken()
-    
-    <div class="form-horizontal">
-        <h4>Reservation</h4>
-        <hr />
-        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-        <div class="form-group">
-            @Html.LabelFor(model => model.UserId, "UserId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("UserId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
-            </div>
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0"><i class="fas fa-calendar-plus"></i> Đặt Trước Sách</h3>
         </div>
+        <div class="card-body">
+            @using (Html.BeginForm())
+            {
+                @Html.AntiForgeryToken()
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.BookId, "BookId", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.DropDownList("BookId", null, htmlAttributes: new { @class = "form-control" })
-                @Html.ValidationMessageFor(model => model.BookId, "", new { @class = "text-danger" })
-            </div>
-        </div>
+            <div class="row">
+                <!-- Chọn sách -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.BookId, new { @class = "form-label fw-bold mb-2" })
+                        <div class="input-group">
+                            <select id="BookId" name="BookId" class="form-control select2">
+                                <option value="">-- Chọn sách --</option>
+                                @foreach (var book in ViewBag.Books as SelectList)
+                                {
+                                    <option value="@book.Value">@book.Text</option>
+                                }
+                            </select>
+                        </div>
+                        @Html.ValidationMessageFor(model => model.BookId, "", new { @class = "text-danger mt-2" })
+                    </div>
+                </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.ReservationDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.ReservationDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.ReservationDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
 
-        <div class="form-group">
-            @Html.LabelFor(model => model.CancelDate, htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-md-10">
-                @Html.EditorFor(model => model.CancelDate, new { htmlAttributes = new { @class = "form-control" } })
-                @Html.ValidationMessageFor(model => model.CancelDate, "", new { @class = "text-danger" })
-            </div>
-        </div>
+                <!-- Chọn người dùng -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.UserId, new { @class = "form-label fw-bold" })
+                        <div class="input-group">
+                            @Html.DropDownListFor(model => model.UserId, (SelectList)ViewBag.Users, "-- Chọn người dùng --", new { @class = "form-control select2" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.UserId, "", new { @class = "text-danger" })
+                    </div>
+                </div>
 
-        <div class="form-group">
-            <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Lưu" class="btn btn-primary" />
+                <!-- Ngày đặt trước -->
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        @Html.LabelFor(model => model.ReservationDate, new { @class = "form-label fw-bold" })
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                            @Html.TextBoxFor(model => model.ReservationDate, new { @class = "form-control", type = "date" })
+                        </div>
+                        @Html.ValidationMessageFor(model => model.ReservationDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
             </div>
+
+                <div class="text-center mt-3">
+                    <button type="submit" class="btn btn-success btn-save">
+                        <i class="fas fa-save"></i> Lưu đặt trước
+                    </button>
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+            }
         </div>
     </div>
-}
-
-<div>
-    @Html.ActionLink("Back to List", "Index")
 </div>
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+
+    <!-- Select2 để tìm kiếm nhanh -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('.select2').select2({
+                placeholder: "Chọn...",
+                allowClear: true
+            });
+
+            // Hiệu ứng loading nút Lưu
+            $(".btn-save").click(function () {
+                $(this).prop("disabled", true).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...');
+                $(this).closest("form").submit();
+            });
+        });
+    </script>
 }

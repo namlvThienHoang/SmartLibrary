@@ -63,5 +63,19 @@ namespace SmartLibrary.Repositories.Implementations
                 _context.BorrowTransactions.Remove(borrowBook);
             }
         }
+
+        public async Task UpdateBorrowBookAsync(BorrowTransaction borrowBook)
+        {
+            var existingBorrow = await _context.BorrowTransactions
+                .FindAsync(borrowBook.BorrowTransactionId);
+
+            if (existingBorrow == null)
+            {
+                throw new InvalidOperationException("Không tìm thấy loại sách.");
+            }
+
+            // Cập nhật thông tin sách
+            _context.Entry(existingBorrow).CurrentValues.SetValues(borrowBook);
+        }
     }
 }

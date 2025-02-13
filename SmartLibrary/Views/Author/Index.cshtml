@@ -19,22 +19,20 @@
     </div>
 </div>
 
-
-<!-- Bảng danh sách sách -->
-
+<!-- Bảng danh sách tác giả -->
 <div class="card mb-4">
     <div class="card-header">
         <h4 class="card-title d-flex justify-content-between">
             Danh sách
             @Html.ActionLink("Thêm mới", "Create", null, new { @class = "btn btn-primary" })
         </h4>
-
     </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th>Ảnh đại diện</th>
                         <th>
                             <a href="@Url.Action("Index", new { sortOrder = ViewBag.NameSortParam, searchString = Model.SearchString })">Tên tác giả</a>
                         </th>
@@ -47,6 +45,16 @@
                     @foreach (var item in Model.Items)
                     {
                         <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.AvatarImage))
+                                {
+                                    <img src="@item.AvatarImage" alt="Ảnh đại diện" class="img-thumbnail" style="width: 50px; height: 50px; object-fit: cover;" />
+                                }
+                                else
+                                {
+                                    <span class="text-muted">Chưa có ảnh</span>
+                                }
+                            </td>
                             <td>@Html.DisplayFor(modelItem => item.AuthorName)</td>
                             <td>@Html.DisplayFor(modelItem => item.DateOfBirth)</td>
                             <td>@Html.DisplayFor(modelItem => item.Biography)</td>
@@ -72,5 +80,4 @@
     <div class="card-footer">
         @Html.Partial("_Pagination", Model.Pagination)
     </div>
-
 </div>

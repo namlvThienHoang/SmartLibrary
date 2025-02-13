@@ -12,7 +12,9 @@ namespace SmartLibrary.Services.Interfaces
     {
         Task<PagedResult<ReservationViewModel>> GetReservations(string searchString, string sortOrder, int pageNumber, int pageSize);
         Task<ReservationViewModel> GetReservationById(int id);
+        Task<EditReservationViewModel> GetReservationEditById(int id);
         Task CreateReservation(CreateReservationViewModel reservationVM);
+        Task EditReservation(EditReservationViewModel reservationVM);
         Task DeleteReservation(int id);
     }
 }

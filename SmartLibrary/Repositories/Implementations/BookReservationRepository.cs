@@ -67,5 +67,19 @@ namespace SmartLibrary.Repositories.Implementations
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task UpdateReservationAsync(Reservation reservation)
+        {
+            var existingReservation = await _context.Reservations
+                .FindAsync(reservation.ReservationId);
+
+            if (existingReservation == null)
+            {
+                throw new InvalidOperationException("Không tìm thấy tác giả.");
+            }
+
+            // Cập nhật thông tin sách
+            _context.Entry(existingReservation).CurrentValues.SetValues(reservation);
+        }
     }
 }

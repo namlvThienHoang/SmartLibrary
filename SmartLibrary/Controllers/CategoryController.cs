@@ -17,6 +17,8 @@ using SmartLibrary.Services.Interfaces;
 
 namespace SmartLibrary.Controllers
 {
+    [Authorize]
+    [AutoLogAndToast]
     public class CategoryController : BaseController
     {
         private readonly ICategoryService _categoryService;
@@ -69,13 +71,34 @@ namespace SmartLibrary.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateCategoryViewModel categoryViewModel)
+        public async Task<ActionResult> Create(CreateCategoryViewModel categoryViewModel, HttpPostedFileBase coverImage)
         {
             if (ModelState.IsValid)
             {
-                await _categoryService.CreateCategory(categoryViewModel);
-                SetToast("Thành công", "Thêm mới loại sách thành công!", Commons.ToastType.Success);
-                return RedirectToAction("Index");
+                try
+                {
+                    // Upload ảnh bìa
+                    if (coverImage != null && coverImage.ContentLength > 0)
+                    {
+                        string uploadFolderPath = Server.MapPath("~/Uploads/Categories");
+                        categoryViewModel.CoverImage = FileHelper.UploadFile(coverImage, uploadFolderPath, "/Uploads/Categories");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Vui lòng chọn ảnh bìa.");
+                        return View(categoryViewModel);
+                    }
+
+                    await _categoryService.CreateCategory(categoryViewModel);
+                    SetToast("Thành công", "Thêm mới loại sách thành công!", Commons.ToastType.Success);
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Lỗi khi upload ảnh: " + ex.Message);
+                    return View(categoryViewModel);
+                }
+                
             }
 
             return View(categoryViewModel);
@@ -102,7 +125,7 @@ namespace SmartLibrary.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Edit(EditCategoryViewModel categoryViewModel)
+        public async Task<ActionResult> Edit(EditCategoryViewModel categoryViewModel, HttpPostedFileBase CoverImage)
         {
 
             if (!ModelState.IsValid)
@@ -119,10 +142,36 @@ namespace SmartLibrary.Controllers
                 return HttpNotFound();
             }
 
-            await _categoryService.EditCategory(categoryViewModel);
-            SetToast("Thành công", "Chỉnh sửa loại sách thành công!", Commons.ToastType.Success);
-            await LogActionAsync("Chỉnh sửa", "Loại sách", $"Đã chỉnh sửa loại sách có tên: {category.Name}");
-            return RedirectToAction(nameof(Index));
+            try
+            {
+                // Nếu có ảnh mới được upload
+                if (CoverImage != null && CoverImage.ContentLength > 0)
+                {
+                    // Xóa ảnh cũ nếu tồn tại
+                    if (!string.IsNullOrEmpty(category.CoverImage))
+                    {
+                        FileHelper.DeleteFile(category.CoverImage);
+                    }
+
+                    // Upload ảnh mới
+                    string uploadFolderPath = Server.MapPath("~/Uploads/Categories");
+                    categoryViewModel.CoverImage = FileHelper.UploadFile(CoverImage, uploadFolderPath, "/Uploads/Categories");
+                }
+
+                // Cập nhật thông tin sách
+                // Lưu thay đổi vào cơ sở dữ liệu
+                await _categoryService.EditCategory(categoryViewModel);
+                SetToast("Thành công", "Chỉnh sửa loại sách thành công!", Commons.ToastType.Success);
+                await LogActionAsync("Chỉnh sửa", "Loại sách", $"Đã chỉnh sửa loại sách có tên: {category.Name}");
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Lỗi khi cập nhật: " + ex.Message);
+                return View(categoryViewModel);
+            }
+
+            
         }
 
         // GET: Category/Delete/5

@@ -1,0 +1,18 @@
+﻿@model string
+
+<div class="text-center mt-4">
+    <button type="submit" id="saveBtn" class="btn btn-primary">
+        <i class="fas fa-save"></i> Lưu
+    </button>
+    @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-secondary" })
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $("#@Model").on("submit", function () {
+                $("#saveBtn").prop("disabled", true).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...');
+            });
+        });
+    </script>
+}

@@ -208,6 +208,14 @@
     <Compile Include="Migrations\202502051002157_ThemHinhAnhChoAuthorVaCategory.Designer.cs">
       <DependentUpon>202502051002157_ThemHinhAnhChoAuthorVaCategory.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202502130213583_UpdateIdentityModel.cs" />
+    <Compile Include="Migrations\202502130213583_UpdateIdentityModel.Designer.cs">
+      <DependentUpon>202502130213583_UpdateIdentityModel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202502130317592_UpdateUserAvatarURL.cs" />
+    <Compile Include="Migrations\202502130317592_UpdateUserAvatarURL.Designer.cs">
+      <DependentUpon>202502130317592_UpdateUserAvatarURL.cs</DependentUpon>
+    </Compile>
     <Compile Include="Repositories\Implementations\AuditLogRepository.cs" />
     <Compile Include="Repositories\Implementations\AuthorRepository.cs" />
     <Compile Include="Repositories\Implementations\BookRepository.cs" />
@@ -232,6 +240,7 @@
     <Compile Include="Services\Interfaces\IBookService.cs" />
     <Compile Include="Services\Interfaces\IBorrowBookService.cs" />
     <Compile Include="Services\Interfaces\ICategoryService.cs" />
+    <Compile Include="Utilities\Helpers\AutoLogAndToastAttribute.cs" />
     <Compile Include="Utilities\Helpers\BreadcrumbConfiguration.cs" />
     <Compile Include="Utilities\Helpers\Commons.cs" />
     <Compile Include="Utilities\Helpers\FileHelper.cs" />
@@ -512,11 +521,15 @@
     <Content Include="Views\AuditLog\Index.cshtml" />
     <Content Include="Views\Shared\_Notification.cshtml" />
     <Content Include="Views\Shared\_Pagination.cshtml" />
+    <Content Include="Views\Shared\_SaveAndBackButtons.cshtml" />
+    <Content Include="Views\BookReservation\HuyDatTruoc.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\ViewModels\Role\" />
+    <Folder Include="Uploads\Authors\" />
     <Folder Include="Uploads\Books\" />
+    <Folder Include="Uploads\Categories\" />
     <Folder Include="Views\Shared\Components\" />
   </ItemGroup>
   <ItemGroup>
@@ -546,6 +559,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202502051002157_ThemHinhAnhChoAuthorVaCategory.resx">
       <DependentUpon>202502051002157_ThemHinhAnhChoAuthorVaCategory.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202502130213583_UpdateIdentityModel.resx">
+      <DependentUpon>202502130213583_UpdateIdentityModel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202502130317592_UpdateUserAvatarURL.resx">
+      <DependentUpon>202502130317592_UpdateUserAvatarURL.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
