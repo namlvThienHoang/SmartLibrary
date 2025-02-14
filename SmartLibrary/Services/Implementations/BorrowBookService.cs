@@ -51,7 +51,7 @@ namespace SmartLibrary.Services.Implementations
         public async Task CreateBorrowBook(CreateBorrowBookViewModel borrowBookVM)
         {
             var borrowBook = _mapper.Map<BorrowTransaction>(borrowBookVM);
-            borrowBook.Status = BorrowBookStatus.ChưaTra;
+            borrowBook.Status = BorrowBookStatus.DangMuon;
             await _unitOfWork.BorrowBookRepository.AddBorrowBookAsync(borrowBook);
             await _unitOfWork.SaveChangesAsync();
         }
@@ -71,12 +71,7 @@ namespace SmartLibrary.Services.Implementations
         public async Task EditBorrowBook(EditBorrowBookViewModel borrowBookVM)
         {
 
-            var borrowBook = await _unitOfWork.BorrowBookRepository.GetBorrowBookByIdAsync(borrowBookVM.BorrowTransactionId);
-            if (borrowBookVM.ReturnDate.HasValue)
-            {
-                borrowBook.ReturnDate = borrowBookVM.ReturnDate.Value;
-                borrowBook.Status = BorrowBookStatus.DaTra;
-            }
+            var borrowBook = _mapper.Map<BorrowTransaction>(borrowBookVM);
             await _unitOfWork.BorrowBookRepository.UpdateBorrowBookAsync(borrowBook);
             await _unitOfWork.SaveChangesAsync();
         }

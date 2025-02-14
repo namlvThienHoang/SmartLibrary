@@ -54,4 +54,11 @@ $('.select2').select2({
     width: 'resolve'
 });
 
+$(document).ready(function () {
+    $(".btn-save").on("click", function () {
+        $(this).html('<i class="fas fa-spinner fa-spin"></i> Đang lưu...').prop("disabled", true);
+        $("form").submit();
+    });
+});
+
 

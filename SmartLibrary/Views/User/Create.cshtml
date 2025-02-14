@@ -1,4 +1,6 @@
-﻿@model SmartLibrary.Models.ViewModels.User.CreateUserViewModel
+﻿@using SmartLibrary.Models
+
+@model SmartLibrary.Models.ViewModels.User.CreateUserViewModel
 
 @{
     ViewBag.Title = "Thêm Mới Người Dùng";
@@ -25,24 +27,55 @@
                     </div>
                     <div class="col-md-8">
                         <div class="mb-3">
+                            @Html.LabelFor(model => model.UserName, new { @class = "form-label fw-bold" })
+                            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập tên người dùng" } })
+                            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="mb-3">
                             @Html.LabelFor(model => model.FullName, new { @class = "form-label fw-bold" })
-                            @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập tên đầy đủ" } })
                             @Html.ValidationMessageFor(model => model.FullName, "", new { @class = "text-danger" })
                         </div>
                         <div class="mb-3">
                             @Html.LabelFor(model => model.Email, new { @class = "form-label fw-bold" })
-                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", type = "email" } })
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control", type = "email", placeholder = "Nhập email" } })
                             @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
                         </div>
                         <div class="mb-3">
                             @Html.LabelFor(model => model.Password, new { @class = "form-label fw-bold" })
-                            @Html.PasswordFor(model => model.Password, new { @class = "form-control" })
+                            @Html.PasswordFor(model => model.Password, new { @class = "form-control", placeholder = "Nhập mật khẩu" })
                             @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger" })
                         </div>
                         <div class="mb-3">
-                            @Html.LabelFor(model => model.Role, new { @class = "form-label fw-bold" })
-                            @Html.DropDownListFor(model => model.Role, (SelectList)ViewBag.Roles, "Chọn vai trò", new { @class = "form-control select2" })
-                            @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+                            @Html.LabelFor(model => model.ConfirmPassword, new { @class = "form-label fw-bold" })
+                            @Html.PasswordFor(model => model.ConfirmPassword, new { @class = "form-control", placeholder = "Nhập lại mật khẩu" })
+                            @Html.ValidationMessageFor(model => model.ConfirmPassword, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.PhoneNumber, new { @class = "form-label fw-bold" })
+                            @Html.EditorFor(model => model.PhoneNumber, new { htmlAttributes = new { @class = "form-control", placeholder = "Nhập số điện thoại" } })
+                            @Html.ValidationMessageFor(model => model.PhoneNumber, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.DateOfBirth, new { @class = "form-label fw-bold" })
+                            @Html.TextBoxFor(model => model.DateOfBirth, new { @class = "form-control", type = "date" })
+                            @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
+                        </div>
+
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.Address, new { @class = "form-label fw-bold" })
+                            @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                        </div>
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.Roles, new { @class = "form-label fw-bold" })
+                            @Html.DropDownListFor(model => model.Roles, new SelectList(new[]
+                            {
+                                ModelCommons.Roles.Admin,
+                                ModelCommons.Roles.Manager,
+                                ModelCommons.Roles.User
+                            }), "Chọn vai trò", new { @class = "form-control select2" })
+                            @Html.ValidationMessageFor(model => model.Roles, "", new { @class = "text-danger" })
                         </div>
                         <div class="mb-3">
                             @Html.LabelFor(model => model.Status, new { @class = "form-label fw-bold" })
@@ -52,7 +85,7 @@
                     </div>
                 </div>
                 <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Lưu</button>
+                    <button type="submit" class="btn btn-success btn-save"><i class="bi bi-save"></i> Lưu</button>
                     <a href="@Url.Action("Index")" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
                 </div>
             }

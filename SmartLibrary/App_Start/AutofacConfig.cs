@@ -66,9 +66,20 @@ namespace SmartLibrary.App_Start
                    .As<IUserStore<ApplicationUser>>() // Đăng ký IUserStore<ApplicationUser>
                    .InstancePerLifetimeScope();
 
+            //builder.RegisterType<RoleStore<IdentityRole>>()
+            //       .As<IRoleStore<IdentityRole>>() // Đăng ký IUserStore<ApplicationUser>
+            //       .InstancePerLifetimeScope();
+
+
+
+
             builder.RegisterType<ApplicationUserManager>()
                    .AsSelf()
                    .InstancePerLifetimeScope();
+
+            //builder.RegisterType<ApplicationRoleManager>()
+            //       .AsSelf()
+            //       .InstancePerLifetimeScope();
 
 
             // Đăng ký các Controller

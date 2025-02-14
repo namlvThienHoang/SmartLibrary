@@ -8,6 +8,7 @@ using SmartLibrary.Models;
 using System.Data.Entity;
 using System;
 using System.Collections.Generic;
+using static SmartLibrary.Models.ModelCommons;
 
 namespace SmartLibrary.Controllers
 {
@@ -99,13 +100,6 @@ namespace SmartLibrary.Controllers
 
             if (borrowBook == null)
                 return HttpNotFound();
-            using (var context = new ApplicationDbContext())
-            {
-                var users = await context.Users.ToListAsync();
-                var books = await context.Books.ToListAsync();
-                ViewBag.Users = new SelectList(users, "Id", "FullName", borrowBook.UserId);
-                ViewBag.Books = new SelectList(books, "BookId", "Title", borrowBook.BookId);
-            }
             return View(borrowBook);
         }
 
@@ -129,19 +123,14 @@ namespace SmartLibrary.Controllers
 
             try
             {
+                borrowBook.ReturnDate = DateTime.Now;
+                borrowBook.Status = BorrowBookStatus.DaTra;
                 // Lưu thay đổi vào cơ sở dữ liệu
                 await _borrowBookService.EditBorrowBook(borrowBook);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
-                using (var context = new ApplicationDbContext())
-                {
-                    var users = await context.Users.ToListAsync();
-                    var books = await context.Books.ToListAsync();
-                    ViewBag.Users = new SelectList(users, "Id", "FullName", borrowBook.UserId);
-                    ViewBag.Books = new SelectList(books, "BookId", "Title", borrowBook.BookId);
-                }
                 ModelState.AddModelError("", "Lỗi khi cập nhật: " + ex.Message);
                 return View(borrowBook);
             }

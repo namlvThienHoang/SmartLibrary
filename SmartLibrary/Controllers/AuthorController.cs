@@ -72,36 +72,34 @@ namespace SmartLibrary.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(CreateAuthorViewModel authorVM, HttpPostedFileBase coverImage)
+        public async Task<ActionResult> Create(CreateAuthorViewModel authorVM, HttpPostedFileBase AvatarImage)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                try
+                return View(authorVM);
+            }
+            try
+            {
+                // Upload ảnh bìa
+                if (AvatarImage != null && AvatarImage.ContentLength > 0)
                 {
-                    // Upload ảnh bìa
-                    if (coverImage != null && coverImage.ContentLength > 0)
-                    {
-                        string uploadFolderPath = Server.MapPath("~/Uploads/Authors");
-                        authorVM.AvatarImage = FileHelper.UploadFile(coverImage, uploadFolderPath, "/Uploads/Authors");
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Vui lòng chọn ảnh bìa.");
-                        return View(authorVM);
-                    }
-
-                    await _authorService.CreateAuthor(authorVM);
-                    return RedirectToAction("Index");
+                    string uploadFolderPath = Server.MapPath("~/Uploads/Authors");
+                    authorVM.AvatarImage = FileHelper.UploadFile(AvatarImage, uploadFolderPath, "/Uploads/Authors");
                 }
-                catch (Exception ex)
+                else
                 {
-                    ModelState.AddModelError("", "Lỗi khi upload ảnh: " + ex.Message);
+                    ModelState.AddModelError("", "Vui lòng chọn ảnh bìa.");
                     return View(authorVM);
                 }
-                
-            }
 
-            return View(authorVM);
+                await _authorService.CreateAuthor(authorVM);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "Lỗi khi upload ảnh: " + ex.Message);
+                return View(authorVM);
+            }
         }
 
         // GET: Authors/Edit/5

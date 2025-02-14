@@ -1,75 +1,50 @@
 ﻿@using Microsoft.AspNet.Identity
+
 @if (Request.IsAuthenticated)
 {
     using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm", @class = "d-flex ms-auto" }))
     {
         @Html.AntiForgeryToken()
 
-        @*<ul class="navbar-nav">
-                <li class="nav-item">
-                    @Html.ActionLink("Xin chào " + User.Identity.GetUserName() + "!", "Index", "Manage", routeValues: null, htmlAttributes: new { title = "Manage" })
-                </li>
-                <li class="nav-item">
-                    <a href="javascript:document.getElementById('logoutForm').submit()" class="nav-link">Đăng xuất</a>
-                </li>
-            </ul>*@
-
-
-<div class="dropdown text-end">
-    <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle show" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="true">
-        <img src="https://github.com/mdo.png" alt="@User.Identity.GetUserName()" width="32" height="32" class="rounded-circle">
-    </a>
-    <ul class="dropdown-menu text-small"
-        aria-labelledby="dropdownUser1"
-        style="position: absolute; inset: 0 auto auto 0; margin: 0; transform: translate(-112px, 34px);"
-        data-popper-placement="bottom-end">
-        <li>
-            @Html.ActionLink(
-                "Cài đặt",
-                "Index",
-                "Setting",
-                routeValues: null,
-                htmlAttributes: new { title = "Cài đặt", @class = "dropdown-item" }
-            )
-        </li>
-        <li class="nav-item">
-            @Html.ActionLink(
-                "Xin chào " + User.Identity.GetUserName() + "!",
-                "Index",
-                "Manage",
-                routeValues: null,
-                htmlAttributes: new { title = "Manage", @class = "dropdown-item" }
-            )
-        </li>
-        <li class="nav-item">
-            @Html.ActionLink(
-                "Nhập ký hoạt động",
-                "Index",
-                "AuditLog",
-                routeValues: null,
-                htmlAttributes: new { title = "Nhập ký hoạt động", @class = "dropdown-item" }
-            )
-        </li>
-        <li><hr class="dropdown-divider"></li>
-        <li class="nav-item">
-            <a href="javascript:document.getElementById('logoutForm').submit()"
-               class="dropdown-item">
-                Đăng xuất
+        <div class="dropdown text-end">
+            <a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1"
+               data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://github.com/mdo.png" alt="@User.Identity.GetUserName()"
+                     width="40" height="40" class="rounded-circle border">
             </a>
-        </li>
-    </ul>
-</div>
+            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="dropdownUser1">
+                <li class="dropdown-header text-center fw-bold">
+                    <i class="fas fa-user"></i> @User.Identity.GetUserName()
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    @Html.ActionLink("Cài đặt", "Index", "Setting", null, new { @class = "dropdown-item" })
+                </li>
+                <li>
+                    @Html.ActionLink("Quản lý tài khoản", "Index", "Manage", null, new { @class = "dropdown-item" })
+                </li>
+                <li>
+                    @Html.ActionLink("Nhật ký hoạt động", "Index", "AuditLog", null, new { @class = "dropdown-item" })
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                    <a href="javascript:document.getElementById('logoutForm').submit()"
+                       class="dropdown-item text-danger">
+                        <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                    </a>
+                </li>
+            </ul>
+        </div>
     }
 }
 else
 {
     <ul class="navbar-nav ms-auto">
         <li class="nav-item">
-            @Html.ActionLink("Register", "Register", "Account", routeValues: null, htmlAttributes: new { id = "registerLink" })
+            @Html.ActionLink("Đăng ký", "Register", "Account", null, new { @class = "nav-link" })
         </li>
         <li class="nav-item">
-            @Html.ActionLink("Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+            @Html.ActionLink("Đăng nhập", "Login", "Account", null, new { @class = "nav-link" })
         </li>
     </ul>
-
 }

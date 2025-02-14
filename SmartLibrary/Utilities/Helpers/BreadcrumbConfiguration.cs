@@ -221,6 +221,100 @@ namespace SmartLibrary.Utilities.Helpers
                 }
             },
             #endregion
+
+            #region mượn/trả sách
+            {
+                "BorrowBook/Index",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Mượn/Trả sách", Url = "/BorrowBook", IsActive = true }
+                }
+            },
+            {
+                "BorrowBook/Create",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Mượn/Trả sách", Url = "/BorrowBook", IsActive = false },
+                    new BreadcrumbItem { Title = "Mượn sách", Url = "#", IsActive = true }
+                }
+            },
+            {
+                "BorrowBook/Edit",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Mượn/Trả sách", Url = "/BorrowBook", IsActive = false },
+                    new BreadcrumbItem { Title = "Trả sách", Url = "#", IsActive = true }
+                }
+            },
+            {
+                "BorrowBook/Details",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Mượn/Trả sách", Url = "/BorrowBook", IsActive = false },
+                    new BreadcrumbItem { Title = "Chi tiết mượn/trả sách", Url = "#", IsActive = true }
+                }
+            },
+            {
+                "BorrowBook/Delete",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Mượn/Trả sách", Url = "/BorrowBook", IsActive = false },
+                    new BreadcrumbItem { Title = "Xóa mượn/trả sách", Url = "#", IsActive = true }
+                }
+            },
+            #endregion
+
+            #region đặt trước sách
+            {
+                "BookReservation/Index",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Đặt trước sách", Url = "/BookReservation", IsActive = true }
+                }
+            },
+            {
+                "BookReservation/Create",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Đặt trước sách", Url = "/BookReservation", IsActive = true },
+                    new BreadcrumbItem { Title = "Đặt trước sách", Url = "#", IsActive = true }
+                }
+            },
+            {
+                "BookReservation/HuyDatTruoc",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Đặt trước sách", Url = "/BookReservation", IsActive = true },
+                    new BreadcrumbItem { Title = "Hủy đặt trước sách", Url = "#", IsActive = true }
+                }
+            },
+            {
+                "BookReservation/Details",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Đặt trước sách", Url = "/BookReservation", IsActive = true },
+                    new BreadcrumbItem { Title = "Chi tiết đặt trước sách", Url = "#", IsActive = true }
+                }
+            },
+            {
+                "BookReservation/Delete",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Đặt trước sách", Url = "/BookReservation", IsActive = true },
+                    new BreadcrumbItem { Title = "Xóa đặt trước sách", Url = "#", IsActive = true }
+                }
+            },
+            #endregion
         };
     }
 }

@@ -130,7 +130,6 @@ namespace SmartLibrary.Controllers
         {
             if (!ModelState.IsValid)
             {
-                SetToast("Thất bại", "Dữ liệu không hợp lệ!", Commons.ToastType.Error);
                 // Trả lại view với thông báo lỗi nếu ModelState không hợp lệ
                 return View(model);
             }

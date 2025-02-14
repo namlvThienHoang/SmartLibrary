@@ -1,4 +1,5 @@
-﻿@model SmartLibrary.Models.ViewModels.User.EditUserViewModel
+﻿@using SmartLibrary.Models
+@model SmartLibrary.Models.ViewModels.User.EditUserViewModel
 
 @{
     ViewBag.Title = "Chỉnh Sửa Người Dùng";
@@ -20,7 +21,7 @@
                     <!-- Cột trái: Avatar -->
                     <div class="col-md-4 d-flex flex-column align-items-center">
                         <label class="form-label fw-bold">Ảnh đại diện</label>
-                        <input type="file" id="AvatarFile" name="AvatarFile" class="form-control" accept="image/*" onchange="previewImage(event)" />
+                        <input type="file" id="AvatarURL" name="AvatarURL" class="form-control" accept="image/*" onchange="previewImage(event)" />
                         <div class="mt-3">
                             <img id="imagePreview" src="@Model.AvatarURL" alt="Ảnh đại diện" class="img-fluid rounded shadow" style="max-width: 200px; max-height: 200px;" />
                         </div>
@@ -28,6 +29,11 @@
 
                     <!-- Cột phải: Form thông tin -->
                     <div class="col-md-8">
+                        <div class="mb-3">
+                            @Html.LabelFor(model => model.UserName, new { @class = "form-label fw-bold" })
+                            @Html.EditorFor(model => model.UserName, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.UserName, "", new { @class = "text-danger" })
+                        </div>
                         <div class="mb-3">
                             @Html.LabelFor(model => model.FullName, new { @class = "form-label fw-bold" })
                             @Html.EditorFor(model => model.FullName, new { htmlAttributes = new { @class = "form-control" } })
@@ -47,7 +53,7 @@
 
                         <div class="mb-3">
                             @Html.LabelFor(model => model.DateOfBirth, new { @class = "form-label fw-bold" })
-                            @Html.TextBoxFor(model => model.DateOfBirth, new { @class = "form-control", type = "date" })
+                            @Html.TextBoxFor(model => model.DateOfBirth, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
                             @Html.ValidationMessageFor(model => model.DateOfBirth, "", new { @class = "text-danger" })
                         </div>
 
@@ -58,17 +64,25 @@
                         </div>
 
                         <div class="mb-3">
-                            @Html.LabelFor(model => model.Role, new { @class = "form-label fw-bold" })
-                            @Html.ListBoxFor(model => model.Role, (SelectList)ViewBag.Roles, new { @class = "form-control select2", multiple = "multiple" })
-                            @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+                            @Html.LabelFor(model => model.Roles, new { @class = "form-label fw-bold" })
+                            @Html.ListBoxFor(model => model.Roles,
+                                new MultiSelectList(new[]
+                                {
+                                    new { Value = ModelCommons.Roles.Admin, Text = ModelCommons.Roles.Admin },
+                                    new { Value = ModelCommons.Roles.Manager, Text = ModelCommons.Roles.Manager },
+                                    new { Value = ModelCommons.Roles.User, Text = ModelCommons.Roles.User }
+                                }, "Value", "Text", Model.Roles),
+                                new { @class = "form-control select2" })
+
+                            @Html.ValidationMessageFor(model => model.Roles, "", new { @class = "text-danger" })
                         </div>
 
                         <div class="mb-3">
                             @Html.LabelFor(model => model.Status, new { @class = "form-label fw-bold" })
                             @Html.DropDownListFor(model => model.Status, new SelectList(new[]
                             {
-                                new { Value = "Active", Text = "Hoạt động" },
-                                new { Value = "Inactive", Text = "Không hoạt động" }
+                                new { Value = ModelCommons.UserStatus.HoatDong, Text =  ModelCommons.UserStatus.HoatDong },
+                                new { Value =  ModelCommons.UserStatus.KhongHoatDong, Text =  ModelCommons.UserStatus.KhongHoatDong }
                             }, "Value", "Text"), "Chọn trạng thái", new { @class = "form-control select2" })
                             @Html.ValidationMessageFor(model => model.Status, "", new { @class = "text-danger" })
                         </div>
@@ -76,7 +90,7 @@
                 </div>
 
                 <div class="text-center mt-4">
-                    <button type="submit" class="btn btn-success"><i class="bi bi-save"></i> Lưu</button>
+                    <button type="submit" class="btn btn-success btn-save"><i class="bi bi-save"></i> Lưu</button>
                     <a href="@Url.Action("Index")" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> Quay lại</a>
                 </div>
             }

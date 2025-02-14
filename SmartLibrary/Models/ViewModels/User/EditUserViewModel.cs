@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SmartLibrary.Models.ViewModels.User
@@ -33,6 +34,6 @@ namespace SmartLibrary.Models.ViewModels.User
         [Display(Name = "Hình ảnh")]
         public string AvatarURL { get; set; }
         [Display(Name = "Vai trò")]
-        public string Role { get; set; }
+        public List<string> Roles { get; set; }
     }
 }

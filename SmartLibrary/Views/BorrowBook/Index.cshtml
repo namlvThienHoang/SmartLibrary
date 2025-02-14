@@ -1,4 +1,6 @@
-﻿@model SmartLibrary.Models.ViewModels.PagedResult<SmartLibrary.Models.ViewModels.BorrowBook.BorrowBookViewModel>
+﻿@using SmartLibrary.Models
+
+@model SmartLibrary.Models.ViewModels.PagedResult<SmartLibrary.Models.ViewModels.BorrowBook.BorrowBookViewModel>
 
 @{
     ViewBag.Title = "Index";
@@ -62,21 +64,27 @@
                                         <i class="fa-solid fa-gear"></i>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li>
-                                            <a href="@Url.Action("Edit", new { id = item.BorrowTransactionId })" class="dropdown-item" title="Chỉnh sửa">
-                                                <i class="fa-solid fa-book me-2"></i> Trả sách
-                                            </a>
-                                        </li>
+
                                         <li>
                                             <a href="@Url.Action("Details", new { id = item.BorrowTransactionId })" class="dropdown-item" title="Xem chi tiết">
                                                 <i class="fa-solid fa-eye me-2"></i> Xem chi tiết
                                             </a>
                                         </li>
-                                        <li>
-                                            <a href="@Url.Action("Delete", new { id = item.BorrowTransactionId })" class="dropdown-item text-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                                <i class="fa-solid fa-trash me-2"></i> Xóa
-                                            </a>
-                                        </li>
+
+
+                                        @if (item.Status == ModelCommons.BorrowBookStatus.DangMuon)
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("Edit", new { id = item.BorrowTransactionId })" class="dropdown-item" title="Chỉnh sửa">
+                                                    <i class="fa-solid fa-book me-2"></i> Trả sách
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Delete", new { id = item.BorrowTransactionId })" class="dropdown-item text-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                    <i class="fa-solid fa-trash me-2"></i> Xóa
+                                                </a>
+                                            </li>
+                                        }
                                     </ul>
                                 </div>
                             </td>

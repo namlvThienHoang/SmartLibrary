@@ -4,7 +4,9 @@
     <button type="submit" id="saveBtn" class="btn btn-primary">
         <i class="fas fa-save"></i> Lưu
     </button>
-    @Html.ActionLink("Quay lại", "Index", null, new { @class = "btn btn-secondary" })
+    <a href="@Url.Action("Index")" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
 </div>
 
 @section Scripts {

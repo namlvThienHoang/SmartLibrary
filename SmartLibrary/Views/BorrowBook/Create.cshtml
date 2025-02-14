@@ -51,7 +51,14 @@
             </div>
         </div>
 
-        @Html.Partial("_SaveAndBackButtons", "borrowForm") <!-- Gọi Partial View -->
+        <div class="text-center mt-3">
+            <button type="submit" class="btn btn-success btn-save">
+                <i class="fas fa-save"></i> Lưu thay đổi
+            </button>
+            <a href="@Url.Action("Index")" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Quay lại
+            </a>
+        </div>
     }
 </div>
 

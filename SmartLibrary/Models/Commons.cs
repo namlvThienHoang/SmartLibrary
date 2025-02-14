@@ -18,7 +18,7 @@
         public static class BorrowBookStatus
         {
             public static string DaTra = "Đã trả";
-            public static string ChưaTra = "Chưa trả";
+            public static string DangMuon = "Đang mượn";
         }
 
         public static class ReservationStatus

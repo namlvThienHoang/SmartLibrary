@@ -30,7 +30,7 @@ namespace SmartLibrary.Models.ViewModels.User
         public string ConfirmPassword { get; set; }
 
         [Display(Name = "Vai trò")]
-        public string Role { get; set; }
+        public List<string> Roles { get; set; }
 
         [Phone]
         [Display(Name = "Số điện thoại")]

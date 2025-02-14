@@ -1,50 +1,69 @@
-﻿@model SmartLibrary.Models.ViewModels.Reservation.ReservationViewModel
+﻿@using SmartLibrary.Models
+
+@model SmartLibrary.Models.ViewModels.Reservation.ReservationViewModel
 
 @{
-    ViewBag.Title = "Details";
+    ViewBag.Title = "Chi Tiết Đặt Trước";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<div class="container mt-4">
+    <div class="card shadow-lg">
+        <div class="card-header bg-primary text-white text-center">
+            <h3 class="mb-0"><i class="fas fa-info-circle"></i> Chi Tiết Đặt Trước</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th class="bg-light"><i class="fas fa-book"></i> Tên sách</th>
+                        <td>@Model.BookTitle</td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light"><i class="fas fa-user"></i> Người đặt</th>
+                        <td>@Model.UserName</td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light"><i class="fas fa-calendar-alt"></i> Ngày đặt trước</th>
+                        <td>@Model.ReservationDate.ToString("dd/MM/yyyy")</td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light"><i class="fas fa-times-circle"></i> Ngày hủy</th>
+                        <td>
+                            @(Model.CancelDate.HasValue ? Model.CancelDate.Value.ToString("dd/MM/yyyy") : "Chưa hủy")
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="bg-light"><i class="fas fa-tasks"></i> Trạng thái</th>
+                        <td>
+                            @if (Model.Status == ModelCommons.ReservationStatus.DangCho)
+                            {
+                                <span class="badge bg-warning text-dark"><i class="fas fa-hourglass-half"></i> @ModelCommons.ReservationStatus.DangCho</span> }
+                            else if (Model.Status == ModelCommons.ReservationStatus.DaHuy)
+                            {
+                                <span class="badge bg-danger"><i class="fas fa-times"></i> @ModelCommons.ReservationStatus.DaHuy</span> }
+                            else if (Model.Status == ModelCommons.ReservationStatus.HoanTat)
+                            {
+                                <span class="badge bg-success"><i class="fas fa-check"></i> @ModelCommons.ReservationStatus.HoanTat</span> }
+                            else
+                            {
+                                <span class="badge bg-secondary">Không xác định</span>}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
-<div>
-    <h4>Reservation</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.BookTitle)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.BookTitle)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.UserName)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.UserName)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.ReservationDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.ReservationDate)
-        </dd>
-
-        <dt>
-            @Html.DisplayNameFor(model => model.CancelDate)
-        </dt>
-
-        <dd>
-            @Html.DisplayFor(model => model.CancelDate)
-        </dd>
-
-    </dl>
+            <div class="text-center mt-3">
+                @if (Model.Status == ModelCommons.ReservationStatus.DangCho)
+                {
+                    <a href="@Url.Action("HuyDatTruoc", new { id = Model.ReservationId })" class="btn btn-warning">
+                        <i class="fas fa-ban"></i> Hủy đặt trước
+                    </a>
+                }
+                    <a href="@Url.Action("Index")" class="btn btn-secondary">
+                        <i class="fas fa-arrow-left"></i> Quay lại
+                    </a>
+                </div>
+        </div>
+    </div>
 </div>
-<p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.ReservationId }) |
-    @Html.ActionLink("Back to List", "Index")
-</p>

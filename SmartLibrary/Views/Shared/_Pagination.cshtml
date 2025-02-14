@@ -10,21 +10,21 @@
             @if (Model.PageNumber > 1)
             {
                 <li class="page-item">
-                    <a class="page-link" href="@Url.Action(ViewContext.RouteData.Values["action"].ToString(), new { page = Model.PageNumber - 1 })">Previous</a>
+                    <a class="page-link" href="@Url.Action(ViewContext.RouteData.Values["action"].ToString(), new { pageNumber = Model.PageNumber - 1 })">Previous</a>
                 </li>
             }
 
             @for (int i = 1; i <= Model.TotalPages; i++)
             {
                 <li class="page-item @(i == Model.PageNumber ? "active" : "")">
-                    <a class="page-link" href="@Url.Action(ViewContext.RouteData.Values["action"].ToString(), new { page = i })">@i</a>
+                    <a class="page-link" href="@Url.Action(ViewContext.RouteData.Values["action"].ToString(), new { pageNumber = i })">@i</a>
                 </li>
             }
 
             @if (Model.PageNumber < Model.TotalPages)
             {
                 <li class="page-item">
-                    <a class="page-link" href="@Url.Action(ViewContext.RouteData.Values["action"].ToString(), new { page = Model.PageNumber + 1 })">Next</a>
+                    <a class="page-link" href="@Url.Action(ViewContext.RouteData.Values["action"].ToString(), new { pageNumber = Model.PageNumber + 1 })">Next</a>
                 </li>
             }
         </ul>

@@ -10,12 +10,16 @@ namespace SmartLibrary.Models.Mappings
         public UserMappingProfile()
         {
             // Mapping from ApplicationUser to UserViewModel
-            CreateMap<ApplicationUser, UserViewModel>(); // If you have roles
+            CreateMap<ApplicationUser, UserViewModel>()
+                .ForMember(dest => dest.Role, opt => opt.Ignore());
 
-            CreateMap<CreateUserViewModel, ApplicationUser>();
+            CreateMap<CreateUserViewModel, ApplicationUser>()
+                     .ForMember(dest => dest.Roles, opt => opt.Ignore());
 
-            CreateMap<EditUserViewModel, ApplicationUser>();
-            CreateMap<ApplicationUser, EditUserViewModel>();
+            CreateMap<EditUserViewModel, ApplicationUser>()
+                 .ForMember(dest => dest.Roles, opt => opt.Ignore());
+            CreateMap<ApplicationUser, EditUserViewModel>()
+                .ForMember(dest => dest.Roles, opt => opt.Ignore());
         }
     }
 }

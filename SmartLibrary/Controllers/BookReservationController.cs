@@ -130,20 +130,18 @@ namespace SmartLibrary.Controllers
             }
 
             // Tìm sách trong cơ sở dữ liệu
-            var category = await _bookReservationService.GetReservationEditById(reservationViewModel.ReservationId);
-            if (category == null)
+            var reservation = await _bookReservationService.GetReservationEditById(reservationViewModel.ReservationId);
+            if (reservation == null)
             {
                 return HttpNotFound();
             }
 
             try
             {
-                if(reservationViewModel.CancelDate.HasValue)
-                {
-                    reservationViewModel.Status = ReservationStatus.DaHuy;
-                }
+                reservation.CancelDate = DateTime.Now;
+                reservation.Status = ReservationStatus.DaHuy;
                 // Lưu thay đổi vào cơ sở dữ liệu
-                await _bookReservationService.EditReservation(reservationViewModel);
+                await _bookReservationService.EditReservation(reservation);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)

@@ -7,15 +7,12 @@ namespace SmartLibrary.Models.ViewModels.Reservation
     {
         public int ReservationId { get; set; }
 
-        [Required]
         [Display(Name = "Tên sách")]
         public int BookId { get; set; }
 
-        [Required]
         [Display(Name = "Ngày đặt trước")]
         public DateTime ReservationDate { get; set; }
 
-        [Required]
         [Display(Name = "Tên người dùng")]
         public string UserId { get; set; }
 

@@ -48,18 +48,6 @@
                             <p class="form-control-plaintext">@Model.DueDate</p>
                         </div>
                     </div>
-
-                    <!-- Ngày trả (editable) -->
-                    <div class="col-md-12">
-                        <div class="mb-3">
-                            @Html.LabelFor(model => model.ReturnDate, "Ngày trả", new { @class = "form-label fw-bold" })
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-undo"></i></span>
-                                @Html.TextBoxFor(model => model.ReturnDate, new { @class = "form-control", type = "date" })
-                            </div>
-                            @Html.ValidationMessageFor(model => model.ReturnDate, "", new { @class = "text-danger" })
-                        </div>
-                    </div>
                 </div>
 
                 <div class="text-center mt-3">
