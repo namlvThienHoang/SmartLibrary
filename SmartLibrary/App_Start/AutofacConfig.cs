@@ -55,6 +55,7 @@ namespace SmartLibrary.App_Start
             builder.RegisterType<BorrowBookRepository>().As<IBorrowBookRepository>().InstancePerRequest();
             builder.RegisterType<BookReservationRepository>().As<IBookReservationRepository>().InstancePerRequest();
             builder.RegisterType<LibrarySettingRepository>().As<ILibrarySettingRepository>().InstancePerRequest();
+            builder.RegisterType<ReportRepository>().As<IReportRepository>().InstancePerRequest();
 
             // Đăng ký Service
             builder.RegisterType<BookService>().As<IBookService>().InstancePerRequest();
@@ -64,6 +65,7 @@ namespace SmartLibrary.App_Start
             builder.RegisterType<BorrowBookService>().As<IBorrowBookService>().InstancePerRequest();
             builder.RegisterType<BookReservationService>().As<IBookReservationService>().InstancePerRequest();
             builder.RegisterType<LibrarySettingService>().As<ILibrarySettingService>().InstancePerRequest();
+            builder.RegisterType<ReportService>().As<IReportService>().InstancePerRequest();
 
             builder.RegisterType<UserStore<ApplicationUser>>()
                    .As<IUserStore<ApplicationUser>>() // Đăng ký IUserStore<ApplicationUser>

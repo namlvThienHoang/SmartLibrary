@@ -1,0 +1,89 @@
+﻿@model SmartLibrary.Models.ViewModels.Report.ReportViewModel
+
+@{
+    ViewBag.Title = "Thống Kê Thư Viện";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">📊 Thống Kê Thư Viện</h2>
+
+    <!-- Card thống kê tổng quan -->
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="card text-white bg-primary mb-3 shadow">
+                <div class="card-body">
+                    <h5 class="card-title">📚 Tổng Sách</h5>
+                    <h2>@Model.TotalBooks</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-danger mb-3 shadow">
+                <div class="card-body">
+                    <h5 class="card-title">📖 Sách Đang Mượn</h5>
+                    <h2>@Model.TotalBorrowedBooks</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-success mb-3 shadow">
+                <div class="card-body">
+                    <h5 class="card-title">✅ Sách Đã Trả</h5>
+                    <h2>@Model.TotalReturnedBooks</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card text-white bg-warning mb-3 shadow">
+                <div class="card-body">
+                    <h5 class="card-title">👥 Thành Viên</h5>
+                    <h2>@Model.TotalMembers</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Thống kê theo thể loại -->
+    <h4 class="mt-4">📌 Thống kê theo thể loại</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover mt-2">
+            <thead class="table-dark">
+                <tr>
+                    <th>📌 Thể loại</th>
+                    <th>📚 Số lượng sách</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var category in Model.BookCategoryStats)
+                {
+                    <tr>
+                        <td>@category.CategoryName</td>
+                        <td>@category.NumberOfBooks</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Thống kê mượn sách theo tháng -->
+    <h4 class="mt-4">📆 Thống kê mượn sách theo tháng</h4>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover mt-2">
+            <thead class="table-success">
+                <tr>
+                    <th>📅 Tháng</th>
+                    <th>📖 Số lượng sách mượn</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.BorrowedBooksByMonth)
+                {
+                    <tr>
+                        <td>@item.Key</td>
+                        <td>@item.Value</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
