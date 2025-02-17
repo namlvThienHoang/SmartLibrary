@@ -265,6 +265,7 @@
     <Compile Include="Utilities\Helpers\AutoLogAndToastAttribute.cs" />
     <Compile Include="Utilities\Helpers\BreadcrumbConfiguration.cs" />
     <Compile Include="Utilities\Helpers\Commons.cs" />
+    <Compile Include="Utilities\Helpers\CustomAuthorizeAttribute.cs" />
     <Compile Include="Utilities\Helpers\FileHelper.cs" />
     <Compile Include="Utilities\Helpers\PaginationHelper.cs" />
     <Compile Include="Migrations\202412200223330_InitialCreate.cs" />
@@ -550,6 +551,7 @@
     <Content Include="Views\Setting\Delete.cshtml" />
     <Content Include="Views\Manage\EditProfile.cshtml" />
     <Content Include="Views\Report\Index.cshtml" />
+    <Content Include="Views\Home\AccessDenied.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

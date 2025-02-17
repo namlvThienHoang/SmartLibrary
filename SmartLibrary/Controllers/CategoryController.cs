@@ -17,7 +17,7 @@ using SmartLibrary.Services.Interfaces;
 
 namespace SmartLibrary.Controllers
 {
-    [Authorize]
+    [CustomAuthorize]
     [AutoLogAndToast]
     public class CategoryController : BaseController
     {
@@ -61,6 +61,7 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: Category/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -99,6 +100,7 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: Category/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -165,6 +167,7 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: Category/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
@@ -182,6 +185,7 @@ namespace SmartLibrary.Controllers
         // POST: Category/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             var category = await _categoryService.GetCategoryById(id);

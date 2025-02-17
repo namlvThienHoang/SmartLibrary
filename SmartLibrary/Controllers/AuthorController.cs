@@ -18,7 +18,7 @@ using SmartLibrary.Services.Interfaces;
 namespace SmartLibrary.Controllers
 {
     [AutoLogAndToast]
-    [Authorize]
+    [CustomAuthorize]
     public class AuthorController : BaseController
     {
         private readonly IAuthorService _authorService;
@@ -62,6 +62,7 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: Authors/Create
+        [Authorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();
@@ -72,6 +73,7 @@ namespace SmartLibrary.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Create(CreateAuthorViewModel authorVM, HttpPostedFileBase AvatarImage)
         {
             if (!ModelState.IsValid)
@@ -98,6 +100,7 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: Authors/Edit/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -117,6 +120,7 @@ namespace SmartLibrary.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(EditAuthorViewModel authorVM, HttpPostedFileBase AvatarImage)
         {
             if (!ModelState.IsValid)
@@ -161,6 +165,7 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: Authors/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int? id)
         {
             if (id == null)
@@ -178,6 +183,7 @@ namespace SmartLibrary.Controllers
         // POST: Authors/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             var author = await _authorService.GetAuthorById(id);

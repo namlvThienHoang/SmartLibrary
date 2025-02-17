@@ -37,22 +37,21 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
-                        <th>
+                        <th scope="col" class="text-nowrap">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().CoverImage)</th>
+                        <th scope="col" class="text-nowrap">
                             <a href="@Url.Action("Index", new { sortOrder = ViewBag.TitleSortParam, searchString = Model.SearchString })">Tiêu đề</a>
                         </th>
-                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Authors)</th>
-                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Categories)</th>
-                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Description)</th>
-                        <th>
+                        <th scope="col" class="text-nowrap">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Authors)</th>
+                        <th scope="col" class="text-nowrap">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Categories)</th>
+                        <th scope="col" class="text-nowrap">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Description)</th>
+                        <th scope="col" class="text-nowrap">
                             <a href="@Url.Action("Index", new { sortOrder = ViewBag.PublisherSortParam, searchString = Model.SearchString })">Nhà xuất bản</a>
                         </th>
-                        <th>
+                        <th scope="col" class="text-nowrap">
                             <a href="@Url.Action("Index", new { sortOrder = ViewBag.PublishedDateSortParam, searchString = Model.SearchString })">Ngày xuất bản</a>
                         </th>
-                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().ISBN)</th>
-                        <th class="text-center">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().TotalCopies)</th>
+                        <th scope="col" class="text-nowrap">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().ISBN)</th>
                         <th class="text-center">@Html.DisplayNameFor(model => model.Items.FirstOrDefault().AvailableCopies)</th>
-                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().CoverImage)</th>
                         <th class="text-center">Thao tác</th>
                     </tr>
                 </thead>
@@ -60,29 +59,52 @@
                     @foreach (var item in Model.Items)
                     {
                         <tr>
-                            <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Authors)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Categories)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                            <td>@Html.DisplayFor(modelItem => item.Publisher)</td>
-                            <td>@Html.DisplayFor(modelItem => item.PublishedDate)</td>
-                            <td>@Html.DisplayFor(modelItem => item.ISBN)</td>
-                            <td>@Html.DisplayFor(modelItem => item.TotalCopies)</td>
-                            <td>@Html.DisplayFor(modelItem => item.AvailableCopies)</td>
-                            <td>
+                            <td class="text-body">
                                 <img src="@item.CoverImage" alt="Cover Image" class="img-thumbnail" style="width: 50px; height: auto;" />
                             </td>
-                            <td>
+                            <td class="text-body">@Html.DisplayFor(modelItem => item.Title)</td>
+                            <td class="text-body">@Html.DisplayFor(modelItem => item.Authors)</td>
+                            <td class="text-body">@Html.DisplayFor(modelItem => item.Categories)</td>
+                            <td class="text-body">@Html.DisplayFor(modelItem => item.Description)</td>
+                            <td class="text-body">@Html.DisplayFor(modelItem => item.Publisher)</td>
+                            <td class="text-body">@Html.DisplayFor(modelItem => item.PublishedDate)</td>
+                            <td class="text-body">@Html.DisplayFor(modelItem => item.ISBN)</td>
+                            <td class="text-body">@Html.DisplayFor(modelItem => item.AvailableCopies)</td>
+                            <td class="text-center">
                                 <div class="btn-group" role="group">
-                                    <a href="@Url.Action("Edit", new { id = item.Id })" class="btn btn-sm btn-primary" title="Chỉnh sửa">
-                                        <i class="fa-solid fa-pen-to-square"></i>
-                                    </a>
-                                    <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-sm btn-info text-white" title="Xem chi tiết">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </a>
-                                    <a href="@Url.Action("Delete", new { id = item.Id })" class="btn btn-sm btn-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                                        <i class="fa-solid fa-trash"></i>
-                                    </a>
+                                    <!-- Dropdown nhóm các thao tác với kích thước nhỏ -->
+                                    <button type="button" class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" title="Thao tác">
+                                        <i class="fa-solid fa-gear"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        @if (User.IsInRole("Admin"))
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("Edit", new { id = item.Id })" class="dropdown-item" title="Chỉnh sửa">
+                                                    <i class="fa-solid fa-pen-to-square me-2"></i> Chỉnh sửa
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Details", new { id = item.Id })" class="dropdown-item" title="Xem chi tiết">
+                                                    <i class="fa-solid fa-eye me-2"></i> Xem chi tiết
+                                                </a>
+                                            </li>
+                                            <li>
+                                                <a href="@Url.Action("Delete", new { id = item.Id })" class="dropdown-item text-danger" title="Xóa" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                                                    <i class="fa-solid fa-trash me-2"></i> Xóa
+                                                </a>
+                                            </li>
+                                        }
+
+                                        @if (User.IsInRole("User"))
+                                        {
+                                            <li>
+                                                <a href="@Url.Action("Details", new { id = item.Id })" class="dropdown-item" title="Xem chi tiết">
+                                                    <i class="fa-solid fa-eye me-2"></i> Xem chi tiết
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
                                 </div>
                             </td>
                         </tr>

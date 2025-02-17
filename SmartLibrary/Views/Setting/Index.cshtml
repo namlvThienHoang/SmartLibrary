@@ -10,37 +10,47 @@
     <a href="@Url.Action("Create")" class="btn btn-success mb-3">
         <i class="bi bi-plus-circle"></i> Thêm Mới
     </a>
+    <!-- Toggle Dark/Light Theme -->
+    <button id="theme-toggle" class="btn btn-outline-secondary">
+        <i id="theme-icon" class="fas fa-sun"></i>
+    </button>
 
-    <table class="table table-bordered table-hover">
-        <thead class="table-dark">
-            <tr>
-                <th>#</th>
-                <th>@Html.DisplayNameFor(model => model.SettingKey)</th>
-                <th>@Html.DisplayNameFor(model => model.DataType)</th>
-                <th>@Html.DisplayNameFor(model => model.SettingValue)</th>
-                <th>@Html.DisplayNameFor(model => model.Description)</th>
-                <th>Hành động</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped align-middle" id="settingsTable">
+            <thead class="thead-dark-light">
                 <tr>
-                    <td>@item.LibrarySettingId</td>
-                    <td>@item.SettingKey</td>
-                    <td>@item.DataType</td>
-                    <td>@item.SettingValue</td>
-                    <td>@item.Description</td>
-                    <td>
-                        <a href="@Url.Action("Edit", new { id = item.LibrarySettingId })" class="btn btn-primary btn-sm">
-                            <i class="bi bi-pencil-square"></i> Sửa
+                    <th scope="col" class="text-nowrap">#</th>
+                    <th scope="col" class="text-nowrap">@Html.DisplayNameFor(model => model.SettingKey)</th>
+                    <th scope="col" class="text-nowrap">@Html.DisplayNameFor(model => model.DataType)</th>
+                    <th scope="col" class="text-nowrap">@Html.DisplayNameFor(model => model.SettingValue)</th>
+                    <th scope="col" class="text-nowrap">@Html.DisplayNameFor(model => model.Description)</th>
+                    <th scope="col" class="text-nowrap text-center">Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var (item, index) in Model.Select((value, i) => (value, i)))
+                {
+                <tr>
+                    <td class="text-body">@(@index + 1)</td>
+                    <td class="text-body">@item.SettingKey</td>
+                    <td class="text-body">@item.DataType</td>
+                    <td class="text-body">@item.SettingValue</td>
+                    <td class="text-body">@item.Description</td>
+                    <td class="text-center">
+                        <a href="@Url.Action("Edit", new { id = item.LibrarySettingId })" class="btn btn-outline-primary btn-sm">
+                            <i class="fa-solid fa-pen-to-square"></i>
                         </a>
-                        <a href="@Url.Action("Delete", new { id = item.LibrarySettingId })" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
-                            <i class="bi bi-trash"></i> Xóa
+                        <a href="@Url.Action("Delete", new { id = item.LibrarySettingId })"
+                           class="btn btn-outline-danger btn-sm"
+                           onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                            <i class="fa-solid fa-trash"></i>
                         </a>
                     </td>
                 </tr>
-            }
-        </tbody>
-    </table>
+                }
+            </tbody>
+        </table>
+    </div>
+
+
 </div>

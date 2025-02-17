@@ -26,7 +26,7 @@ namespace SmartLibrary.Models.ViewModels.Book
         [Display(Name = "Tổng số bản sao")]
         public int TotalCopies { get; set; }
 
-        [Display(Name = "Số lượng bản sao có sẵn")]
+        [Display(Name = "Có sẵn")]
         public int AvailableCopies { get; set; }
 
         [Display(Name = "Ảnh bìa")]

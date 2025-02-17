@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="" id="htmlPage">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,24 +13,6 @@
 
     <!-- Dark/Light Mode -->
     <style>
-        body.dark-mode {
-            background-color: #121212;
-            color: #ffffff;
-        }
-
-        .dark-mode .navbar {
-            background-color: #1e1e1e !important;
-        }
-
-        .dark-mode .breadcrumb {
-            background-color: #333;
-        }
-
-        .dark-mode .card {
-            background-color: #1e1e1e;
-            color: #fff;
-        }
-
         #backToTop {
             position: fixed;
             bottom: 20px;
@@ -42,7 +24,7 @@
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+    <nav class="navbar navbar-expand-lg fixed-top shadow" >
         <div class="container">
             <a class="navbar-brand" href="@Url.Action("Index", "Home")">📚 SmartLibrary</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -54,36 +36,46 @@
                     <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Home")">🏠 Trang chủ</a></li>
                     <li class="nav-item"><a class="nav-link" href="@Url.Action("About", "Home")">ℹ️ Giới thiệu</a></li>
                     <li class="nav-item"><a class="nav-link" href="@Url.Action("Contact", "Home")">📞 Liên hệ</a></li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="@Url.Action("Index", "User")">👤 Người dùng</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="bookManagementDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            📖 Quản lý sách
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="bookManagementDropdown">
-                            <li><a class="dropdown-item" href="@Url.Action("Index", "Book")">Danh sách sách</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("Index", "Author")">Tác giả</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("Index", "Category")">Loại sách</a></li>
-                        </ul>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="bookManagementDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            📚 Mượn/Trả/Đặt trước sách
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="bookManagementDropdown">
-                            <li><a class="dropdown-item" href="@Url.Action("Index", "BorrowBook")">Mượn sách</a></li>
-                            <li><a class="dropdown-item" href="@Url.Action("Index", "BookReservation")">Đặt trước sách</a></li>
-                        </ul>
-                    </li>
+                    @if (User.IsInRole("User"))
+                    {
+                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Book")">📚 Danh sách sách</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="bookManagementDropdown" role="button" data-bs-toggle="dropdown">
+                                📚 Mượn/Trả/Đặt trước sách
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "BorrowBook")">Mượn sách</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "BookReservation")">Đặt trước sách</a></li>
+                            </ul>
+                        </li>
+                    }
+
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "User")">👤 Người dùng</a></li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="bookManagementDropdown" role="button" data-bs-toggle="dropdown">
+                                📖 Quản lý sách
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Book")">Danh sách sách</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Author")">Tác giả</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Category")">Loại sách</a></li>
+                            </ul>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="bookManagementDropdown" role="button" data-bs-toggle="dropdown">
+                                📚 Mượn/Trả/Đặt trước sách
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "BorrowBook")">Mượn sách</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "BookReservation")">Đặt trước sách</a></li>
+                            </ul>
+                        </li>
+                    }
                 </ul>
 
                 <div class="ms-auto d-flex align-items-center">
-                    <!-- Toggle Dark/Light Theme -->
-                    <button id="themeToggle" class="btn btn-outline-light me-2">
-                        <i class="fa-solid fa-moon"></i>
-                    </button>
-
                     <!-- User Dropdown -->
                     @Html.Partial("_LoginPartial")
                 </div>
@@ -91,15 +83,15 @@
         </div>
     </nav>
 
+
     <!-- Content -->
     <div class="wrapper d-flex flex-column min-vh-100 mt-5">
         <div class="container">
             <!-- Breadcrumb -->
             <nav aria-label="breadcrumb">
-                <ol class="breadcrumb bg-light p-2 rounded">
-                    @if (ViewData["Breadcrumbs"] != null)
+                <ol class="breadcrumb bg-body-tertiary p-2 rounded">
+                    @if (ViewData["Breadcrumbs"] is List<SmartLibrary.Models.ViewModels.BreadcrumbItem> breadcrumbs)
                     {
-                        var breadcrumbs = (List<SmartLibrary.Models.ViewModels.BreadcrumbItem>)ViewData["Breadcrumbs"];
                         foreach (var breadcrumb in breadcrumbs)
                         {
                             if (breadcrumb.IsActive)
@@ -108,7 +100,9 @@
                             }
                             else
                             {
-                                <li class="breadcrumb-item"><a href="@breadcrumb.Url">@breadcrumb.Title</a></li>
+                                <li class="breadcrumb-item">
+                                    <a href="@breadcrumb.Url" class="text-decoration-none">@breadcrumb.Title</a>
+                                </li>
                             }
                         }
                     }
@@ -164,18 +158,41 @@
             // AJAX spinner
             $(document).ajaxStart(function () { $("#loadingSpinner").removeClass("d-none"); });
             $(document).ajaxStop(function () { $("#loadingSpinner").addClass("d-none"); });
+        });
+    </script>
+    <script>
+        // Đảm bảo theme được áp dụng ngay khi trang tải
+        (function () {
+            const html = document.documentElement;
+            const savedTheme = localStorage.getItem("theme") || "light";
+            html.setAttribute("data-bs-theme", savedTheme);
+        })();
 
-            // Toggle Dark Mode
-            const themeToggle = document.getElementById("themeToggle");
-            if (localStorage.getItem("theme") === "dark") document.body.classList.add("dark-mode");
+        document.addEventListener("DOMContentLoaded", function () {
+            const html = document.documentElement;
+            const themeToggleButton = document.getElementById("theme-toggle");
+            const themeIcon = document.getElementById("theme-icon");
 
-            themeToggle.addEventListener("click", function () {
-                document.body.classList.toggle("dark-mode");
-                localStorage.setItem("theme", document.body.classList.contains("dark-mode") ? "dark" : "light");
+            if (!themeIcon || !html) return;
+
+            // Cập nhật icon theo theme đã lưu
+            const currentTheme = html.getAttribute("data-bs-theme");
+            themeIcon.classList.toggle("fa-sun", currentTheme === "light");
+            themeIcon.classList.toggle("fa-moon", currentTheme === "dark");
+
+            // Xử lý sự kiện toggle theme
+            themeToggleButton.addEventListener("click", function () {
+                const newTheme = html.getAttribute("data-bs-theme") === "light" ? "dark" : "light";
+
+                html.setAttribute("data-bs-theme", newTheme);
+                localStorage.setItem("theme", newTheme);
+
+                // Cập nhật icon
+                themeIcon.classList.toggle("fa-sun", newTheme === "light");
+                themeIcon.classList.toggle("fa-moon", newTheme === "dark");
             });
         });
     </script>
-
     @RenderSection("scripts", required: false)
 </body>
 </html>

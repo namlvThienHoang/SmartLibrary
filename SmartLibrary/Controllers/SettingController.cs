@@ -11,7 +11,7 @@ using System.Web.Mvc;
 
 namespace SmartLibrary.Controllers
 {
-    [Authorize]
+    [CustomAuthorize(Roles = "Admin")]
     public class SettingController : BaseController
     {
         private readonly ILibrarySettingService _service;

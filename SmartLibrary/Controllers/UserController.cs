@@ -17,7 +17,7 @@ using System;
 namespace SmartLibrary.Controllers
 {
     [AutoLogAndToast]
-    [Authorize]
+    [CustomAuthorize(Roles = "Admin")]
     public class UserController : BaseController
     {
         private readonly ApplicationUserManager UserManager;

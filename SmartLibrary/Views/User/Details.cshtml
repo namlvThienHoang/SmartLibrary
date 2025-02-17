@@ -1,4 +1,6 @@
-﻿@model SmartLibrary.Models.ViewModels.User.UserViewModel
+﻿@using SmartLibrary.Models
+
+@model SmartLibrary.Models.ViewModels.User.UserViewModel
 
 @{
     ViewBag.Title = "Chi Tiết Người Dùng";
@@ -48,7 +50,7 @@
                             <tr>
                                 <th>Trạng thái</th>
                                 <td>
-                                    @if (Model.Status == "Active")
+                                    @if (Model.Status == ModelCommons.UserStatus.HoatDong)
                                     {
                                         <span class="badge bg-primary">Hoạt động</span>
                                     }
@@ -58,7 +60,7 @@
                                     }
                                 </td>
                             </tr>
-                           
+
                         </tbody>
                     </table>
                 </div>

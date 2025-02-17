@@ -2,6 +2,7 @@
 using SmartLibrary.Models;
 using SmartLibrary.Models.ViewModels.Report;
 using SmartLibrary.Services.Interfaces;
+using SmartLibrary.Utilities.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ using System.Web.Mvc;
 
 namespace SmartLibrary.Controllers
 {
+    [CustomAuthorize(Roles = "Admin")]
     public class ReportController : BaseController
     {
         private readonly IReportService _service;

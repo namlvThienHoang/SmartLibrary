@@ -72,7 +72,7 @@
                                     new { Value = ModelCommons.Roles.Manager, Text = ModelCommons.Roles.Manager },
                                     new { Value = ModelCommons.Roles.User, Text = ModelCommons.Roles.User }
                                 }, "Value", "Text", Model.Roles),
-                                new { @class = "form-control select2" })
+                                new { @class = "form-control select2", multiple = "multiple" })
 
                             @Html.ValidationMessageFor(model => model.Roles, "", new { @class = "text-danger" })
                         </div>

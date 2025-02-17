@@ -46,5 +46,11 @@ namespace SmartLibrary.Controllers
 
             return View(model);
         }
+
+        public ActionResult AccessDenied()
+        {
+            return View();
+        }
+
     }
 }

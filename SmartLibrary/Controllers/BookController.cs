@@ -18,7 +18,7 @@ using System.IO;
 
 namespace SmartLibrary.Controllers
 {
-    [Authorize]
+    [CustomAuthorize]
     [AutoLogAndToast]
     public class BookController : BaseController
     {
@@ -60,6 +60,7 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: Book/Create
+        [CustomAuthorize(Roles = "Admin")]
         public async Task<ActionResult> Create()
         {
             ViewBag.Categories = new SelectList(await _bookService.GetCategoriesAsync(), "Id", "Name");
@@ -68,6 +69,7 @@ namespace SmartLibrary.Controllers
         }
 
         // POST: Book/Create
+        [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateBookViewModel model, HttpPostedFileBase coverImage)
@@ -107,6 +109,7 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: Book/Edit/5
+        [CustomAuthorize(Roles = "Admin")]
         public async Task<ActionResult> Edit(int? id)
         {
             if (id == null)
@@ -124,6 +127,7 @@ namespace SmartLibrary.Controllers
         }
 
         // POST: Book/Edit/5
+        [CustomAuthorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EditBookViewModel model, HttpPostedFileBase CoverImage)
@@ -175,6 +179,7 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: Book/Delete/5
+        [CustomAuthorize(Roles = "Admin")]
         public async Task<ActionResult> Delete(int id)
         {
             var book = await _bookService.GetBookById(id);
@@ -188,6 +193,7 @@ namespace SmartLibrary.Controllers
         // POST: Book/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [CustomAuthorize(Roles = "Admin")]
         public async Task<ActionResult> DeleteConfirmed(int id)
         {
             var book = await _bookService.GetBookById(id);

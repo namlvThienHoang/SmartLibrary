@@ -40,5 +40,14 @@ namespace SmartLibrary
             // Đăng ký Autofac
             AutofacConfig.RegisterDependencies();
         }
+
+        protected void Application_EndRequest()
+        {
+            if (Context.Response.StatusCode == 403)
+            {
+                Response.ClearContent();
+                Response.Redirect("~/Home/AccessDenied");
+            }
+        }
     }
 }
