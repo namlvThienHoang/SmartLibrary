@@ -1,0 +1,113 @@
+﻿@model SmartLibrary.Models.ViewModels.LibrarySetting.LibrarySettingViewModel
+
+@{
+    ViewBag.Title = "Chỉnh sửa Cấu Hình";
+}
+
+<div class="container mt-4">
+    <h2 class="mb-3">Chỉnh Sửa Cấu Hình</h2>
+
+    @using (Html.BeginForm("Edit", "Setting", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", novalidate = "true" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.LibrarySettingId)
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.SettingKey, new { @class = "form-label" })
+            @Html.TextBoxFor(model => model.SettingKey, new { @class = "form-control", required = "required" })
+            @Html.ValidationMessageFor(model => model.SettingKey, "", new { @class = "text-danger" })
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.DataType, new { @class = "form-label" })
+            @Html.DropDownListFor(model => model.DataType,
+                new SelectList(new List<SelectListItem>
+                {
+                    new SelectListItem { Value = "text", Text = "Text" },
+                    new SelectListItem { Value = "number", Text = "Number" },
+                    new SelectListItem { Value = "date", Text = "Date" },
+                    new SelectListItem { Value = "image", Text = "Image" }
+                }, "Value", "Text"),
+                "Chọn kiểu dữ liệu",
+                new { @class = "form-control", required = "required", id = "dataTypeSelect" })
+            @Html.ValidationMessageFor(model => model.DataType, "", new { @class = "text-danger" })
+        </div>
+
+
+        <!-- Container hiển thị input cho SettingValue dạng text, number, date -->
+        <div class="mb-3" id="settingValueContainer">
+            @Html.LabelFor(model => model.SettingValue, new { @class = "form-label" })
+            @Html.TextBoxFor(model => model.SettingValue, new { @class = "form-control", required = "required", id = "settingValueInput" })
+            @Html.ValidationMessageFor(model => model.SettingValue, "", new { @class = "text-danger" })
+        </div>
+
+        <!-- Container hiển thị upload file khi DataType là image -->
+        <div class="mb-3" id="fileUploadContainer" style="display: none;">
+            <div class="col-md-4 d-flex flex-column align-items-center">
+                @Html.LabelFor(model => model.SettingValue, new { @class = "form-label" })
+                <input type="file" id="FileUpload" name="FileUpload" class="form-control" accept="image/*" onchange="previewImage(event)" />
+                <img id="imagePreview" src="@(!string.IsNullOrEmpty(Model.SettingValue) ? Url.Content(Model.SettingValue) : "#")"
+                     class="img-fluid mt-3 shadow"
+                     style="@(string.IsNullOrEmpty(Model.SettingValue) ? "display:none;" : "") max-width: 200px; max-height: 200px;" />
+                @Html.ValidationMessageFor(model => model.FileUpload, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="mb-3">
+            @Html.LabelFor(model => model.Description, new { @class = "form-label" })
+            @Html.TextAreaFor(model => model.Description, new { @class = "form-control" })
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="bi bi-save"></i> Cập Nhật
+        </button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Hủy</a>
+    }
+</div>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            function toggleInputControls() {
+                var selectedType = $('#dataTypeSelect').val();
+                if (selectedType === 'image') {
+                    // Nếu kiểu là image: ẩn text input và hiện file upload
+                    $('#settingValueContainer').hide();
+                    $('#fileUploadContainer').show();
+                } else {
+                    // Ngược lại: ẩn file upload và hiện text input với kiểu phù hợp
+                    $('#fileUploadContainer').hide();
+                    $('#settingValueContainer').show();
+                    if (selectedType === 'date') {
+                        $('#settingValueInput').attr('type', 'date');
+                    } else if (selectedType === 'number') {
+                        $('#settingValueInput').attr('type', 'number');
+                    } else {
+                        $('#settingValueInput').attr('type', 'text');
+                    }
+                }
+            }
+
+            toggleInputControls();
+
+            $('#dataTypeSelect').change(function () {
+                toggleInputControls();
+            });
+        });
+
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById("imagePreview");
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                };
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = "#";
+                preview.style.display = "none";
+            }
+        }
+    </script>
+}

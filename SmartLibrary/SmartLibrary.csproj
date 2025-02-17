@@ -216,7 +216,19 @@
     <Compile Include="Migrations\202502130317592_UpdateUserAvatarURL.Designer.cs">
       <DependentUpon>202502130317592_UpdateUserAvatarURL.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202502170216310_AddDescriptionToLibrarySetting.cs" />
+    <Compile Include="Migrations\202502170216310_AddDescriptionToLibrarySetting.Designer.cs">
+      <DependentUpon>202502170216310_AddDescriptionToLibrarySetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202502170328500_AddDataTypeToLibrarySetting.cs" />
+    <Compile Include="Migrations\202502170328500_AddDataTypeToLibrarySetting.Designer.cs">
+      <DependentUpon>202502170328500_AddDataTypeToLibrarySetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\Mappings\LibrarySettingMappingProfile.cs" />
+    <Compile Include="Models\ViewModels\LibrarySetting\LibrarySettingViewModel.cs" />
+    <Compile Include="Models\ViewModels\User\EditProfileViewModel.cs" />
     <Compile Include="Repositories\Implementations\AuditLogRepository.cs" />
+    <Compile Include="Repositories\Implementations\LibrarySettingRepository.cs" />
     <Compile Include="Repositories\Implementations\AuthorRepository.cs" />
     <Compile Include="Repositories\Implementations\BookRepository.cs" />
     <Compile Include="Repositories\Implementations\BookReservationRepository.cs" />
@@ -224,17 +236,20 @@
     <Compile Include="Repositories\Implementations\CategoryRepository.cs" />
     <Compile Include="Repositories\Implementations\UnitOfWork.cs" />
     <Compile Include="Repositories\Interfaces\IAuditLogRepository.cs" />
+    <Compile Include="Repositories\Interfaces\ILibrarySettingRepository.cs" />
     <Compile Include="Repositories\Interfaces\IAuthorRepository.cs" />
     <Compile Include="Repositories\Interfaces\IBookRepository.cs" />
     <Compile Include="Repositories\Interfaces\IBookReservationRepository.cs" />
     <Compile Include="Repositories\Interfaces\IBorrowBookRepository.cs" />
     <Compile Include="Repositories\Interfaces\ICategoryRepository.cs" />
     <Compile Include="Repositories\Interfaces\IUnitOfWork.cs" />
+    <Compile Include="Services\Implementations\LibrarySettingService.cs" />
     <Compile Include="Services\Implementations\AuthorService.cs" />
     <Compile Include="Services\Implementations\BookReservationService.cs" />
     <Compile Include="Services\Implementations\BookService.cs" />
     <Compile Include="Services\Implementations\BorrowBookService.cs" />
     <Compile Include="Services\Implementations\CategoryService.cs" />
+    <Compile Include="Services\Interfaces\ILibrarySettingService.cs" />
     <Compile Include="Services\Interfaces\IAuthorService.cs" />
     <Compile Include="Services\Interfaces\IBookReservationService.cs" />
     <Compile Include="Services\Interfaces\IBookService.cs" />
@@ -523,6 +538,10 @@
     <Content Include="Views\Shared\_Pagination.cshtml" />
     <Content Include="Views\Shared\_SaveAndBackButtons.cshtml" />
     <Content Include="Views\BookReservation\HuyDatTruoc.cshtml" />
+    <Content Include="Views\Setting\Edit.cshtml" />
+    <Content Include="Views\Setting\Create.cshtml" />
+    <Content Include="Views\Setting\Delete.cshtml" />
+    <Content Include="Views\Manage\EditProfile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -565,6 +584,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202502130317592_UpdateUserAvatarURL.resx">
       <DependentUpon>202502130317592_UpdateUserAvatarURL.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202502170216310_AddDescriptionToLibrarySetting.resx">
+      <DependentUpon>202502170216310_AddDescriptionToLibrarySetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202502170328500_AddDataTypeToLibrarySetting.resx">
+      <DependentUpon>202502170328500_AddDataTypeToLibrarySetting.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

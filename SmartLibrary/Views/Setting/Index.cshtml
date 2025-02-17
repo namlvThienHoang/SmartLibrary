@@ -1,9 +1,46 @@
-﻿
+﻿@model IEnumerable<SmartLibrary.Models.ViewModels.LibrarySetting.LibrarySettingViewModel>
+
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Danh sách cài đặt thư viện";
 }
 
-<button id="theme-toggle" class="btn btn-outline-secondary">
-    <i id="theme-icon" class="fas fa-sun"></i>
-</button>
+<div class="container mt-4">
+    <h2 class="mb-3">Danh sách Cấu Hình</h2>
 
+    <a href="@Url.Action("Create")" class="btn btn-success mb-3">
+        <i class="bi bi-plus-circle"></i> Thêm Mới
+    </a>
+
+    <table class="table table-bordered table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>#</th>
+                <th>@Html.DisplayNameFor(model => model.SettingKey)</th>
+                <th>@Html.DisplayNameFor(model => model.DataType)</th>
+                <th>@Html.DisplayNameFor(model => model.SettingValue)</th>
+                <th>@Html.DisplayNameFor(model => model.Description)</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.LibrarySettingId</td>
+                    <td>@item.SettingKey</td>
+                    <td>@item.DataType</td>
+                    <td>@item.SettingValue</td>
+                    <td>@item.Description</td>
+                    <td>
+                        <a href="@Url.Action("Edit", new { id = item.LibrarySettingId })" class="btn btn-primary btn-sm">
+                            <i class="bi bi-pencil-square"></i> Sửa
+                        </a>
+                        <a href="@Url.Action("Delete", new { id = item.LibrarySettingId })" class="btn btn-danger btn-sm" onclick="return confirm('Bạn có chắc chắn muốn xóa?');">
+                            <i class="bi bi-trash"></i> Xóa
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

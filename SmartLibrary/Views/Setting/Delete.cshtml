@@ -1,0 +1,31 @@
+﻿@model SmartLibrary.Models.ViewModels.LibrarySetting.LibrarySettingViewModel
+
+@{
+    ViewBag.Title = "Xóa Cấu Hình";
+}
+
+<div class="container mt-4">
+    <h2 class="text-danger">Xóa Cấu Hình</h2>
+    <p>Bạn có chắc chắn muốn xóa cấu hình này không?</p>
+
+    <div class="mb-3">
+        <strong>Key:</strong> @Model.SettingKey
+    </div>
+    <div class="mb-3">
+        <strong>Value:</strong> @Model.SettingValue
+    </div>
+    <div class="mb-3">
+        <strong>Mô tả:</strong> @Model.Description
+    </div>
+
+    @using (Html.BeginForm("Delete", "LibrarySettings", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.LibrarySettingId)
+
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-trash"></i> Xóa
+        </button>
+        <a href="@Url.Action("Index")" class="btn btn-secondary">Hủy</a>
+    }
+</div>

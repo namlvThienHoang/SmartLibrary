@@ -41,6 +41,7 @@ namespace SmartLibrary.App_Start
                 cfg.AddProfile<CategoryMappingProfile>();
                 cfg.AddProfile<AuditLogMappingProfile>();
                 cfg.AddProfile<ReservationMappingProfile>();
+                cfg.AddProfile<LibrarySettingMappingProfile>();
             }).CreateMapper()).As<IMapper>().InstancePerRequest();
 
 
@@ -53,6 +54,7 @@ namespace SmartLibrary.App_Start
             builder.RegisterType<AuditLogRepository>().As<IAuditLogRepository>().InstancePerRequest();
             builder.RegisterType<BorrowBookRepository>().As<IBorrowBookRepository>().InstancePerRequest();
             builder.RegisterType<BookReservationRepository>().As<IBookReservationRepository>().InstancePerRequest();
+            builder.RegisterType<LibrarySettingRepository>().As<ILibrarySettingRepository>().InstancePerRequest();
 
             // Đăng ký Service
             builder.RegisterType<BookService>().As<IBookService>().InstancePerRequest();
@@ -61,6 +63,7 @@ namespace SmartLibrary.App_Start
             builder.RegisterType<AuditLogService>().As<IAuditLogService>().InstancePerRequest();
             builder.RegisterType<BorrowBookService>().As<IBorrowBookService>().InstancePerRequest();
             builder.RegisterType<BookReservationService>().As<IBookReservationService>().InstancePerRequest();
+            builder.RegisterType<LibrarySettingService>().As<ILibrarySettingService>().InstancePerRequest();
 
             builder.RegisterType<UserStore<ApplicationUser>>()
                    .As<IUserStore<ApplicationUser>>() // Đăng ký IUserStore<ApplicationUser>
@@ -69,9 +72,6 @@ namespace SmartLibrary.App_Start
             //builder.RegisterType<RoleStore<IdentityRole>>()
             //       .As<IRoleStore<IdentityRole>>() // Đăng ký IUserStore<ApplicationUser>
             //       .InstancePerLifetimeScope();
-
-
-
 
             builder.RegisterType<ApplicationUserManager>()
                    .AsSelf()

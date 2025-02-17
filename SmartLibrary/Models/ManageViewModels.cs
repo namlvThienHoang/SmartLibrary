@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
@@ -12,6 +13,30 @@ namespace SmartLibrary.Models
         public string PhoneNumber { get; set; }
         public bool TwoFactor { get; set; }
         public bool BrowserRemembered { get; set; }
+        public UserProfile UserProfile { get; set; }
+    }
+
+    public class UserProfile
+    {
+        [Display(Name = "Tên người dùng")]
+        public string UserName { get; set; }
+
+        [Display(Name = "Địa chỉ email")]
+        public string Email { get; set; }
+
+        [Display(Name = "Tên đầy đủ")]
+        public string FullName { get; set; }
+
+        [Display(Name = "Ngày sinh")]
+        public DateTime? DateOfBirth { get; set; }
+
+        [Display(Name = "Địa chỉ")]
+        public string Address { get; set; }
+
+        [Display(Name = "Trạng thái")]
+        public string Status { get; set; }
+        [Display(Name = "Hình ảnh")]
+        public string AvatarURL { get; set; }
     }
 
     public class ManageLoginsViewModel

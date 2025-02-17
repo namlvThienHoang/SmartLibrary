@@ -86,11 +86,6 @@ namespace SmartLibrary.Controllers
                     string uploadFolderPath = Server.MapPath("~/Uploads/Authors");
                     authorVM.AvatarImage = FileHelper.UploadFile(AvatarImage, uploadFolderPath, "/Uploads/Authors");
                 }
-                else
-                {
-                    ModelState.AddModelError("", "Vui lòng chọn ảnh bìa.");
-                    return View(authorVM);
-                }
 
                 await _authorService.CreateAuthor(authorVM);
                 return RedirectToAction("Index");
@@ -163,8 +158,6 @@ namespace SmartLibrary.Controllers
                 ModelState.AddModelError("", "Lỗi khi cập nhật: " + ex.Message);
                 return View(authorVM);
             }
-
-            
         }
 
         // GET: Authors/Delete/5

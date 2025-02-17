@@ -26,6 +26,7 @@ namespace SmartLibrary.Utilities.Helpers
                     new BreadcrumbItem { Title = "Liên hệ", Url = "/Home/Contact", IsActive = true }
                 }
             },
+              #region cài đặt
              {
                 "Setting/Index",
                 new List<BreadcrumbItem>
@@ -34,6 +35,44 @@ namespace SmartLibrary.Utilities.Helpers
                     new BreadcrumbItem { Title = "Cài đặt", Url = "/Setting", IsActive = true }
                 }
             },
+             {
+                "Setting/Create",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Cài đặt", Url = "/Setting", IsActive = false },
+                    new BreadcrumbItem { Title = "Thêm mới", Url = "#", IsActive = true }
+                }
+            },
+            {
+                "Setting/Edit",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Cài đặt", Url = "/Setting", IsActive = false },
+                    new BreadcrumbItem { Title = "Chỉnh sửa", Url = "#", IsActive = true }
+                }
+            },
+            {
+                "Setting/Details",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Cài đặt", Url = "/Setting", IsActive = false },
+                    new BreadcrumbItem { Title = "Chi tiết", Url = "#", IsActive = true }
+                }
+            },
+            {
+                "Setting/Delete",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Cài đặt", Url = "/Setting", IsActive = false },
+                    new BreadcrumbItem { Title = "Xóa cài đặt", Url = "#", IsActive = true }
+                }
+            },
+            #endregion
+
             #region sách
             {
                 "Book/Index",

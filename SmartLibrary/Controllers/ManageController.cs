@@ -7,6 +7,8 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using SmartLibrary.Models;
+using SmartLibrary.Models.ViewModels.User;
+using SmartLibrary.Utilities.Helpers;
 
 namespace SmartLibrary.Controllers
 {
@@ -64,14 +66,101 @@ namespace SmartLibrary.Controllers
                 : "";
 
             var userId = User.Identity.GetUserId();
+            // Lấy thông tin người dùng từ UserManager
+            var appUser = await UserManager.FindByIdAsync(userId);
+
+            // Ánh xạ thông tin từ appUser sang UserProfile
+            var userProfile = new UserProfile
+            {
+                UserName = appUser.UserName,
+                Email = appUser.Email,
+                FullName = appUser.FullName,      // Đảm bảo thuộc tính này có trong ApplicationUser của bạn
+                DateOfBirth = appUser.DateOfBirth,   // Hoặc chuyển đổi nếu cần
+                Address = appUser.Address,       // Tương tự
+                Status = appUser.Status,
+                AvatarURL = appUser.AvatarURL
+            };
             var model = new IndexViewModel
             {
                 HasPassword = HasPassword(),
                 PhoneNumber = await UserManager.GetPhoneNumberAsync(userId),
                 TwoFactor = await UserManager.GetTwoFactorEnabledAsync(userId),
                 Logins = await UserManager.GetLoginsAsync(userId),
-                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId)
+                BrowserRemembered = await AuthenticationManager.TwoFactorBrowserRememberedAsync(userId),
+                UserProfile = userProfile
             };
+            return View(model);
+        }
+
+        // GET: /Manage/EditProfile
+        [HttpGet]
+        public async Task<ActionResult> EditProfile()
+        {
+            var userId = User.Identity.GetUserId();
+            var user = await UserManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            var model = new EditProfileViewModel
+            {
+                UserName = user.UserName,
+                Email = user.Email,
+                FullName = user.FullName,
+                DateOfBirth = user.DateOfBirth,
+                Address = user.Address,
+                Status = user.Status,
+                AvatarURL = user.AvatarURL
+            };
+            return View(model);
+        }
+
+        // POST: /Manage/EditProfile
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> EditProfile(EditProfileViewModel model, HttpPostedFileBase AvatarURL)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var userId = User.Identity.GetUserId();
+            var user = await UserManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            // Cập nhật thông tin người dùng theo dữ liệu từ model
+
+            // Nếu có ảnh mới được upload
+            if (AvatarURL != null && AvatarURL.ContentLength > 0)
+            {
+                // Xóa ảnh cũ nếu tồn tại
+                if (!string.IsNullOrEmpty(user.AvatarURL))
+                {
+                    FileHelper.DeleteFile(user.AvatarURL);
+                }
+
+                // Upload ảnh mới
+                string uploadFolderPath = Server.MapPath("~/Uploads/Users");
+                user.AvatarURL = FileHelper.UploadFile(AvatarURL, uploadFolderPath, "/Uploads/Users");
+            }
+
+            user.FullName = model.FullName;
+            user.DateOfBirth = model.DateOfBirth;
+            user.Address = model.Address;
+            user.Status = model.Status;
+
+            var result = await UserManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                // Bạn có thể định nghĩa thêm ManageMessageId.ProfileUpdated trong enum ManageMessageId
+                return RedirectToAction("Index");
+            }
+            AddErrors(result);
             return View(model);
         }
 

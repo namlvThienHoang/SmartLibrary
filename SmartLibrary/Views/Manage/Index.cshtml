@@ -6,6 +6,49 @@
 <h2>@ViewBag.Title.</h2>
 
 <p class="text-success">@ViewBag.StatusMessage</p>
+
+<div class="row">
+    <!-- Cột thông tin cá nhân -->
+    <div class="col-md-8">
+        <h3>Thông tin người dùng</h3>
+        <dl class="dl-horizontal">
+            <dt>@Html.DisplayNameFor(m => m.UserProfile.UserName)</dt>
+            <dd>@Model.UserProfile.UserName</dd>
+            <dt>@Html.DisplayNameFor(m => m.UserProfile.Email)</dt>
+            <dd>@Model.UserProfile.Email</dd>
+            <dt>@Html.DisplayNameFor(m => m.UserProfile.FullName)</dt>
+            <dd>@Model.UserProfile.FullName</dd>
+            <dt>@Html.DisplayNameFor(m => m.UserProfile.DateOfBirth)</dt>
+            <dd>
+                @(Model.UserProfile.DateOfBirth.HasValue
+                    ? Model.UserProfile.DateOfBirth.Value.ToString("dd/MM/yyyy")
+                    : "N/A")
+            </dd>
+            <dt>@Html.DisplayNameFor(m => m.UserProfile.Address)</dt>
+            <dd>@Model.UserProfile.Address</dd>
+            <dt>@Html.DisplayNameFor(m => m.UserProfile.Status)</dt>
+            <dd>@Model.UserProfile.Status</dd>
+        </dl>
+        <p>
+            @Html.ActionLink("Chỉnh sửa thông tin cá nhân", "EditProfile", "Manage", null, new { @class = "btn btn-primary" })
+        </p>
+    </div>
+    <!-- Cột ảnh đại diện -->
+    <div class="col-md-4 text-right">
+        <h3>Ảnh đại diện</h3>
+        @if (!string.IsNullOrEmpty(Model.UserProfile.AvatarURL))
+        {
+            <img src="@Model.UserProfile.AvatarURL" alt="Avatar" class="img-thumbnail" style="max-width:200px; max-height:200px;" />
+        }
+        else
+        {
+            <span>Không có ảnh đại diện</span>
+        }
+    </div>
+</div>
+
+<hr />
+
 <div>
     <h4>Thay đổi cài đặt tài khoản của bạn</h4>
     <hr />
@@ -28,59 +71,29 @@
             @Model.Logins.Count [
             @Html.ActionLink("Quản lý", "ManageLogins") ]
         </dd>
-        @*
-            Phone Numbers can used as a second factor of verification in a two-factor authentication system.
-             
-             See <a href="https://go.microsoft.com/fwlink/?LinkId=403804">this article</a>
-                for details on setting up this ASP.NET application to support two-factor authentication using SMS.
-             
-             Uncomment the following block after you have set up two-factor authentication
-        *@
-        @*  
-            <dt>Phone Number:</dt>
-            <dd>
-                @(Model.PhoneNumber ?? "None")
-                @if (Model.PhoneNumber != null)
+        <dt>Phone Number:</dt>
+        <dd>
+            @(Model.PhoneNumber ?? "None")
+            @if (Model.PhoneNumber != null)
+            {
+                <br />
+                <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber")&nbsp;&nbsp;]</text>
+                using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
                 {
-                    <br />
-                    <text>[&nbsp;&nbsp;@Html.ActionLink("Change", "AddPhoneNumber")&nbsp;&nbsp;]</text>
-                    using (Html.BeginForm("RemovePhoneNumber", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>[<input type="submit" value="Remove" class="btn-link" />]</text>
-                    }
+                    @Html.AntiForgeryToken()
+                    <text>[ <input type="submit" value="Remove" class="btn-link" /> ]</text>
                 }
-                else
-                {
-                    <text>[&nbsp;&nbsp;@Html.ActionLink("Add", "AddPhoneNumber")
-                }
-            </dd>
-        *@
-    <dt>Xác thực hai yếu tố:</dt>
+            }
+            else
+            {
+                @Html.ActionLink("Add", "AddPhoneNumber")
+            }
+        </dd>
+        <dt>Xác thực hai yếu tố:</dt>
         <dd>
             <p>
                 Không có nhà cung cấp xác thực hai yếu tố nào được cấu hình. Xem <a href="https://go.microsoft.com/fwlink/?LinkId=403804">bài viết này</a> để biết chi tiết về cách thiết lập ứng dụng ASP.NET này để hỗ trợ xác thực hai yếu tố.
             </p>
-            @*@if (Model.TwoFactor)
-                {
-                    using (Html.BeginForm("DisableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>Enabled
-                        <input type="submit" value="Disable" class="btn btn-link" />
-                        </text>
-                    }
-                }
-                else
-                {
-                    using (Html.BeginForm("EnableTwoFactorAuthentication", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
-                    {
-                        @Html.AntiForgeryToken()
-                        <text>Disabled
-                        <input type="submit" value="Enable" class="btn btn-link" />
-                        </text>
-                    }
-                }*@
         </dd>
     </dl>
 </div>
