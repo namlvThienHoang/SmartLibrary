@@ -15,5 +15,11 @@ namespace SmartLibrary.Repositories.Interfaces
         Task CreateBookAsync(Book book);
         Task UpdateBookAsync(Book book);
         Task DeleteBookAsync(int id);
+
+        Task<List<BookReview>> GetReviewsByBookIdAsync(int id);
+        Task<BookReview> GetReviewByIdAsync(int id);
+        Task AddReviewAsync(BookReview review);
+        Task UpdateReviewAsync(BookReview review);
+        Task DeleteReviewAsync(int id);
     }
 }

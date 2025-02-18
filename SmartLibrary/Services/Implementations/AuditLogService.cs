@@ -37,9 +37,9 @@ namespace SmartLibrary.Services.Implementations
             await _unitOfWork.SaveChangesAsync();
         }
 
-        public async Task<PagedResult<AuditLogViewModel>> GetAuditLogs(string searchString, string sortOrder, int pageNumber, int pageSize)
+        public async Task<PagedResult<AuditLogViewModel>> GetAuditLogs(string userId, string searchString, string sortOrder, int pageNumber, int pageSize)
         {
-            var (AuditLogs, totalCount) = await _unitOfWork.AuditLogRepository.GetAuditLogsAsync(searchString, sortOrder, pageNumber, pageSize);
+            var (AuditLogs, totalCount) = await _unitOfWork.AuditLogRepository.GetAuditLogsAsync(userId, searchString, sortOrder, pageNumber, pageSize);
 
             var AuditLogViewModels = _mapper.Map<IEnumerable<AuditLogViewModel>>(AuditLogs);
 

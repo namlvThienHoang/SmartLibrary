@@ -24,5 +24,11 @@ namespace SmartLibrary.Services.Interfaces
         Task<List<CategoryViewModel>> GetCategoriesAsync();
 
         Task<List<AuthorViewModel>> GetAuthorsAsync();
+        Task<BookReviewViewModel> GetBookReviewById(int id);
+        Task<int> AddReview(string userId, int bookId, int rating, string comment);
+        Task EditReview(BookReviewViewModel reviewViewModel);
+        Task DeleteReview(int reviewId);
+
+
     }
 }

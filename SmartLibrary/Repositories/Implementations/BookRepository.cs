@@ -108,5 +108,34 @@ namespace SmartLibrary.Repositories.Implementations
                 _context.Books.Remove(book);
             }
         }
+
+        public async Task<List<BookReview>> GetReviewsByBookIdAsync(int id)
+        {
+            return await _context.BookReviews.Where(x => x.BookId == id).ToListAsync();
+        }
+
+        public async Task<BookReview> GetReviewByIdAsync(int id)
+        {
+            return await _context.BookReviews.FindAsync(id);
+        }
+
+        public async Task AddReviewAsync(BookReview review)
+        {
+            _context.BookReviews.Add(review);
+        }
+
+        public async Task UpdateReviewAsync(BookReview review)
+        {
+            _context.Entry(review).State = EntityState.Modified;
+        }
+
+        public async Task DeleteReviewAsync(int id)
+        {
+            var review = await _context.BookReviews.FindAsync(id);
+            if (review != null)
+            {
+                _context.BookReviews.Remove(review);
+            }
+        }
     }
 }

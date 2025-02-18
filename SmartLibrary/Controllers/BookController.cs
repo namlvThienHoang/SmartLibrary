@@ -15,6 +15,9 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.IO;
+using Microsoft.AspNet.Identity;
+using SmartLibrary.Hubs;
+using Microsoft.AspNet.SignalR;
 
 namespace SmartLibrary.Controllers
 {
@@ -206,5 +209,76 @@ namespace SmartLibrary.Controllers
             await LogActionAsync("Xóa", "Sách", $"Đã xóa sách có tiêu đề: {book.Title}");
             return RedirectToAction(nameof(Index));
         }
-    }
+
+        [HttpPost]
+        public async Task<JsonResult> AddReview(int bookId, int rating, string comment)
+        {
+            if (rating < 1 || rating > 5 || string.IsNullOrWhiteSpace(comment))
+            {
+                return Json(new { success = false, message = "Vui lòng nhập đánh giá hợp lệ." });
+            }
+            var userId = User.Identity.GetUserId();
+            if (string.IsNullOrEmpty(userId))
+            {
+                return Json(new { success = false, message = "Bạn cần đăng nhập để đánh giá." });
+            }
+            var userName = User.Identity.Name;
+            var reviewId = await _bookService.AddReview(userId, bookId, rating, comment);
+            var createdAt = DateTime.Now.ToString("dd/MM/yyyy HH:mm");
+            var context = GlobalHost.ConnectionManager.GetHubContext<ReviewHub>();
+            context.Clients.All.newReview(userName, rating, comment, createdAt);
+            return Json(new { success = true, reviewId, userName, rating, comment, createdAt });
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult> EditReview(int reviewId, int rating, string comment)
+        {
+            var review = await _bookService.GetBookReviewById(reviewId);
+            if (review == null || review.UserName != User.Identity.Name)
+            {
+                return Json(new { success = false, message = "Không tìm thấy đánh giá hoặc bạn không có quyền chỉnh sửa!" });
+            }
+            review.Rating = rating;
+            review.Review = comment;
+            review.ReviewDate = DateTime.Now;
+            await _bookService.EditReview(review);
+
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<ReviewHub>();
+            hubContext.Clients.All.updateReview(review.Id, review.UserName, review.Rating, review.Review, review.ReviewDate.ToString("dd/MM/yyyy HH:mm"));
+
+            return Json(new
+            {
+                success = true,
+                reviewId = review.Id,
+                userName = review.UserName,
+                rating = review.Rating,
+                comment = review.Review,
+                createdAt = review.ReviewDate.ToString("dd/MM/yyyy HH:mm")
+            });
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> DeleteReview(int reviewId)
+        {
+            var review = await _bookService.GetBookReviewById(reviewId);
+            if (review == null || (review.UserName != User.Identity.Name && !User.IsInRole("Admin")))
+            {
+                return Json(new { success = false, message = "Bạn không có quyền xóa đánh giá này!" });
+            }
+
+            await _bookService.DeleteReview(reviewId);
+
+            var hubContext = GlobalHost.ConnectionManager.GetHubContext<ReviewHub>();
+            hubContext.Clients.All.deleteReview(reviewId);
+
+            return Json(new { success = true, reviewId });
+        }
+
+
+        public ActionResult Chat()
+            {
+                return View();
+            }
+        }
 }

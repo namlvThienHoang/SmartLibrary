@@ -6,6 +6,7 @@
 }
 
 <div class="container mt-4">
+    <!-- Thông tin sách -->
     <div class="card shadow-lg">
         <div class="row g-0">
             <div class="col-md-4 d-flex align-items-center justify-content-center p-3">
@@ -26,30 +27,237 @@
                     <p class="card-text"><strong>Nhà xuất bản:</strong> @Model.Publisher</p>
                     <p class="card-text"><strong>Ngày xuất bản:</strong> @Model.PublishedDate.ToShortDateString()</p>
                     <p class="card-text"><strong>ISBN:</strong> @Model.ISBN</p>
-                    <p class="card-text"><strong>Số lượng tổng:</strong> @Model.TotalCopies</p>
-                    <p class="card-text"><strong>Còn lại:</strong> <span class="badge @(Model.AvailableCopies > 0 ? "bg-success" : "bg-danger")">@Model.AvailableCopies</span></p>
                     <p class="card-text"><strong>Mô tả:</strong> @Model.Description</p>
-                    <div class="mt-3">
-                        @if (User.IsInRole("User"))
-                        {
-                            <a href="@Url.Action("Index")" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left"></i> Quay lại
-                            </a>
-                        }
 
+                    <div class="mt-3">
+                        <a href="@Url.Action("Index", "Book")" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Quay lại
+                        </a>
                         @if (User.IsInRole("Admin"))
                         {
-                            <a href="@Url.Action("Edit", new { id = Model.Id })" class="btn btn-warning me-2">
+                            <a href="@Url.Action("Edit", "Book", new { id = Model.Id })" class="btn btn-warning me-2">
                                 <i class="bi bi-pencil-square"></i> Chỉnh sửa
                             </a>
-                            <a href="@Url.Action("Index")" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left"></i> Quay lại
-                            </a>
                         }
-
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Phần đánh giá & bình luận -->
+    <div class="mt-4">
+        <h4>Đánh giá & Bình luận</h4>
+
+        <div id="error-message" class="alert alert-danger d-none"></div>
+
+
+        <p>Điểm trung bình: <span id="average-rating" class="fw-bold">@Model.AverageRating.ToString("0.0")</span> ⭐</p>
+
+        <!-- Form thêm đánh giá -->
+        @if (User.Identity.IsAuthenticated)
+        {
+            var userReview = Model.Reviews.FirstOrDefault(r => r.UserName == User.Identity.Name);
+
+            if (userReview == null)
+            {
+                <!-- Nếu chưa đánh giá, hiển thị form thêm mới -->
+                <form id="review-form" method="post" action="@Url.Action("AddReview", "Book")">
+                    <input type="hidden" name="bookId" value="@Model.Id" />
+                    <div class="mb-3">
+                        <label for="rating" class="form-label">Đánh giá:</label>
+                        <select name="rating" id="rating" class="form-select" required>
+                            <option value="5">⭐⭐⭐⭐⭐</option>
+                            <option value="4">⭐⭐⭐⭐</option>
+                            <option value="3">⭐⭐⭐</option>
+                            <option value="2">⭐⭐</option>
+                            <option value="1">⭐</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="comment" class="form-label">Bình luận:</label>
+                        <textarea name="comment" id="comment" class="form-control" rows="3" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
+                </form>
+            }
+        }
+        else
+        {
+            <p>Vui lòng <a href="@Url.Action("Login", "Account")">đăng nhập</a> để đánh giá.</p>
+        }
+
+        <!-- Form chỉnh sửa đánh giá (ẩn mặc định) -->
+        <div id="edit-review-form" class="mt-3 d-none">
+            <h5>Chỉnh sửa đánh giá</h5>
+            <form method="post" action="@Url.Action("EditReview", "Book")">
+                <input type="hidden" name="reviewId" id="edit-review-id" />
+                <div class="mb-3">
+                    <label for="edit-rating" class="form-label">Đánh giá:</label>
+                    <select name="rating" id="edit-rating" class="form-select" required>
+                        <option value="5">⭐⭐⭐⭐⭐</option>
+                        <option value="4">⭐⭐⭐⭐</option>
+                        <option value="3">⭐⭐⭐</option>
+                        <option value="2">⭐⭐</option>
+                        <option value="1">⭐</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="edit-comment" class="form-label">Bình luận:</label>
+                    <textarea name="comment" id="edit-comment" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-success">Cập nhật</button>
+                <button type="button" class="btn btn-secondary" onclick="$('#edit-review-form').addClass('d-none')">Hủy</button>
+            </form>
+        </div>
+
+
+        <!-- Danh sách đánh giá -->
+        <div id="reviews-list" class="mt-4">
+            @foreach (var review in Model.Reviews)
+            {
+                <div class="card mb-2 shadow-sm" id="review-@review.Id">
+                    <div class="card-body">
+                        <h6 class="card-title fw-bold">@review.UserName</h6>
+                        <p class="text-warning">
+                            @for (int i = 0; i < review.Rating; i++)
+                            {
+                                <i class="bi bi-star-fill"></i>
+                            }
+                            @for (int i = review.Rating; i < 5; i++)
+                            {
+                                <i class="bi bi-star"></i>
+                            }
+                        </p>
+                        <p class="card-text">@review.Review</p>
+                        <small class="text-muted">@review.ReviewDate.ToString("dd/MM/yyyy HH:mm")</small>
+
+                        @if (User.Identity.Name == review.UserName || User.IsInRole("Admin"))
+                        {
+                            <button class="btn btn-warning btn-sm" onclick="editReview(@review.Id, '@review.Rating', '@review.Review')">
+                                <i class="bi bi-pencil"></i> Sửa
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteReview(@review.Id)">
+                                <i class="bi bi-trash"></i> Xóa
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+    </div>
 </div>
+
+@section scripts {
+    <!--Script references. -->
+    <!--The jQuery library is required and is referenced by default in _Layout.cshtml. -->
+    <!--Reference the SignalR library. -->
+    <script src="~/Scripts/jquery.signalR-2.4.3.min.js"></script>
+    <!--Reference the autogenerated SignalR hub script. -->
+    <script src="~/signalr/hubs"></script>
+    <!--SignalR script to update the chat page and send messages.-->
+    <script>
+        $(function () {
+            var reviewHub = $.connection.reviewHub;
+
+            // Nhận phản hồi từ server khi có đánh giá mới
+            reviewHub.client.newReview = function (reviewId, userName, rating, comment, createdAt) {
+                var stars = '<span class="text-warning">';
+                for (var i = 0; i < rating; i++) { stars += '<i class="bi bi-star-fill"></i>'; }
+                for (var i = rating; i < 5; i++) { stars += '<i class="bi bi-star"></i>'; }
+                stars += '</span>';
+
+                var newReviewHtml = `
+                    <div class="card mb-2 shadow-sm" id="review-${reviewId}">
+                        <div class="card-body">
+                            <h6 class="card-title fw-bold">${userName}</h6>
+                            <p>${stars}</p>
+                            <p class="card-text">${comment}</p>
+                            <small class="text-muted">${createdAt}</small>
+                        </div>
+                    </div>`;
+
+                $("#reviews-list").prepend(newReviewHtml);
+            };
+
+            // Nhận phản hồi khi có cập nhật đánh giá
+            reviewHub.client.updateReview = function (reviewId, userName, rating, comment, createdAt) {
+                var stars = '<span class="text-warning">';
+                for (var i = 0; i < rating; i++) { stars += '<i class="bi bi-star-fill"></i>'; }
+                for (var i = rating; i < 5; i++) { stars += '<i class="bi bi-star"></i>'; }
+                stars += '</span>';
+
+                var reviewItem = $("#review-" + reviewId);
+                reviewItem.find(".card-title").text(userName);
+                reviewItem.find(".text-warning").html(stars);
+                reviewItem.find(".card-text").text(comment);
+                reviewItem.find(".text-muted").text(createdAt);
+            };
+
+            // Nhận phản hồi khi xóa đánh giá
+            reviewHub.client.deleteReview = function (reviewId) {
+                $("#review-" + reviewId).fadeOut(300, function () { $(this).remove(); });
+            };
+
+            $.connection.hub.start();
+
+            // Xử lý sự kiện gửi đánh giá
+            $("#review-form").submit(function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var formData = form.serialize();
+
+                $.post(form.attr("action"), formData, function (response) {
+                    if (response.success) {
+                        reviewHub.client.newReview(response.userName, response.rating, response.comment, response.createdAt);
+                        form[0].reset();
+                        $("#error-message").hide();
+                    } else {
+                        $("#error-message").text(response.message).show();
+                    }
+                });
+            });
+
+            // Hàm chỉnh sửa đánh giá
+            window.editReview = function (reviewId, rating, comment) {
+                $("#edit-review-id").val(reviewId);
+                $("#edit-rating").val(rating);
+                $("#edit-comment").val(comment);
+                $("#edit-review-form").removeClass("d-none");
+            };
+
+            // Gửi yêu cầu chỉnh sửa
+            $("#edit-review-form form").submit(function (e) {
+                e.preventDefault();
+                var form = $(this);
+                var formData = form.serialize();
+
+                $.post(form.attr("action"), formData, function (response) {
+                    if (response.success) {
+                        $("#edit-review-form").addClass("d-none");
+                        reviewHub.client.updateReview(response.reviewId, response.userName, response.rating, response.comment, response.createdAt);
+                    } else {
+                        alert(response.message);
+                    }
+                });
+            });
+
+            // Hàm xóa đánh giá
+            window.deleteReview = function (reviewId) {
+                if (!confirm("Bạn có chắc chắn muốn xóa đánh giá này?")) return;
+
+                $.post("/Book/DeleteReview", { reviewId: reviewId }, function (response) {
+                    if (response.success) {
+                        reviewHub.client.deleteReview(reviewId);
+                    } else {
+                        alert(response.message);
+                    }
+                });
+            };
+        });
+    </script>
+
+
+
+}

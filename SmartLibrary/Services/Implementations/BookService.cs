@@ -66,8 +66,26 @@ namespace SmartLibrary.Services.Implementations
         public async Task<BookViewModel> GetBookById(int id)
         {
             var book = await _unitOfWork.BookRepository.GetBookByIdAsync(id);
-            return _mapper.Map<BookViewModel>(book);
+            var reviews = await _unitOfWork.BookRepository.GetReviewsByBookIdAsync(id);
+            var result = _mapper.Map<BookViewModel>(book);
+
+            // Sắp xếp reviews theo ReviewDate giảm dần
+            foreach (var review in reviews.OrderByDescending(r => r.ReviewDate))
+            {
+                result.Reviews.Add(new BookReviewViewModel()
+                {
+                    Id = review.BookReviewId,
+                    UserName = review.User.UserName,
+                    Rating = review.Rating,
+                    Review = review.Review,
+                    ReviewDate = review.ReviewDate
+                });
+            }
+
+            result.AverageRating = result.Reviews.Any() ? result.Reviews.Average(r => r.Rating) : 0;
+            return result;
         }
+
 
         public async Task<EditBookViewModel> GetBookEditById(int id)
         {
@@ -136,6 +154,45 @@ namespace SmartLibrary.Services.Implementations
         public async Task DeleteBook(int id)
         {
             await _unitOfWork.BookRepository.DeleteBookAsync(id);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task<BookReviewViewModel> GetBookReviewById(int id)
+        {
+            var book = await _unitOfWork.BookRepository.GetReviewByIdAsync(id);
+            return _mapper.Map<BookReviewViewModel>(book);
+        }
+
+
+
+        public async Task<int> AddReview(string userId, int bookId, int rating, string comment)
+        {
+            var review = new BookReview
+            {
+                UserId = userId,
+                BookId = bookId,
+                Rating = rating,
+                Review = comment,
+                ReviewDate = DateTime.Now
+            };
+            await _unitOfWork.BookRepository.AddReviewAsync(review);
+            await _unitOfWork.SaveChangesAsync();
+            return review.BookReviewId;
+        }
+
+        public async Task EditReview(BookReviewViewModel reviewViewModel)
+        {
+            var review = await _unitOfWork.BookRepository.GetReviewByIdAsync(reviewViewModel.Id);
+            review.Review = reviewViewModel.Review;
+            review.ReviewDate = reviewViewModel.ReviewDate;
+
+            await _unitOfWork.BookRepository.UpdateReviewAsync(review);
+            await _unitOfWork.SaveChangesAsync();
+        }
+
+        public async Task DeleteReview(int reviewId)
+        {
+            await _unitOfWork.BookRepository.DeleteReviewAsync(reviewId);
             await _unitOfWork.SaveChangesAsync();
         }
     }

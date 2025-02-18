@@ -27,6 +27,9 @@ namespace SmartLibrary.Models.Mappings
                     src.BookAuthors.Select(ba => ba.Author.AuthorId)))
                 .ForMember(dest => dest.CategoryIds, act => act.MapFrom(src =>
                     src.BookCategories.Select(ba => ba.Category.CategoryId)));
+
+            CreateMap<BookReview, BookReviewViewModel>()
+                .ForMember(dest => dest.Id, act => act.MapFrom(src => src.BookReviewId));
         }
     }
 }

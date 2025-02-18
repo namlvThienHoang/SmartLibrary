@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace SmartLibrary.Models.ViewModels.Book
@@ -39,5 +40,11 @@ namespace SmartLibrary.Models.ViewModels.Book
         public string Authors { get; set; }
         [Display(Name = "Thể loại")]
         public string Categories { get; set; }
+
+        // Danh sách đánh giá
+        public List<BookReviewViewModel> Reviews { get; set; } = new List<BookReviewViewModel>();
+
+        // Điểm trung bình
+        public double AverageRating { get; set; }
     }
 }

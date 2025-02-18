@@ -14,14 +14,19 @@ using SmartLibrary.Models.ViewModels.AuditLog;
 using SmartLibrary.Utilities.Helpers;
 using SmartLibrary.Models.ViewModels;
 using SmartLibrary.Services.Interfaces;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 
 namespace SmartLibrary.Controllers
 {
     public class AuditLogController : BaseController
     {
+        private readonly ApplicationUserManager UserManager;
         public AuditLogController(IAuditLogService auditLogService, ApplicationUserManager userManager)
         : base(auditLogService, userManager) // Gọi constructor của BaseController
         {
+            var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
+            UserManager = new ApplicationUserManager(userStore);
         }
 
         // GET: AuditLog
@@ -33,9 +38,14 @@ namespace SmartLibrary.Controllers
 
             // Thiết lập trang hiện tại
             pageNumber = pageNumber ?? 1;
-
+            var userId = User.Identity.GetUserId();
+            var roles = await UserManager.GetRolesAsync(userId);
+            if(roles.Contains(ModelCommons.Roles.Admin))
+            {
+                userId = null;
+            }    
             // Lấy dữ liệu từ service
-            var model = await _auditLogService.GetAuditLogs(searchString, sortOrder, pageNumber.Value, pageSize);
+            var model = await _auditLogService.GetAuditLogs(userId, searchString, sortOrder, pageNumber.Value, pageSize);
 
             return View(model);
         }

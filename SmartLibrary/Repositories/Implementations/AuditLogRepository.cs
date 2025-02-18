@@ -17,7 +17,7 @@ namespace SmartLibrary.Repositories.Implementations
             _context = context;
         }
 
-        public async Task<(IEnumerable<AuditLog> AuditLogs, int TotalCount)> GetAuditLogsAsync(string searchString, string sortOrder, int pageNumber, int pageSize)
+        public async Task<(IEnumerable<AuditLog> AuditLogs, int TotalCount)> GetAuditLogsAsync(string userId, string searchString, string sortOrder, int pageNumber, int pageSize)
         {
             var query = _context.AuditLogs.AsQueryable();
 
@@ -26,6 +26,11 @@ namespace SmartLibrary.Repositories.Implementations
             {
                 query = query.Where(b => b.Action.Contains(searchString));
             }
+            if (!string.IsNullOrEmpty(userId))
+            {
+                query = query.Where(b => b.UserId == userId);
+            }
+
             int totalCount = await query.CountAsync();
 
             // Sắp xếp

@@ -10,7 +10,7 @@ namespace SmartLibrary.Services.Interfaces
     public interface IAuditLogService
     {
         Task LogActionAsync(string action, string entity, string details, string userId);
-        Task<PagedResult<AuditLogViewModel>> GetAuditLogs(string searchString, string sortOrder, int pageNumber, int pageSize);
+        Task<PagedResult<AuditLogViewModel>> GetAuditLogs(string userId, string searchString, string sortOrder, int pageNumber, int pageSize);
         Task<IEnumerable<AuditLogViewModel>> GetAllAuditLogs();
         Task<AuditLogViewModel> GetAuditLogById(int id);
     }
