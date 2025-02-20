@@ -1,0 +1,49 @@
+﻿@model List<SmartLibrary.Models.ViewModels.Notification.NotificationViewModel>
+
+
+<h2>Thông báo</h2>
+
+<table class="table" id="notificationTable">
+    <thead>
+        <tr>
+            <th>Nội dung</th>
+            <th>Ngày tạo</th>
+            <th>Trạng thái</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr style="background-color: @(item.IsRead ? "#f0f0f0" : "#ffffcc")">
+                <td>@item.Message</td>
+                <td>@item.CreatedDate</td>
+                <td>@(item.IsRead ? "Đã đọc" : "Chưa đọc")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Thêm SignalR JavaScript -->
+<script>
+    var connection = new signalR.HubConnectionBuilder().withUrl("/notificationHub").build();
+
+    connection.on("ReceiveNotification", function (message) {
+        var table = document.getElementById("notificationTable").getElementsByTagName('tbody')[0];
+
+        var newRow = table.insertRow(0);
+        newRow.style.backgroundColor = "#ffffcc"; // Màu cho thông báo chưa đọc
+
+        var cell1 = newRow.insertCell(0);
+        var cell2 = newRow.insertCell(1);
+        var cell3 = newRow.insertCell(2);
+
+        cell1.innerHTML = message;
+        cell2.innerHTML = new Date().toLocaleString();
+        cell3.innerHTML = "Chưa đọc";
+    });
+
+    connection.start().catch(function (err) {
+        return console.error(err.toString());
+    });
+</script>
+

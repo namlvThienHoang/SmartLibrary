@@ -1,0 +1,17 @@
+﻿@model SmartLibrary.Models.ViewModels.Notification.EditNotificationViewModel
+
+<h2>Chỉnh sửa thông báo</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.NotificationId)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Message)
+        @Html.TextAreaFor(model => model.Message, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Message)
+    </div>
+
+    <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+}

@@ -1,0 +1,16 @@
+﻿@model SmartLibrary.Models.ViewModels.Notification.CreateNotificationViewModel
+
+<h2>Thêm thông báo</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Message)
+        @Html.TextAreaFor(model => model.Message, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Message)
+    </div>
+
+    <button type="submit" class="btn btn-primary">Gửi thông báo</button>
+}

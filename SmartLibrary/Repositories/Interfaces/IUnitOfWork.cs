@@ -15,6 +15,7 @@ namespace SmartLibrary.Repositories.Interfaces
         IBorrowBookRepository BorrowBookRepository { get; }
         IBookReservationRepository BookReservationRepository { get; }
         IReportRepository ReportRepository { get; }
+        INotificationRepository NotificationRepository { get; }
         Task<int> SaveChangesAsync();
         int SaveChanges();
     }

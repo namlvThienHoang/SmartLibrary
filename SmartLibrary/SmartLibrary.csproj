@@ -206,6 +206,7 @@
     <Compile Include="Controllers\CategoryController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\NotificationController.cs" />
     <Compile Include="Controllers\ReportController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -235,9 +236,16 @@
     <Compile Include="Migrations\202502170328500_AddDataTypeToLibrarySetting.Designer.cs">
       <DependentUpon>202502170328500_AddDataTypeToLibrarySetting.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202502190227570_UpdateNotification.cs" />
+    <Compile Include="Migrations\202502190227570_UpdateNotification.Designer.cs">
+      <DependentUpon>202502190227570_UpdateNotification.cs</DependentUpon>
+    </Compile>
     <Compile Include="Models\Mappings\LibrarySettingMappingProfile.cs" />
     <Compile Include="Models\ViewModels\Book\BookReviewViewModel.cs" />
     <Compile Include="Models\ViewModels\LibrarySetting\LibrarySettingViewModel.cs" />
+    <Compile Include="Models\ViewModels\Notification\CreateNotificationViewModel.cs" />
+    <Compile Include="Models\ViewModels\Notification\EditNotificationViewModel.cs" />
+    <Compile Include="Models\ViewModels\Notification\NotificationViewModel.cs" />
     <Compile Include="Models\ViewModels\Report\BookCategoryStatistics.cs" />
     <Compile Include="Models\ViewModels\Report\ReportViewModel.cs" />
     <Compile Include="Models\ViewModels\User\EditProfileViewModel.cs" />
@@ -248,6 +256,7 @@
     <Compile Include="Repositories\Implementations\BookReservationRepository.cs" />
     <Compile Include="Repositories\Implementations\BorrowBookRepository.cs" />
     <Compile Include="Repositories\Implementations\CategoryRepository.cs" />
+    <Compile Include="Repositories\Implementations\NotificationRepository.cs" />
     <Compile Include="Repositories\Implementations\ReportRepository.cs" />
     <Compile Include="Repositories\Implementations\UnitOfWork.cs" />
     <Compile Include="Repositories\Interfaces\IAuditLogRepository.cs" />
@@ -257,6 +266,7 @@
     <Compile Include="Repositories\Interfaces\IBookReservationRepository.cs" />
     <Compile Include="Repositories\Interfaces\IBorrowBookRepository.cs" />
     <Compile Include="Repositories\Interfaces\ICategoryRepository.cs" />
+    <Compile Include="Repositories\Interfaces\INotificationRepository.cs" />
     <Compile Include="Repositories\Interfaces\IReportRepository.cs" />
     <Compile Include="Repositories\Interfaces\IUnitOfWork.cs" />
     <Compile Include="Services\Implementations\LibrarySettingService.cs" />
@@ -265,6 +275,7 @@
     <Compile Include="Services\Implementations\BookService.cs" />
     <Compile Include="Services\Implementations\BorrowBookService.cs" />
     <Compile Include="Services\Implementations\CategoryService.cs" />
+    <Compile Include="Services\Implementations\NotificationService.cs" />
     <Compile Include="Services\Implementations\ReportService.cs" />
     <Compile Include="Services\Interfaces\ILibrarySettingService.cs" />
     <Compile Include="Services\Interfaces\IAuthorService.cs" />
@@ -272,6 +283,7 @@
     <Compile Include="Services\Interfaces\IBookService.cs" />
     <Compile Include="Services\Interfaces\IBorrowBookService.cs" />
     <Compile Include="Services\Interfaces\ICategoryService.cs" />
+    <Compile Include="Services\Interfaces\INotificationService.cs" />
     <Compile Include="Services\Interfaces\IReportService.cs" />
     <Compile Include="Utilities\Helpers\AutoLogAndToastAttribute.cs" />
     <Compile Include="Utilities\Helpers\BreadcrumbConfiguration.cs" />
@@ -566,6 +578,9 @@
     <Content Include="Views\Report\Index.cshtml" />
     <Content Include="Views\Home\AccessDenied.cshtml" />
     <Content Include="Views\Book\Chat.cshtml" />
+    <Content Include="Views\Notification\Index.cshtml" />
+    <Content Include="Views\Notification\Create.cshtml" />
+    <Content Include="Views\Notification\Edit.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -614,6 +629,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202502170328500_AddDataTypeToLibrarySetting.resx">
       <DependentUpon>202502170328500_AddDataTypeToLibrarySetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202502190227570_UpdateNotification.resx">
+      <DependentUpon>202502190227570_UpdateNotification.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

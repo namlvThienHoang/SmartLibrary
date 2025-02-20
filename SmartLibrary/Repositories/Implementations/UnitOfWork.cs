@@ -23,6 +23,8 @@ namespace SmartLibrary.Repositories.Implementations
 
         public IReportRepository ReportRepository { get; }
 
+        public INotificationRepository NotificationRepository { get; }
+
         public UnitOfWork(ApplicationDbContext context,
                           IBookRepository bookRepository,
                           ICategoryRepository categoryRepository,
@@ -30,7 +32,8 @@ namespace SmartLibrary.Repositories.Implementations
                           IAuditLogRepository auditLogRepository,
                           IBorrowBookRepository borrowBookRepository,
                           IBookReservationRepository bookReservationRepository,
-                          IReportRepository reportRepository)
+                          IReportRepository reportRepository,
+                          INotificationRepository notificationRepository)
         {
             _context = context;
             BookRepository = bookRepository;
@@ -40,6 +43,8 @@ namespace SmartLibrary.Repositories.Implementations
             BorrowBookRepository = borrowBookRepository;
             BookReservationRepository = bookReservationRepository;
             ReportRepository = reportRepository;
+            NotificationRepository = notificationRepository;
+
         }
 
         public int SaveChanges()
