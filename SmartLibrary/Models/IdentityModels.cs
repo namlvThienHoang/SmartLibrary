@@ -20,11 +20,10 @@ namespace SmartLibrary.Models
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
-
-
         // Navigation property
-        public ICollection<UserSetting> UserSettings { get; set; }
-        public ICollection<Reservation> Reservations { get; set; }
+        public virtual ICollection<UserSetting> UserSettings { get; set; }
+        public virtual ICollection<Reservation> Reservations { get; set; }
+        public virtual ICollection<NotificationUser> NotificationUsers { get; set; }
         public virtual ICollection<BorrowTransaction> BorrowTransactions { get; set; }
         public async Task<ClaimsIdentity> GenerateUserIdentityAsync(UserManager<ApplicationUser> manager)
         {
@@ -62,6 +61,7 @@ namespace SmartLibrary.Models
         public DbSet<LibrarySetting> LibrarySettings { get; set; }
         public DbSet<Membership> Memberships { get; set; }
         public DbSet<UserSetting> UserSettings { get; set; }
+        public DbSet<NotificationUser> NotificationUsers { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -141,11 +141,20 @@ namespace SmartLibrary.Models
                 .WithMany()
                 .HasForeignKey(m => m.UserId);
 
-            // Notification configuration
-            modelBuilder.Entity<Notification>()
-                .HasRequired(n => n.User)
-                .WithMany()
-                .HasForeignKey(n => n.UserId);
+            // BookAuthor configuration
+            modelBuilder.Entity<NotificationUser>()
+                .HasKey(ba => new { ba.NotificationId, ba.UserId });
+
+            modelBuilder.Entity<NotificationUser>()
+                .HasRequired(ba => ba.Notification)
+                .WithMany(b => b.NotificationUsers)
+                .HasForeignKey(ba => ba.NotificationId);
+
+            modelBuilder.Entity<NotificationUser>()
+                .HasRequired(ba => ba.User)
+                .WithMany(a => a.NotificationUsers)
+                .HasForeignKey(ba => ba.UserId);
+
 
             modelBuilder.Entity<UserSetting>()
             .HasRequired(us => us.User)

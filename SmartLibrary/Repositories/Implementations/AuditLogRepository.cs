@@ -24,7 +24,9 @@ namespace SmartLibrary.Repositories.Implementations
             // Tìm kiếm
             if (!string.IsNullOrEmpty(searchString))
             {
-                query = query.Where(b => b.Action.Contains(searchString));
+                query = query.Where(b => b.User.Email.Contains(searchString) 
+                || b.Action.Contains(searchString) 
+                || b.Details.Contains(searchString));
             }
             if (!string.IsNullOrEmpty(userId))
             {
@@ -36,17 +38,17 @@ namespace SmartLibrary.Repositories.Implementations
             // Sắp xếp
             switch (sortOrder)
             {
-                case "action_desc":
-                    query = query.OrderByDescending(b => b.Action);
-                    break;
                 case "actionDate":
                     query = query.OrderBy(b => b.ActionDate);
                     break;
-                case "actionDate_desc":
+                case "action":
+                    query = query.OrderBy(b => b.Action);
+                    break;
+                case "action_desc":
                     query = query.OrderByDescending(b => b.ActionDate);
                     break;
                 default:
-                    query = query.OrderBy(b => b.Action);
+                    query = query.OrderByDescending(b => b.ActionDate);
                     break;
             }
 

@@ -1,22 +1,28 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using SmartLibrary.Models;
+using SmartLibrary.Models.EntityModels;
 using SmartLibrary.Models.ViewModels.Notification;
+using SmartLibrary.Services.Implementations;
 using SmartLibrary.Services.Interfaces;
 using SmartLibrary.Utilities.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Data.Entity.Core.Metadata.Edm;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using static SmartLibrary.Utilities.Helpers.Commons;
 
 namespace SmartLibrary.Controllers
 {
     [CustomAuthorize]
     public class NotificationController : BaseController
     {
-        private readonly INotificationService _notificationService;
+        private readonly INotificationService _service;
         private readonly ApplicationUserManager UserManager;
 
         public NotificationController(IAuditLogService auditLogService,
@@ -26,112 +32,147 @@ namespace SmartLibrary.Controllers
         {
             var userStore = new UserStore<ApplicationUser>(new ApplicationDbContext());
             UserManager = new ApplicationUserManager(userStore);
-            _notificationService = notificationService;
+            _service = notificationService;
         }
 
-        // Hiển thị danh sách thông báo
         public async Task<ActionResult> Index()
         {
-            var userId = User.Identity.GetUserId();
-            var notifications = await _notificationService.GetNotificationsByUserIdAsync(userId);
-            var model = notifications.Select(n => new NotificationViewModel
-            {
-                NotificationId = n.NotificationId,
-                Message = n.Message,
-                CreatedDate = n.CreatedDate.ToString("dd/MM/yyyy HH:mm"),
-                IsRead = n.IsRead
-            }).ToList();
+            string userId = User.Identity.GetUserId();
+            bool isAdmin = User.IsInRole("Admin");
 
-            return View(model);
+            var notifications = await _service.GetAllAsync(userId, isAdmin);
+            return View(notifications);
         }
 
-        // Hiển thị form tạo thông báo (chỉ Admin)
-        [CustomAuthorize(Roles = "Admin")]
-        public ActionResult Create()
+
+        public async Task<ActionResult> Details(int id)
         {
-            return View();
+            var notification = await _service.GetByIdAsync(id);
+            if (notification == null) return HttpNotFound();
+            return View(notification);
         }
 
-        // Xử lý tạo thông báo
-        [HttpPost]
         [CustomAuthorize(Roles = "Admin")]
+        public async Task<ActionResult> Create()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+                var users = await context.Users.ToListAsync();
+                ViewBag.Users = new SelectList(users, "Id", "FullName");
+            }
+            ViewBag.NotificationTypes = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Value = NotificationType.System, Text = NotificationType.System },
+                new SelectListItem { Value = NotificationType.Reminder, Text = NotificationType.Reminder },
+                new SelectListItem { Value = NotificationType.Security, Text = NotificationType.Security },
+                new SelectListItem { Value = NotificationType.Message, Text = NotificationType.Message    }
+            }, "Value", "Text");
+            return View(new CreateNotificationViewModel());
+        }
+
+        [CustomAuthorize(Roles = "Admin")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(CreateNotificationViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(model);
+                await _service.CreateAsync(model);
+                return RedirectToAction("Index");
             }
-            var userIds = UserManager.Users.Select(x=>x.Id).ToList();
-
-            await _notificationService.CreateNotificationForAllUsersAsync(model.Message, userIds);
-            return RedirectToAction("Index");
-        }
-
-        // Hiển thị form chỉnh sửa thông báo (chỉ Admin)
-        [CustomAuthorize(Roles = "Admin")]
-        public async Task<ActionResult> Edit(int id)
-        {
-            var notification = await _notificationService.GetNotificationByIdAsync(id);
-            if (notification == null)
+            using (var context = new ApplicationDbContext())
             {
-                return HttpNotFound();
+                var users = await context.Users.ToListAsync();
+                ViewBag.Users = new SelectList(users, "Id", "FullName");
             }
-
-            var model = new EditNotificationViewModel
+            ViewBag.NotificationTypes = new SelectList(new List<SelectListItem>
             {
-                NotificationId = notification.NotificationId,
-                Message = notification.Message
-            };
-
+                new SelectListItem { Value = NotificationType.System, Text = NotificationType.System },
+                new SelectListItem { Value = NotificationType.Reminder, Text = NotificationType.Reminder },
+                new SelectListItem { Value = NotificationType.Security, Text = NotificationType.Security },
+                new SelectListItem { Value = NotificationType.Message, Text = NotificationType.Message    }
+            }, "Value", "Text");
             return View(model);
         }
 
-        // Xử lý chỉnh sửa thông báo
-        [HttpPost]
         [CustomAuthorize(Roles = "Admin")]
+        public async Task<ActionResult> Edit(int id)
+        {
+            var notification = await _service.GetByIdAsync(id);
+            if (notification == null) return HttpNotFound();
+
+            var editModel = new EditNotificationViewModel
+            {
+                NotificationId = notification.NotificationId,
+                Title = notification.Title,
+                Message = notification.Message,
+                NotificationType = notification.NotificationType,
+                RedirectUrl = notification.RedirectUrl,
+                IsRead = notification.IsRead,
+                UserIds = notification.UserIds
+            };
+            using (var context = new ApplicationDbContext())
+            {
+                var users = await context.Users.ToListAsync();
+                ViewBag.Users = new SelectList(users, "Id", "FullName", editModel.UserIds);
+            }
+            ViewBag.NotificationTypes = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Value = NotificationType.System, Text = NotificationType.System },
+                new SelectListItem { Value = NotificationType.Reminder, Text = NotificationType.Reminder },
+                new SelectListItem { Value = NotificationType.Security, Text = NotificationType.Security },
+                new SelectListItem { Value = NotificationType.Message, Text = NotificationType.Message    }
+            }, "Value", "Text");
+            return View(editModel);
+        }
+
+        [CustomAuthorize(Roles = "Admin")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(EditNotificationViewModel model)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return View(model);
+                await _service.UpdateAsync(model);
+                return RedirectToAction("Index");
             }
-
-            var notification = await _notificationService.GetNotificationByIdAsync(model.NotificationId);
-            if (notification == null)
+            using (var context = new ApplicationDbContext())
             {
-                return HttpNotFound();
+                var users = await context.Users.ToListAsync();
+                ViewBag.Users = new SelectList(users, "Id", "FullName", model.UserIds);
             }
+            ViewBag.NotificationTypes = new SelectList(new List<SelectListItem>
+            {
+                new SelectListItem { Value = NotificationType.System, Text = NotificationType.System },
+                new SelectListItem { Value = NotificationType.Reminder, Text = NotificationType.Reminder },
+                new SelectListItem { Value = NotificationType.Security, Text = NotificationType.Security },
+                new SelectListItem { Value = NotificationType.Message, Text = NotificationType.Message    }
+            }, "Value", "Text");
+            return View(model);
+        }
 
-            notification.Message = model.Message;
-            await _notificationService.UpdateNotificationAsync(notification);
+        [CustomAuthorize(Roles = "Admin")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var notification = await _service.GetByIdAsync(id);
+            if (notification == null) return HttpNotFound();
+            return View(notification);
+        }
 
+        [CustomAuthorize(Roles = "Admin")]
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> ConfirmDelete(int id)
+        {
+            await _service.DeleteAsync(id);
             return RedirectToAction("Index");
         }
-        // Đánh dấu một thông báo là đã đọc
-        [HttpPost]
-        public async Task<JsonResult> MarkAsRead(int id)
-        {
-            await _notificationService.MarkNotificationAsReadAsync(id);
-            return Json(new { success = true });
-        }
 
-        // Đánh dấu tất cả thông báo của admin là đã đọc
-        [HttpPost]
-        public async Task<JsonResult> MarkAllAsRead()
-        {
-            var adminId = User.Identity.GetUserId();
-            await _notificationService.MarkAllNotificationsAsReadAsync(adminId);
-            return Json(new { success = true });
-        }
 
-        // Xóa một thông báo
-        [HttpPost]
-        public async Task<JsonResult> Delete(int id)
+        public async Task<ActionResult> MarkAsRead(int id)
         {
-            await _notificationService.DeleteNotificationAsync(id);
-            return Json(new { success = true });
+            await _service.MarkAsReadAsync(id);
+            return RedirectToAction("Index");
         }
     }
 

@@ -24,7 +24,7 @@ namespace SmartLibrary.Models.ViewModels.User
 
         [Display(Name = "Tên đầy đủ")]
         public string FullName { get; set; }
-
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Ngày sinh")]
         public DateTime? DateOfBirth { get; set; }
 

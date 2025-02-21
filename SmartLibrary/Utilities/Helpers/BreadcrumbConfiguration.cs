@@ -372,6 +372,27 @@ namespace SmartLibrary.Utilities.Helpers
                     new BreadcrumbItem { Title = "Nhật ký hoạt động", Url = "/AuditLog", IsActive = false },
                     new BreadcrumbItem { Title = "Chi tiết", Url = "#", IsActive = true }
                 }
+            },
+           
+            #endregion
+
+            #region Quản lý thông báo
+            {
+                "Notification/Index",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Quản lý thông báo", Url = "/Notification", IsActive = true }
+                }
+            },
+            {
+                "Notification/Create",
+                new List<BreadcrumbItem>
+                {
+                    new BreadcrumbItem { Title = "Trang chủ", Url = "/", IsActive = false },
+                    new BreadcrumbItem { Title = "Quản lý thông báo", Url = "/Notification", IsActive = false },
+                    new BreadcrumbItem { Title = "Thêm mới", Url = "#", IsActive = true }
+                }
             }
            
             #endregion

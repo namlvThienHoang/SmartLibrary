@@ -8,12 +8,23 @@ namespace SmartLibrary.Models.ViewModels.Notification
 {
     public class EditNotificationViewModel
     {
-        [Required]
         public int NotificationId { get; set; }
 
         [Required]
-        [StringLength(200, ErrorMessage = "Nội dung thông báo không được quá 200 ký tự.")]
+        [Display(Name = "Tiêu đề")]
+        public string Title { get; set; }
+
+        [Required]
+        [Display(Name = "Nội dung")]
         public string Message { get; set; }
+        [Display(Name = "Loại thông báo")]
+        public string NotificationType { get; set; }
+        [Display(Name = "Đường dẫn")]
+        public string RedirectUrl { get; set; }
+
+        public bool IsRead { get; set; }
+
+        public List<string> UserIds { get; set; } = new List<string>();
     }
 
 }

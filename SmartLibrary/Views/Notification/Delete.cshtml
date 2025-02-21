@@ -1,0 +1,27 @@
+﻿@model SmartLibrary.Models.ViewModels.Notification.NotificationViewModel
+
+@{
+    ViewBag.Title = "Delete Notification";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-sm border-danger">
+        <div class="card-header bg-danger text-white">
+            <h5>Delete Notification</h5>
+        </div>
+        <div class="card-body">
+            <p class="text-danger"><strong>Are you sure you want to delete this notification?</strong></p>
+            <ul>
+                <li><strong>Message:</strong> @Model.Message</li>
+                <li><strong>Created Date:</strong> @Model.CreatedDate.ToString("dd-MM-yyyy")</li>
+            </ul>
+
+            @using (Html.BeginForm("Delete", "Notification", new { id = Model.NotificationId }, FormMethod.Post))
+            {
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                @Html.ActionLink("Cancel", "Index", null, new { @class = "btn btn-secondary ms-2" })
+            }
+        </div>
+    </div>
+</div>

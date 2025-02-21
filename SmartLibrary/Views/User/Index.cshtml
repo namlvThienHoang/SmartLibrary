@@ -32,6 +32,7 @@
             <table class="table table-bordered table-striped">
                 <thead>
                     <tr>
+                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().AvatarURL)</th>
                         <th>
                             <a href="@Url.Action("Index", new { sortOrder = ViewBag.UserNameSortParam, searchString = Model.SearchString })">Tên người dùng</a>
                         </th>
@@ -49,6 +50,9 @@
                     @foreach (var item in Model.Items)
                     {
                         <tr>
+                            <td class="text-body">
+                                <img src="@item.AvatarURL" alt="Avatar Image" class="img-thumbnail" style="width: 50px; height: auto;" />
+                            </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.UserName)
                             </td>

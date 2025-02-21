@@ -1,9 +1,13 @@
-﻿using SmartLibrary.Hubs;
+﻿using AutoMapper;
+using SmartLibrary.Hubs;
+using SmartLibrary.Models;
 using SmartLibrary.Models.EntityModels;
+using SmartLibrary.Models.ViewModels.Notification;
 using SmartLibrary.Repositories.Interfaces;
 using SmartLibrary.Services.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -12,90 +16,91 @@ namespace SmartLibrary.Services.Implementations
 {
     public class NotificationService : INotificationService
     {
-        private readonly INotificationRepository _notificationRepository;
-        private readonly IUnitOfWork _unitOfWork;
-        public NotificationService(INotificationRepository notificationRepository, IUnitOfWork unitOfWork)
+        private readonly INotificationRepository _repository;
+
+        public NotificationService(INotificationRepository repository)
         {
-            _notificationRepository = notificationRepository;
-            _unitOfWork = unitOfWork;
+            _repository = repository;
         }
 
-        public async Task<IEnumerable<Notification>> GetNotificationsByUserIdAsync(string userId)
+        public async Task<IEnumerable<NotificationViewModel>> GetAllAsync(string userId, bool isAdmin)
         {
-            return await _notificationRepository.GetNotificationsByUserIdAsync(userId);
-        }
+            var notifications = await _repository.GetAllAsync(userId, isAdmin);
 
-        public async Task<int> GetUnreadNotificationCountAsync(string userId)
-        {
-            return await _notificationRepository.GetUnreadNotificationCountAsync(userId);
-        }
-
-        public async Task<Notification> GetNotificationByIdAsync(int notificationId)
-        {
-            return await _notificationRepository.GetNotificationByIdAsync(notificationId);
-        }
-
-        public async Task CreateNotificationAsync(Notification notification)
-        {
-            // Đặt mặc định thời gian tạo và trạng thái chưa đọc
-            notification.CreatedDate = DateTime.Now;
-            notification.IsRead = false;
-            await _notificationRepository.AddNotificationAsync(notification);
-        }
-
-        public async Task CreateNotificationForAllUsersAsync(string message, List<string> userIds)
-        {
-            var notifications = userIds.Select(userId => new Notification
+            return notifications.Select(n => new NotificationViewModel
             {
-                UserId = userId,
-                Message = message,
+                NotificationId = n.NotificationId,
+                Title = n.Title,
+                Message = n.Message,
+                CreatedDate = n.CreatedDate,
+                IsRead = n.IsRead,
+                NotificationType = n.NotificationType,
+                RedirectUrl = n.RedirectUrl,
+                UserIds = n.NotificationUsers.Select(nu => nu.UserId).ToList()
+            });
+        }
+
+
+        public async Task<NotificationViewModel> GetByIdAsync(int id)
+        {
+            var n = await _repository.GetByIdAsync(id);
+            if (n == null) return null;
+
+            return new NotificationViewModel
+            {
+                NotificationId = n.NotificationId,
+                Title = n.Title,
+                Message = n.Message,
+                CreatedDate = n.CreatedDate,
+                IsRead = n.IsRead,
+                NotificationType = n.NotificationType,
+                RedirectUrl = n.RedirectUrl,
+                UserIds = n.NotificationUsers.Select(nu => nu.UserId).ToList()
+            };
+        }
+
+        public async Task CreateAsync(CreateNotificationViewModel model)
+        {
+            var notification = new Notification
+            {
+                Title = model.Title,
+                Message = model.Message,
+                NotificationType = model.NotificationType,
+                RedirectUrl = model.RedirectUrl,
                 CreatedDate = DateTime.Now,
-                IsRead = false
-            }).ToList();
-
-            foreach(var item in notifications)
-            {
-                await _notificationRepository.AddNotificationAsync(item);
-                NotificationHub.Notify(item);
-            }
+                IsRead = false,
+                NotificationUsers = model.SendToAll
+                    ? (await GetAllUsersAsync()).Select(userId => new NotificationUser { UserId = userId }).ToList()
+                    : model.SelectedUserIds.Select(userId => new NotificationUser { UserId = userId }).ToList()
+            };
+            await _repository.AddAsync(notification);
         }
 
-
-        public async Task MarkNotificationAsReadAsync(int notificationId)
+        public async Task UpdateAsync(EditNotificationViewModel model)
         {
-            var notification = await _notificationRepository.GetNotificationByIdAsync(notificationId);
-            if (notification != null && !notification.IsRead)
-            {
-                notification.IsRead = true;
-                await _notificationRepository.UpdateNotificationAsync(notification);
-            }
-        }
-
-        public async Task MarkAllNotificationsAsReadAsync(string userId)
-        {
-            var notifications = await _notificationRepository.GetNotificationsByUserIdAsync(userId);
-            foreach (var notification in notifications.Where(n => !n.IsRead))
-            {
-                notification.IsRead = true;
-                await _notificationRepository.UpdateNotificationAsync(notification);
-            }
-        }
-
-        public async Task DeleteNotificationAsync(int notificationId)
-        {
-            var notification = await _notificationRepository.GetNotificationByIdAsync(notificationId);
+            var notification = await _repository.GetByIdAsync(model.NotificationId);
             if (notification != null)
             {
-                await _notificationRepository.DeleteNotificationAsync(notification);
+                notification.Title = model.Title;
+                notification.Message = model.Message;
+                notification.NotificationType = model.NotificationType;
+                notification.RedirectUrl = model.RedirectUrl;
+                notification.IsRead = model.IsRead;
+                notification.NotificationUsers = model.UserIds.Select(userId => new NotificationUser { UserId = userId }).ToList();
+                await _repository.UpdateAsync(notification);
             }
         }
 
-        public async Task UpdateNotificationAsync(Notification notification)
+        public async Task DeleteAsync(int id) => await _repository.DeleteAsync(id);
+
+        public async Task MarkAsReadAsync(int id) => await _repository.MarkAsReadAsync(id);
+
+        private async Task<List<string>> GetAllUsersAsync()
         {
-            // Đặt mặc định thời gian tạo và trạng thái chưa đọc
-            notification.CreatedDate = DateTime.Now;
-            notification.IsRead = false;
-            await _notificationRepository.UpdateNotificationAsync(notification);
+            using (var context = new ApplicationDbContext())
+            {
+                return await context.Users.Select(u => u.Id).ToListAsync();
+            }
         }
     }
 

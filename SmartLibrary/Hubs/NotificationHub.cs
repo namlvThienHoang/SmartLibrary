@@ -15,17 +15,18 @@ namespace SmartLibrary.Hubs
             context.Clients.All.receiveNotification(message);
         }
 
-        // Phương thức tĩnh để gửi thông báo đến tất cả các client (admin)
+        // Gửi thông báo từ Admin đến tất cả người dùng
         public static void Notify(Notification notification)
         {
             var context = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
-            context.Clients.All.receiveNotification(new
+            var notificationData = new
             {
                 id = notification.NotificationId,
                 message = notification.Message,
-                createdDate = notification.CreatedDate.ToString("dd/MM/yyyy HH:mm"),
+                createdDate = notification.CreatedDate.ToString("yyyy-MM-dd HH:mm:ss"),
                 isRead = notification.IsRead
-            });
+            };
+            context.Clients.All.SendAsync("ReceiveNotification", notificationData);
         }
     }
 }

@@ -112,5 +112,13 @@ namespace SmartLibrary.Utilities.Helpers
                 }
             }
         }
+
+        public static class NotificationType
+        {
+            public const string System = "Thông báo hệ thống";
+            public const string Reminder = "Nhắc nhở sự kiện quan trọng";
+            public const string Security = "Cảnh báo bảo mật, đăng nhập lạ";
+            public const string Message = "Tin nhắn từ hệ thống";
+        }
     }
 }

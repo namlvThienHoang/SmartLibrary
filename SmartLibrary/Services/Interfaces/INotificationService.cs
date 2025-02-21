@@ -1,4 +1,7 @@
-﻿using SmartLibrary.Models.EntityModels;
+﻿using SmartLibrary.Models;
+using SmartLibrary.Models.EntityModels;
+using SmartLibrary.Models.ViewModels.Notification;
+using SmartLibrary.Repositories.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +12,15 @@ namespace SmartLibrary.Services.Interfaces
 {
     public interface INotificationService
     {
-        Task<IEnumerable<Notification>> GetNotificationsByUserIdAsync(string userId);
-        Task<int> GetUnreadNotificationCountAsync(string userId);
-        Task<Notification> GetNotificationByIdAsync(int notificationId);
-        Task CreateNotificationAsync(Notification notification);
-        Task CreateNotificationForAllUsersAsync(string message, List<string> userIds);
-        Task MarkNotificationAsReadAsync(int notificationId);
-        Task MarkAllNotificationsAsReadAsync(string userId);
-        Task DeleteNotificationAsync(int notificationId);
-        Task UpdateNotificationAsync(Notification notification);
+        Task<IEnumerable<NotificationViewModel>> GetAllAsync(string userId, bool isAdmin);
+        Task<NotificationViewModel> GetByIdAsync(int id);
+        Task CreateAsync(CreateNotificationViewModel model);
+        Task UpdateAsync(EditNotificationViewModel model);
+        Task DeleteAsync(int id);
+        Task MarkAsReadAsync(int id);
     }
+
+    
+
 
 }

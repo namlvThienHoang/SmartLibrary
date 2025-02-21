@@ -30,25 +30,37 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: AuditLog
-        public async Task<ActionResult> Index(string searchString, string sortOrder, int? pageNumber, int pageSize = 10)
+        public async Task<ActionResult> Index(string searchString, string sortOrder, int? pageNumber, int? pageSize)
         {
-            // Thiết lập thứ tự sắp xếp
             ViewBag.CurrentSort = sortOrder;
-            ViewBag.ActionSortParam = string.IsNullOrEmpty(sortOrder) ? "action_desc" : "";
-            ViewBag.ActionDateSortParam = sortOrder == "actionDate" ? "actionDate_desc" : "actionDate";
-            // Thiết lập trang hiện tại
+            ViewBag.ActionDateSortParam = string.IsNullOrEmpty(sortOrder) ? "actionDate_desc" : "";
+            ViewBag.ActionSortParam = sortOrder == "action" ? "action_desc" : "action";
+
+            // Giữ lại giá trị tìm kiếm và số lượng hiển thị trên mỗi trang
+            ViewBag.SearchString = searchString;
+
+            // Trang hiện tại
             pageNumber = pageNumber ?? 1;
+            pageSize = pageSize ?? 10;
+
             var userId = User.Identity.GetUserId();
             var roles = await UserManager.GetRolesAsync(userId);
-            if(roles.Contains(ModelCommons.Roles.Admin))
+            if (roles.Contains(ModelCommons.Roles.Admin))
             {
                 userId = null;
-            }    
+            }
+
             // Lấy dữ liệu từ service
-            var model = await _auditLogService.GetAuditLogs(userId, searchString, sortOrder, pageNumber.Value, pageSize);
+            var model = await _auditLogService.GetAuditLogs(userId, searchString, sortOrder, pageNumber.Value, pageSize.Value);
+
+            // Gán lại giá trị tìm kiếm và số lượng hiển thị vào model
+            model.SearchString = searchString;
 
             return View(model);
         }
+
+
+
 
         // GET: AuditLog/Details/5
         public async Task<ActionResult> Details(int id)

@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using SmartLibrary.Hubs;
 using SmartLibrary.Models;
+using SmartLibrary.Services.Interfaces;
 
 namespace SmartLibrary.Controllers
 {
@@ -18,12 +19,13 @@ namespace SmartLibrary.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
-        public AccountController()
+        private readonly IAuditLogService _auditLogService;
+        public AccountController(IAuditLogService auditLogService)
         {
+            _auditLogService = auditLogService;
         }
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
@@ -80,6 +82,8 @@ namespace SmartLibrary.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
+                    var user = await UserManager.FindByNameAsync(model.Email);
+                    await _auditLogService.LogActionAsync("Login", "Account", "Đăng nhập thành công!", user.Id);
                     return RedirectToLocal(returnUrl);
                 case SignInStatus.LockedOut:
                     return View("Lockout");

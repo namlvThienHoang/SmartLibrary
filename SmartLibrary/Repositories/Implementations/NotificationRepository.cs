@@ -19,42 +19,62 @@ namespace SmartLibrary.Repositories.Implementations
             _context = context;
         }
 
-        public async Task<IEnumerable<Notification>> GetNotificationsByUserIdAsync(string userId)
+        public async Task<IEnumerable<Notification>> GetAllAsync(string userId, bool isAdmin)
         {
-            return await _context.Notifications
-                .Where(n => n.UserId == userId)
-                .OrderByDescending(n => n.CreatedDate)
-                .ToListAsync();
+            if (isAdmin)
+            {
+                return await _context.Notifications
+                    .Include(n => n.NotificationUsers)
+                    .ToListAsync();
+            }
+            else
+            {
+                return await _context.Notifications
+                    .Where(n => n.NotificationUsers.Any(nu => nu.UserId == userId))
+                    .Include(n => n.NotificationUsers)
+                    .ToListAsync();
+            }
         }
 
-        public async Task<int> GetUnreadNotificationCountAsync(string userId)
-        {
-            return await _context.Notifications
-                .CountAsync(n => n.UserId == userId && !n.IsRead);
-        }
 
-        public async Task<Notification> GetNotificationByIdAsync(int notificationId)
-        {
-            return await _context.Notifications.FindAsync(notificationId);
-        }
+        public async Task<Notification> GetByIdAsync(int id) =>
+            await _context.Notifications
+                .Include(n => n.NotificationUsers)
+                .FirstOrDefaultAsync(n => n.NotificationId == id);
 
-        public async Task AddNotificationAsync(Notification notification)
+        public async Task AddAsync(Notification notification)
         {
             _context.Notifications.Add(notification);
-            await _context.SaveChangesAsync();
+            await SaveAsync();
         }
 
-        public async Task UpdateNotificationAsync(Notification notification)
+        public async Task UpdateAsync(Notification notification)
         {
             _context.Entry(notification).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            await SaveAsync();
         }
 
-        public async Task DeleteNotificationAsync(Notification notification)
+        public async Task DeleteAsync(int id)
         {
-            _context.Notifications.Remove(notification);
-            await _context.SaveChangesAsync();
+            var notification = await GetByIdAsync(id);
+            if (notification != null)
+            {
+                _context.Notifications.Remove(notification);
+                await SaveAsync();
+            }
         }
+
+        public async Task MarkAsReadAsync(int id)
+        {
+            var notification = await GetByIdAsync(id);
+            if (notification != null)
+            {
+                notification.IsRead = true;
+                await SaveAsync();
+            }
+        }
+
+        public async Task SaveAsync() => await _context.SaveChangesAsync();
     }
 
 }

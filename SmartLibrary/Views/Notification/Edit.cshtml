@@ -1,17 +1,105 @@
 ﻿@model SmartLibrary.Models.ViewModels.Notification.EditNotificationViewModel
 
-<h2>Chỉnh sửa thông báo</h2>
+@{
+    ViewBag.Title = "Edit Notification";
+}
 
-@using (Html.BeginForm())
+<h2 class="mb-4">✏️ Chỉnh Sửa Thông Báo</h2>
+
+@using (Html.BeginForm("Edit", "Notification", FormMethod.Post, new { @class = "needs-validation", novalidate = "novalidate" }))
 {
     @Html.AntiForgeryToken()
     @Html.HiddenFor(model => model.NotificationId)
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.Message)
-        @Html.TextAreaFor(model => model.Message, new { @class = "form-control" })
-        @Html.ValidationMessageFor(model => model.Message)
+    <div class="row">
+        <!-- Tiêu đề -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                @Html.LabelFor(model => model.Title, new { @class = "form-label fw-bold" })
+                @Html.TextBoxFor(model => model.Title, new { @class = "form-control", placeholder = "Nhập tiêu đề..." })
+                @Html.ValidationMessageFor(model => model.Title, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- Loại thông báo -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                @Html.LabelFor(model => model.NotificationType, new { @class = "form-label fw-bold" })
+                @Html.DropDownListFor(model => model.NotificationType, (SelectList)ViewBag.NotificationTypes, "-- Chọn loại thông báo --", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.NotificationType, "", new { @class = "text-danger" })
+            </div>
+        </div>
     </div>
 
-    <button type="submit" class="btn btn-success">Lưu thay đổi</button>
+    <!-- Nội dung -->
+    <div class="mb-3">
+        @Html.LabelFor(model => model.Message, new { @class = "form-label fw-bold" })
+        @Html.TextAreaFor(model => model.Message, new { @class = "form-control", rows = "3", placeholder = "Nhập nội dung thông báo..." })
+        @Html.ValidationMessageFor(model => model.Message, "", new { @class = "text-danger" })
+    </div>
+
+    <div class="row">
+        <!-- Chọn người dùng -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                <label class="form-label fw-bold">Người nhận thông báo</label>
+                <div class="form-check">
+                    <input type="checkbox" id="selectAllUsers" class="form-check-input" @(Model.UserIds == null || !Model.UserIds.Any() ? "checked" : "")>
+                    <label for="selectAllUsers" class="form-check-label">Gửi đến tất cả người dùng</label>
+                </div>
+                <div class="input-group">
+                    @Html.DropDownListFor(model => model.UserIds, (SelectList)ViewBag.Users, new { @class = "form-control select2", multiple = "multiple", id = "userSelect" })
+                </div>
+                @Html.ValidationMessageFor(model => model.UserIds, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <!-- URL Chuyển hướng -->
+        <div class="col-md-6">
+            <div class="mb-3">
+                @Html.LabelFor(model => model.RedirectUrl, new { @class = "form-label fw-bold" })
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-link"></i></span>
+                    @Html.TextBoxFor(model => model.RedirectUrl, new { @class = "form-control", placeholder = "Nhập URL chuyển hướng..." })
+                </div>
+                @Html.ValidationMessageFor(model => model.RedirectUrl, "", new { @class = "text-danger" })
+            </div>
+        </div>
+    </div>
+
+    <a href="@Url.Action("Index")" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Quay lại
+    </a>
+    <!-- Nút lưu -->
+    <button type="submit" class="btn btn-primary btn-save"><i class="fas fa-save"></i> Cập Nhật</button>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".select2").select2({
+                placeholder: "Chọn người dùng...",
+                allowClear: true
+            });
+
+            let allUsersChecked = $("#selectAllUsers").is(":checked");
+            $("#userSelect").prop("disabled", allUsersChecked);
+
+            $("#selectAllUsers").change(function () {
+                if (this.checked) {
+                    $("#userSelect").prop("disabled", true).val(null).trigger("change");
+                } else {
+                    $("#userSelect").prop("disabled", false);
+                }
+            });
+
+            @if (Model.UserIds != null && Model.UserIds.Any())
+            {
+                <text>
+                    let selectedUsers = @Html.Raw(Json.Encode(Model.UserIds));
+                    $("#userSelect").val(selectedUsers).trigger("change");
+                </text>
+            }
+        });
+    </script>
 }

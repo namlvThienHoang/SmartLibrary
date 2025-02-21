@@ -61,7 +61,7 @@ namespace SmartLibrary.Controllers
         }
 
         // GET: Category/Create
-        [Authorize(Roles = "Admin")]
+        [CustomAuthorize(Roles = "Admin")]
         public ActionResult Create()
         {
             return View();

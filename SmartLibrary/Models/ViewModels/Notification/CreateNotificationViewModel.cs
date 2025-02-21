@@ -9,8 +9,18 @@ namespace SmartLibrary.Models.ViewModels.Notification
     public class CreateNotificationViewModel
     {
         [Required]
-        [StringLength(200, ErrorMessage = "Nội dung thông báo không được quá 200 ký tự.")]
+        [Display(Name = "Tiêu đề")]
+        public string Title { get; set; }
+
+        [Required]
+        [Display(Name = "Nội dung")]
         public string Message { get; set; }
+        [Display(Name = "Loại thông báo")]
+        public string NotificationType { get; set; }
+        [Display(Name = "Đường dẫn")]
+        public string RedirectUrl { get; set; }
+        public bool SendToAll { get; set; } // true: gửi tất cả, false: chọn user cụ thể
+        public List<string> SelectedUserIds { get; set; } = new List<string>(); // Chứa ID các user được chọn nếu không gửi cho tất cả
     }
 
 }
