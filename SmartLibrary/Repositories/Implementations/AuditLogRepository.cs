@@ -39,6 +39,12 @@ namespace SmartLibrary.Repositories.Implementations
                 case "action_desc":
                     query = query.OrderByDescending(b => b.Action);
                     break;
+                case "actionDate":
+                    query = query.OrderBy(b => b.ActionDate);
+                    break;
+                case "actionDate_desc":
+                    query = query.OrderByDescending(b => b.ActionDate);
+                    break;
                 default:
                     query = query.OrderBy(b => b.Action);
                     break;

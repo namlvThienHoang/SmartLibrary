@@ -16,6 +16,7 @@ namespace SmartLibrary.Models.ViewModels.AuditLog
         [Display(Name = "Đối tượng")]
         public string Entity { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:HH:mm dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Thời gian thực hiện")]
         public DateTime ActionDate { get; set; }
 

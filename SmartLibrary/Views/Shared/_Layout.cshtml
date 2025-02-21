@@ -33,7 +33,6 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "Home")">🏠 Trang chủ</a></li>
                     <li class="nav-item"><a class="nav-link" href="@Url.Action("About", "Home")">ℹ️ Giới thiệu</a></li>
                     <li class="nav-item"><a class="nav-link" href="@Url.Action("Contact", "Home")">📞 Liên hệ</a></li>
                     @if (User.IsInRole("User"))
@@ -52,7 +51,6 @@
 
                     @if (User.IsInRole("Admin"))
                     {
-                        <li class="nav-item"><a class="nav-link" href="@Url.Action("Index", "User")">👤 Người dùng</a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" id="bookManagementDropdown" role="button" data-bs-toggle="dropdown">
                                 📖 Quản lý sách
@@ -72,7 +70,19 @@
                                 <li><a class="dropdown-item" href="@Url.Action("Index", "BookReservation")">Đặt trước sách</a></li>
                             </ul>
                         </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="bookManagementDropdown" role="button" data-bs-toggle="dropdown">
+                                ⚙️ Quản trị hệ thống
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "User")">Người dùng</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "BookReservation")">Đặt trước sách</a></li>
+                                <li><a class="dropdown-item" href="@Url.Action("Index", "Notification")">Quản lý thông báo</a></li>
+                            </ul>
+                        </li>
                     }
+
+
                 </ul>
 
                 <div class="ms-auto d-flex align-items-center">

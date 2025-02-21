@@ -13,12 +13,16 @@ namespace SmartLibrary.Models.ViewModels.BorrowBook
         public string UserName { get; set; }
         [Display(Name = "Tên sách")]
         public string BookTitle { get; set; }
+
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Ngày mượn")]
         public DateTime BorrowDate { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Ngày hết hạn")]
         public DateTime? DueDate { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Ngày trả")]
         public DateTime? ReturnDate { get; set; }
 

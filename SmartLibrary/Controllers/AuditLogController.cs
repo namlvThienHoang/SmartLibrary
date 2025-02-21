@@ -35,7 +35,7 @@ namespace SmartLibrary.Controllers
             // Thiết lập thứ tự sắp xếp
             ViewBag.CurrentSort = sortOrder;
             ViewBag.ActionSortParam = string.IsNullOrEmpty(sortOrder) ? "action_desc" : "";
-
+            ViewBag.ActionDateSortParam = sortOrder == "actionDate" ? "actionDate_desc" : "actionDate";
             // Thiết lập trang hiện tại
             pageNumber = pageNumber ?? 1;
             var userId = User.Identity.GetUserId();

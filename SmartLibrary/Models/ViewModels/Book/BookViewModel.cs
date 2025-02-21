@@ -18,6 +18,7 @@ namespace SmartLibrary.Models.ViewModels.Book
         [Display(Name = "Nhà xuất bản")]
         public string Publisher { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Ngày xuất bản")]
         public DateTime PublishedDate { get; set; }
 

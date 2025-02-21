@@ -38,7 +38,9 @@
                             <a href="@Url.Action("Index", new { sortOrder = ViewBag.ActionSortParam, searchString = Model.SearchString })">Tên hành động</a>
                         </th>
                         <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Entity)</th>
-                        <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().ActionDate)</th>
+                        <th>
+                            <a href="@Url.Action("Index", new { sortOrder = ViewBag.ActionDateSortParam, searchString = Model.SearchString })">Thời gian thực hiện</a>
+                        </th>
                         <th>@Html.DisplayNameFor(model => model.Items.FirstOrDefault().Details)</th>
                         <th class="text-center">Thao tác</th>
                     </tr>
@@ -50,7 +52,7 @@
                             <td>@Html.DisplayFor(modelItem => item.UserName)</td>
                             <td>@Html.DisplayFor(modelItem => item.Action)</td>
                             <td>@Html.DisplayFor(modelItem => item.Entity)</td>
-                            <td>@Html.DisplayFor(modelItem => item.ActionDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.ActionDate)</td>      
                             <td>@Html.DisplayFor(modelItem => item.Details)</td>
                             <td>
                                 <div class="btn-group" role="group">

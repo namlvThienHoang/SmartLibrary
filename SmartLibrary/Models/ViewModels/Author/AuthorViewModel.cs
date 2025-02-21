@@ -15,6 +15,7 @@ namespace SmartLibrary.Models.ViewModels.Author
         public string AuthorName { get; set; }
 
         [Required]
+        [DisplayFormat(DataFormatString = "{0:dd-MM-yyyy}", ApplyFormatInEditMode = true)]
         [Display(Name = "Ngày sinh")]
         public DateTime DateOfBirth { get; set; }
 
